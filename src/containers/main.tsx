@@ -1,13 +1,14 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { getColor } from '../themes/';
-import { PetData } from '../types';
 import { Footer } from './footer';
 
 import styled from 'styled-components';
 import { Loader } from './loader';
-import { useAppDispatch, useAppSelector } from '../services/hooks';
-import { selectActiveIdx, selectActivePet, selectPetList, setActiveIdx } from '../services/petstore/petstore-slice';
+import { useAppSelector } from '../services/hooks';
+import {  
+  selectActivePet, 
+} from '../services/petstore/petstore-slice';
 
 const ScContainer = styled.div`
   padding:1rem;
@@ -84,10 +85,7 @@ const ScPetImage = styled.div`
 
 export const Main = () => {
   let { push } = useHistory();
-  const pet = useAppSelector(selectActivePet) || {};
-  const petList = useAppSelector(selectPetList);
-  const activePetIdx = useAppSelector(selectActiveIdx);
-  const dispatch = useAppDispatch();
+  const activePet = useAppSelector(selectActivePet) || {};
 
   return (
     <ScContainer>
@@ -99,19 +97,14 @@ export const Main = () => {
         </ScHelpButton>
         <hr/>
         <ScPetLabel>
-          <ScPetName>{pet.name}</ScPetName>
-          <ScPetLevel><span>{'Level: '}</span><span>{pet.level}</span></ScPetLevel>
+          <ScPetName>{activePet.name}</ScPetName>
+          <ScPetLevel><span>{'Level: '}</span><span>{activePet.level}</span></ScPetLevel>
         </ScPetLabel>
       </header>
       <ScPetContainer>
-        <ScPetImage style={{ backgroundImage: `url(${pet.image})` }}/>
+        <ScPetImage style={{ backgroundImage: `url(${activePet.image})` }}/>
       </ScPetContainer>
-      <Footer 
-        activePet={pet}
-        activePetIdx={activePetIdx}
-        petList={petList}
-        onTab={(tabId:number) => dispatch(setActiveIdx(tabId))}
-      />
+      <Footer />
     </ScContainer>
   )
 }

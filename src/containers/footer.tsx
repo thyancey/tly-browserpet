@@ -1,8 +1,15 @@
 import React from 'react';
 import { getColor } from '../themes/';
-import { PetData, PetListItem } from '../types';
 
 import styled, { css } from 'styled-components';
+import { useAppDispatch, useAppSelector } from '../services/hooks';
+
+import { 
+  selectActivePet, 
+  selectActivePetStats, 
+  selectPetList, 
+  setActiveIdx 
+} from '../services/petstore/petstore-slice';
 
 const ScContainer = styled.div`
   margin-top: -3.75rem;
@@ -15,7 +22,7 @@ const ScTabs = styled.ul`
 `;
 
 type ScTabProps = {
-  isActive: boolean
+  isActive?: boolean
 };
 
 const ScTab = styled.li<ScTabProps>`
@@ -50,6 +57,7 @@ const ScTab = styled.li<ScTabProps>`
 `
 
 const ScPetInfo = styled.div`
+  position:relative;
   width:100%;
   height:10rem;
 
@@ -64,14 +72,25 @@ const ScPetInfo = styled.div`
   border:.5rem solid ${getColor('white')};
   border-radius:1rem;
 `
-type PropTypes = {
-  activePet: PetData,
-  activePetIdx: number,
-  petList: PetListItem[],
-  onTab: Function
-}
 
-export const Footer = ({ activePet, activePetIdx, onTab, petList }: PropTypes) => {
+const ScStats = styled.ul`
+  position:absolute;
+  width:100%;
+  height:80%;
+  left:0;
+  bottom:0;
+  border: 3px solid black;
+`;
+// type PropTypes = {
+//   onTab: Function
+// }
+// export const Footer = ({ onTab }: PropTypes) => {
+
+export const Footer = () => {
+  const activePet = useAppSelector(selectActivePet) || {};
+  const petList = useAppSelector(selectPetList);
+  const activeStats = useAppSelector(selectActivePetStats);
+  const dispatch = useAppDispatch();
 
   return (
     <ScContainer>
@@ -79,8 +98,8 @@ export const Footer = ({ activePet, activePetIdx, onTab, petList }: PropTypes) =
         {petList.map((p, idx) => (
           <ScTab 
             key={idx} 
-            onClick={() => onTab(idx)} 
-            isActive={idx === activePetIdx}
+            onClick={() => dispatch(setActiveIdx(idx))} 
+            isActive={p.isActive}
           >
             {idx + 1}
           </ScTab>
@@ -88,6 +107,9 @@ export const Footer = ({ activePet, activePetIdx, onTab, petList }: PropTypes) =
       </ScTabs>
       <ScPetInfo>
         {activePet.info}
+        <ScStats>
+          {activeStats.map(s => <div key={s.id}>{s.label}</div>)}
+        </ScStats>
       </ScPetInfo>
     </ScContainer>
   )

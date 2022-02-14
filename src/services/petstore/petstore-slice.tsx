@@ -1,6 +1,7 @@
 // slightly evolving from create-react-app example
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PetDefinition, PetListItem } from '../../types';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { useSelector } from 'react-redux';
+import { PetDefinition, PetListItem, PetStatDefinition } from '../../types';
 
 import { RootState } from '../store';
 
@@ -51,10 +52,16 @@ export const selectActivePet = (state: RootState): PetDefinition => {
   return state.petStore.pets[state.petStore.activeIdx];
 };
 
+export const selectActivePetStats = createSelector(selectActivePet, (activePet) => {
+  // TODO: all the delta stat stuff
+  return activePet?.stats || [];
+});
+
 export const selectPetList = (state: RootState): PetListItem[] => {
-  return state.petStore.pets.map(p => ({
+  return state.petStore.pets.map((p, idx) => ({
     name: p.name,
-    id: p.id
+    id: p.id,
+    isActive: idx === state.petStore.activeIdx
   }));
 };
 

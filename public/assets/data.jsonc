@@ -4,13 +4,53 @@
     "name": "Bunchie",
     "info": "A big dumb hopping green llama.",
     "image": "assets/pets/bunchie/happy.gif",
-    "level": 0
+    "level": 0,
+    "stats":[
+      {
+        "id": "food",
+        "label": "Food",
+        "value": 0.0,
+        "perSecond": 1.0,
+        "min": 0.0,
+        "max": 500.0,
+        "alignment": 1 // is more good (1) or is more bad (-1)?
+      },
+      {
+        "id": "brains",
+        "label": "Brains",
+        "value": 0.0,
+        "perSecond": 1.0,
+        "min": 0.0,
+        "max": 100.0,
+        "alignment": 1
+      },
+      {
+        "id": "poop",
+        "label": "Poop",
+        "value": 0.0,
+        "perSecond": 1.6,
+        "min": 0.0,
+        "max": 100.0,
+        "alignment": -1
+      }
+    ]
   },
   {
     "id": "raccoon",
     "name": "A Racoon",
     "info": "A dead, bloated raccoon, with a belly full of old seafood.",
     "image": "assets/pets/raccoon/dead.gif",
-    "level": 0
+    "level": 0,
+    "stats":[
+      {
+        "id": "food",
+        "label": "Food",
+        "value": 0.0,
+        "perSecond": 1.0,
+        "min": 0.0,
+        "max": 500.0,
+        "alignment": 1
+      }
+    ]
   }
 ]
