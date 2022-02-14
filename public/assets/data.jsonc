@@ -1,0 +1,17 @@
+[
+  {
+    "id": "bunchie",
+    "type": "meme",
+    "animal": "Llama",
+    "name": "Bunchie",
+    "thumbnail": "thumbnail.jpg",
+    "animations":{
+      "Bunchie_Happy":{
+        "sprite": "happy.gif"
+      },
+      "Bunchie_Dead":{
+        "sprite": "dead.gif"
+      }
+    }
+  }
+]

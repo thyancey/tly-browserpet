@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { getColor } from '../themes/';
 import { PetData } from '../types';
+import { jsonc } from 'jsonc';
 
 import { Footer } from './footer';
 
@@ -94,9 +95,38 @@ const petData: PetData[] = [
   }
 ];
 
+const readIt = () => {
+  const url =  `assets/data.jsonc`;
+
+  fetch(url, {
+    mode: 'cors'
+  })
+    .then(res => res.text())
+    .then(
+      text => jsonc.parse(text), 
+      err => {
+        console.error(`Error fretching item from ${url}`, err);
+      }
+    ) //- bad url responds with 200/ok? so this doesnt get thrown
+    .then(
+      json => {
+        console.log(`data was read successfully`, json);
+
+        return true;
+      }, 
+      err => {
+        console.error(`Error parsing (the url (${url}) was bad), skipping`, err?.stack || err);
+      }
+    );
+}
+
 export const Main = () => {
   let { push } = useHistory();
   const [curPetIdx, setCurPetIdx] = useState<number>(0);
+  useEffect(() => {
+    readIt();
+  }, [])
+
 
   const pet:PetData = useMemo(() => {
     return petData[curPetIdx]
