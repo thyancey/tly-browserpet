@@ -2,11 +2,15 @@
   {
     "id": "bunchie",
     "name": "Bunchie",
-    "info": "A big dumb hopping green llama."
+    "info": "A big dumb hopping green llama.",
+    "image": "assets/pets/bunchie/happy.gif",
+    "level": 0
   },
   {
     "id": "raccoon",
     "name": "A Racoon",
-    "info": "A dead, bloated raccoon, with a belly full of old seafood."
+    "info": "A dead, bloated raccoon, with a belly full of old seafood.",
+    "image": "assets/pets/raccoon/dead.gif",
+    "level": 0
   }
 ]

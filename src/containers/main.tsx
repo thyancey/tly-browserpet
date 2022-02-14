@@ -1,12 +1,13 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { getColor } from '../themes/';
 import { PetData } from '../types';
-import { jsonc } from 'jsonc';
-
 import { Footer } from './footer';
 
 import styled from 'styled-components';
+import { Loader } from './loader';
+import { useAppDispatch, useAppSelector } from '../services/hooks';
+import { selectActiveIdx, selectActivePet, selectPetList, setActiveIdx } from '../services/petstore/petstore-slice';
 
 const ScContainer = styled.div`
   padding:1rem;
@@ -81,60 +82,17 @@ const ScPetImage = styled.div`
   text-align:center;
 `;
 
-const petData: PetData[] = [
-  {
-    name: 'Bunchie',
-    image: 'assets/pets/bunchie/happy.gif',
-    level: 3,
-    info: 'A big dumb hopping green llama.'
-  },{
-    name: 'Dead Raccoon',
-    image: 'assets/pets/raccoon/dead.gif',
-    level: 2,
-    info: 'A dead, bloated raccoon, with a belly full of old seafood.'
-  }
-];
-
-const readIt = () => {
-  const url =  `assets/data.jsonc`;
-
-  fetch(url, {
-    mode: 'cors'
-  })
-    .then(res => res.text())
-    .then(
-      text => jsonc.parse(text), 
-      err => {
-        console.error(`Error fretching item from ${url}`, err);
-      }
-    ) //- bad url responds with 200/ok? so this doesnt get thrown
-    .then(
-      json => {
-        console.log(`data was read successfully`, json);
-
-        return true;
-      }, 
-      err => {
-        console.error(`Error parsing (the url (${url}) was bad), skipping`, err?.stack || err);
-      }
-    );
-}
-
 export const Main = () => {
   let { push } = useHistory();
-  const [curPetIdx, setCurPetIdx] = useState<number>(0);
-  useEffect(() => {
-    readIt();
-  }, [])
-
-
-  const pet:PetData = useMemo(() => {
-    return petData[curPetIdx]
-  }, [ curPetIdx ])
+  const pet = useAppSelector(selectActivePet) || {};
+  const petList = useAppSelector(selectPetList);
+  const activePetIdx = useAppSelector(selectActiveIdx);
+  const dispatch = useAppDispatch();
 
   return (
     <ScContainer>
       <header>
+        <Loader />
         <ScLogo>{'Virtual Pet'}</ScLogo>
         <ScHelpButton onClick={() => {push('/about')}}>
           {'?'}
@@ -149,10 +107,10 @@ export const Main = () => {
         <ScPetImage style={{ backgroundImage: `url(${pet.image})` }}/>
       </ScPetContainer>
       <Footer 
-        curPet={pet}
-        curPetIdx={curPetIdx}
-        pets={petData}
-        onTab={(tabId:number) => setCurPetIdx(tabId)}
+        activePet={pet}
+        activePetIdx={activePetIdx}
+        petList={petList}
+        onTab={(tabId:number) => dispatch(setActiveIdx(tabId))}
       />
     </ScContainer>
   )

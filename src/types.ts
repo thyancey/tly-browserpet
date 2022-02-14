@@ -15,3 +15,16 @@ export type PetData = {
   image: string,
   info: string
 }
+
+export type PetDefinition = {
+  id: string,
+  name: string,
+  info: string,
+  image: string,
+  level: number
+}
+
+export type PetListItem = {
+  name: string,
+  id: string
+}

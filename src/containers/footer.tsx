@@ -1,6 +1,6 @@
 import React from 'react';
 import { getColor } from '../themes/';
-import { PetData } from '../types';
+import { PetData, PetListItem } from '../types';
 
 import styled, { css } from 'styled-components';
 
@@ -65,29 +65,29 @@ const ScPetInfo = styled.div`
   border-radius:1rem;
 `
 type PropTypes = {
-  curPet: PetData,
-  curPetIdx: number,
-  pets: PetData[],
+  activePet: PetData,
+  activePetIdx: number,
+  petList: PetListItem[],
   onTab: Function
 }
 
-export const Footer = ({ pets, curPet, curPetIdx, onTab }: PropTypes) => {
+export const Footer = ({ activePet, activePetIdx, onTab, petList }: PropTypes) => {
 
   return (
     <ScContainer>
       <ScTabs>
-        {pets.map((p, idx) => (
+        {petList.map((p, idx) => (
           <ScTab 
             key={idx} 
             onClick={() => onTab(idx)} 
-            isActive={idx === curPetIdx}
+            isActive={idx === activePetIdx}
           >
             {idx + 1}
           </ScTab>
         ))}
       </ScTabs>
       <ScPetInfo>
-        {curPet.info}
+        {activePet.info}
       </ScPetInfo>
     </ScContainer>
   )
