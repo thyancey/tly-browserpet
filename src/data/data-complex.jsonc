@@ -1,0 +1,52 @@
+[
+  {
+    "id": "bunchie",
+    "type": "meme",
+    "animal": "Llama",
+    "name": "Bunchie",
+    "info": "A dead, bloated raccoon, with a belly full of old seafood.",
+    "thumbnail": "thumbnail.jpg",
+    "stats":[
+      {
+        "id": "food",
+        "value": 0.0,
+        "perSecond": 1.0,
+        "min": 0.0,
+        "max": 500.0,
+        "alignment": 1, // is more good (1) or is more bad (-1)?well 
+        "effects":[
+          { "when": ">_50%", "then": "MOOD_FULL" },
+          { "when": "<=_25%", "then": "MOOD_HUNGRY" }
+        ]
+      }
+    ],
+    "moods":{
+      "MOOD_FULL":  { "label": "Full", "moodType": 1 },
+      "MOOD_HUNGRY":  { "label": "Hungry", "moodType": -1 }
+    },
+    "moodSwings":[
+      {
+        "when":[
+          { "type":"status", "isDead": true }
+        ],
+        "then": "DEAD"
+      },
+      {
+        "when":[
+          { "type":"moods", "moods": [ "MOOD_HUNGRY" ] }
+        ],
+        "then": "IDLE_ANGRY"
+      },
+      {
+        "when":[],
+        "then": "IDLE"
+      }
+    ],
+    "behaviors": {
+      "DEFAULT": { "images": [ "happy.gif" ] },
+      "IDLE": { "images": [ "happy.gif" ] },
+      "IDLE_ANGRY": { "images": [ "happy.gif" ] },
+      "DEAD": { "images": [ "dead.gif" ] }
+    }
+  }
+]

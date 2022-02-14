@@ -1,17 +1,12 @@
 [
   {
     "id": "bunchie",
-    "type": "meme",
-    "animal": "Llama",
     "name": "Bunchie",
-    "thumbnail": "thumbnail.jpg",
-    "animations":{
-      "Bunchie_Happy":{
-        "sprite": "happy.gif"
-      },
-      "Bunchie_Dead":{
-        "sprite": "dead.gif"
-      }
-    }
+    "info": "A big dumb hopping green llama."
+  },
+  {
+    "id": "raccoon",
+    "name": "A Racoon",
+    "info": "A dead, bloated raccoon, with a belly full of old seafood."
   }
 ]

@@ -84,12 +84,12 @@ const ScPetImage = styled.div`
 const petData: PetData[] = [
   {
     name: 'Bunchie',
-    image: 'assets/bunchie.gif',
+    image: 'assets/pets/bunchie/happy.gif',
     level: 3,
     info: 'A big dumb hopping green llama.'
   },{
     name: 'Dead Raccoon',
-    image: 'assets/raccoon-dead.gif',
+    image: 'assets/pets/raccoon/dead.gif',
     level: 2,
     info: 'A dead, bloated raccoon, with a belly full of old seafood.'
   }
