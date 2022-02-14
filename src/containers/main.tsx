@@ -61,12 +61,11 @@ const ScPetLevel = styled.h2`
   }
 `;
 
-
 const ScPetContainer = styled.div`
   background-color: ${getColor('blue')};
   border:.5rem solid ${getColor('white')};
   border-radius:1rem 1rem 0 0;
-  width: 30rem;
+  width: 100%;
   height: 30rem;
 
   padding-bottom: 2rem;
@@ -101,7 +100,7 @@ export const Main = () => {
 
   const pet:PetData = useMemo(() => {
     return petData[curPetIdx]
-  }, [ petData, curPetIdx ])
+  }, [ curPetIdx ])
 
   return (
     <ScContainer>

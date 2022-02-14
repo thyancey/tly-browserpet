@@ -29,13 +29,12 @@ const ScTab = styled.li<ScTabProps>`
   font-size:2rem;
   line-height:2rem;
   font-weight:bold;
-  padding: .25rem .75rem;
-  margin-right:.5rem;
+  padding: .25rem 1rem;
+  margin-right:.25rem;
   display: inline-block;
 
   border:.5rem solid ${getColor('white')};
   border-radius:1rem 1rem 0 0;
-  /* border-bottom:0; */
 
   background-color:${getColor('blue')};
   border-bottom-color: ${getColor('white')};
