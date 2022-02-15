@@ -54,7 +54,7 @@ export const Example = () => {
   return (
     <div>
       <header>
-        <p>Virtual Pet</p>
+        <p>Browser Pet</p>
         <p>URL:</p>
         <p>
           {url}

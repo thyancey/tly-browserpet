@@ -7,8 +7,8 @@ import { round } from '../../util/tools';
 
 const ScContainer = styled.div`
   display:inline-block;
-  width:50%;
-  padding:0rem .5rem;
+  width:calc(50% - 1rem);
+  margin-right:1rem;
 `;
 
 const ScLabel = styled.h4`

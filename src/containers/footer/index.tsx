@@ -10,10 +10,10 @@ import {
   selectPetList, 
   setActiveIdx 
 } from '../../services/petstore/petstore-slice';
-import { StatBar } from './stat-bar';
+import { PetInfo } from './pet-info';
 
 const ScContainer = styled.div`
-  margin-top: -3.75rem;
+  margin-top: -1rem;
   position:relative;
 `;
 
@@ -52,55 +52,25 @@ const ScTab = styled.li<ScTabProps>`
   background-color:${getColor('blue')};
   border-bottom-color: ${getColor('white')};
   color:${getColor('black')};
-  transition: padding-bottom .1s ease-in-out;
+  transition: padding-bottom .1s ease-in-out, background-color .1s ease-in-out;
 
   &:hover{
-    background-color:${getShade('green', 40)};
+    background-color:${getShade('blue', 20)};
   }
   
   ${props => props.isActive && css`
     background-color:${getColor('green')};
     padding-bottom: .75rem;
-    padding-top: .75rem;
-    transition: padding .2s ease-out;
+    padding-top: .5rem;
+    transition: padding .2s ease-out, background-color .2s ease-out;
+
+    &:hover{
+      background-color:${getShade('green', 40)};
+    }
   `};
 
   cursor:pointer;
 `
-
-const ScPetInfo = styled.div`
-  width:100%;
-  height:15rem;
-
-  font-size: 1.5rem;
-  line-height: 1.5rem;
-  padding: 0.25rem .5rem .5rem .5rem;
-  font-weight:500;
-  
-  background-color:${getColor('green')};
-  color: black;
-  
-  border:.5rem solid ${getColor('white')};
-  border-radius:1rem;
-
-  overflow-y:auto;
-`
-
-const ScStats = styled.div`
-  width:100%;
-  padding:.5rem;
-`;
-
-const ScBio = styled.div`
-  padding:1rem;
-  width:100%;
-`;
-
-const ScBioName = styled.h4`
-`;
-const ScBioInfo = styled.p`
-  margin-top:1rem;
-`;
 
 export const Footer = () => {
   const activePet = useAppSelector(selectActivePet) || {};
@@ -121,24 +91,10 @@ export const Footer = () => {
           </ScTab>
         ))}
       </ScTabs>
-      <ScPetInfo>
-        <ScStats>
-          {activeStats.map((s, idx) => (
-            <StatBar 
-              key={idx}
-              label={s.label}
-              percent={0.5}
-              max={100}
-              value={50}
-            />
-          ))}
-        </ScStats>
-        <hr/>
-        <ScBio>
-          <ScBioName>{'Description'}</ScBioName>
-          <ScBioInfo>{activePet.info}</ScBioInfo>
-        </ScBio>
-      </ScPetInfo>
+      <PetInfo
+        activePet={activePet}
+        activeStats={activeStats}
+      />
     </ScContainer>
   )
 }

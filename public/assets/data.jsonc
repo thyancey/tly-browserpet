@@ -49,5 +49,23 @@
         "fullIsGood": true
       }
     ]
+  },
+  {
+    "id": "mika",
+    "name": "Mika",
+    "info": "A dog",
+    "image": "assets/pets/mika/sleeping.gif",
+    "level": 0,
+    "stats":[
+      {
+        "id": "food",
+        "label": "Food",
+        "value": 0.0,
+        "perSecond": 1.0,
+        "min": 0.0,
+        "max": 500.0,
+        "fullIsGood": true
+      }
+    ]
   }
 ]
