@@ -13,6 +13,7 @@ import {
 const ScContainer = styled.div`
   padding:1rem;
   color: ${getColor('blue')};
+  width:30rem;
 `;
 
 const ScHelpButton = styled.div`

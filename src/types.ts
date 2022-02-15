@@ -21,9 +21,8 @@ export type PetStatDefinition = {
   label: string,
   value: number,
   perSecond: number,
-  min: number,
   max: number,
-  alignment: number // is more good (1) or is more bad (-1)?well 
+  fullIsGood: boolean
 }
 
 export type PetDefinition = {

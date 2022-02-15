@@ -2,7 +2,7 @@
   {
     "id": "bunchie",
     "name": "Bunchie",
-    "info": "A big dumb hopping green llama.",
+    "info": "A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama.",
     "image": "assets/pets/bunchie/happy.gif",
     "level": 0,
     "stats":[
@@ -11,27 +11,24 @@
         "label": "Food",
         "value": 0.0,
         "perSecond": 1.0,
-        "min": 0.0,
         "max": 500.0,
-        "alignment": 1 // is more good (1) or is more bad (-1)?
+        "fullIsGood": true
       },
       {
         "id": "brains",
         "label": "Brains",
         "value": 0.0,
         "perSecond": 1.0,
-        "min": 0.0,
         "max": 100.0,
-        "alignment": 1
+        "fullIsGood": true
       },
       {
         "id": "poop",
         "label": "Poop",
         "value": 0.0,
         "perSecond": 1.6,
-        "min": 0.0,
         "max": 100.0,
-        "alignment": -1
+        "fullIsGood": false
       }
     ]
   },
@@ -49,7 +46,7 @@
         "perSecond": 1.0,
         "min": 0.0,
         "max": 500.0,
-        "alignment": 1
+        "fullIsGood": true
       }
     ]
   }
