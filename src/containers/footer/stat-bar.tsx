@@ -50,7 +50,7 @@ type StatBarProps = {
 };
 
 export const StatBar = ({label, max, value}: StatBarProps) => {
-  const percent = Math.round((value / max) * 100) / 10;
+  const percent = Math.round((value / max) * 1000) / 10;
 
   return (
     <ScContainer>

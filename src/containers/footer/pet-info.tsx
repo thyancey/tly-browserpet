@@ -2,8 +2,9 @@ import React from 'react';
 import { getColor } from '../../themes/';
 
 import styled from 'styled-components';
-import { StatBar } from './stat-bar';
-import { PetStatDefinition, PetDefinition } from '../../types';
+import { StatGroup } from './stat-group';
+import { useAppSelector } from '../../services/hooks';
+import { selectActivePet } from '../../services/petstore';
 
 const ScPetInfo = styled.div`
   width:100%;
@@ -33,10 +34,6 @@ const ScPetInfo = styled.div`
   }
 
 `
-
-const ScStats = styled.div`
-  width:100%;
-`;
 
 const ScBio = styled.div`
   width:100%;
@@ -75,11 +72,9 @@ const ScPetLevel = styled.div`
   color: ${getColor('black')};
 `;
 
-type PetInfoProps = {
-  activePet: PetDefinition,
-  activeStats: PetStatDefinition[]
-}
-export const PetInfo = ({activePet, activeStats}: PetInfoProps) => {
+export const PetInfo = () => {
+  const activePet = useAppSelector(selectActivePet) || {};
+
   return (
     <ScPetInfo>
       <ScPetLabel>
@@ -87,16 +82,7 @@ export const PetInfo = ({activePet, activeStats}: PetInfoProps) => {
         <ScPetLevel><h4>{`L-${activePet.level}`}</h4></ScPetLevel>
       </ScPetLabel>
       <hr/>
-      <ScStats>
-        {activeStats.map((s, idx) => (
-          <StatBar 
-            key={idx}
-            label={s.label}
-            max={s.max}
-            value={s.value}
-          />
-        ))}
-      </ScStats>
+      <StatGroup />
       <hr/>
       <ScBio>
         <ScBioName>{'Description'}</ScBioName>

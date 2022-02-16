@@ -10,7 +10,7 @@ export const Helper = () => {
   useInterval(() => {
     setPinger(pinger + 1);
     dispatch(pingStore());
-  }, 2000);
+  }, 200);
 
   return null;
 }

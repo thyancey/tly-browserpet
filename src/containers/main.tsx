@@ -73,8 +73,6 @@ export const Main = () => {
   let { push } = useHistory();
   const activePet = useAppSelector(selectActivePet) || {};
 
-  console.log('Main.render');
-
   return (
     <ScContainer>
       <ScHeader>

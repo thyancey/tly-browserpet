@@ -5,13 +5,10 @@ import styled, { css } from 'styled-components';
 import { useAppDispatch, useAppSelector } from '../../services/hooks';
 
 import { 
-  selectActivePet, 
-  selectActivePetStats, 
   selectPetList, 
   setActiveIdx 
 } from '../../services/petstore';
 import { PetInfo } from './pet-info';
-import { selectPingIdx } from '../../services/ui';
 
 const ScContainer = styled.div`
   margin-top: -1rem;
@@ -74,9 +71,7 @@ const ScTab = styled.li<ScTabProps>`
 `
 
 export const Footer = () => {
-  const activePet = useAppSelector(selectActivePet) || {};
   const petList = useAppSelector(selectPetList);
-  const activeStats = useAppSelector(selectActivePetStats);
   const dispatch = useAppDispatch();
 
   return (
@@ -92,10 +87,7 @@ export const Footer = () => {
           </ScTab>
         ))}
       </ScTabs>
-      <PetInfo
-        activePet={activePet}
-        activeStats={activeStats}
-      />
+      <PetInfo/>
     </ScContainer>
   )
 }

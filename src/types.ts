@@ -20,6 +20,7 @@ export type PetStatDefinition = {
   id: string,
   label: string,
   value: number,
+  currentValue: number,
   perSecond: number,
   max: number,
   fullIsGood: boolean
@@ -31,7 +32,8 @@ export type PetDefinition = {
   info: string,
   image: string,
   level: number,
-  stats: PetStatDefinition[]
+  stats: PetStatDefinition[],
+  timestamp: number
 }
 
 export type PetListItem = {

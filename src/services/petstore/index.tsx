@@ -1,7 +1,7 @@
 // slightly evolving from create-react-app example
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { useSelector } from 'react-redux';
-import { PetDefinition, PetListItem, PetStatDefinition } from '../../types';
+import { PetDefinition } from '../../types';
+import { getDeltaStats } from '../../util/tools';
 
 import { RootState } from '../store';
 import { selectPingIdx } from '../ui';
@@ -26,18 +26,29 @@ export const petStoreSlice = createSlice({
     setPet: (state: PetStoreState, action: PayloadAction<any>) => {
       const petData = action.payload as PetDefinition;
       const foundPet = state.pets.find(p => p.id === petData.id);
+      const nowTime = new Date().getTime();
+
       if(foundPet){
         console.error('already added pet, redoing it ', petData);
         state.pets = state.pets.map(p => {
           if(p.id === petData.id){
-            return petData;
+            return {
+              ...petData,
+              timestamp: nowTime
+            };
           }else{
-            return p;
+            return {
+              ...p,
+              timestamp: nowTime
+            }
           }
         });
       }else{
         console.log('adding pet ', petData);
-        state.pets.push(petData);
+        state.pets.push({
+          ...petData,
+          timestamp: nowTime
+        });
       }
     }
   }
@@ -64,11 +75,9 @@ export const selectActivePetStats = createSelector(
   [selectActivePet, selectPingIdx], 
   (activePet, pingIdx) => {
     // TODO: all the delta stat stuff
-    const stats = activePet?.stats || [];
-    return stats.map(s => ({
-      ...s,
-      value: s.value + pingIdx
-    }));
+    if(!activePet || !activePet.stats) return [];
+
+    return getDeltaStats(activePet.stats, activePet.timestamp, new Date().getTime());
   }
 );
 
@@ -80,5 +89,7 @@ export const selectPetList = createSelector(
     isActive: idx === activeIdx
   }))
 );
+
+
 
 export default petStoreSlice.reducer;
