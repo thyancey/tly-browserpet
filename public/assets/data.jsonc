@@ -9,7 +9,7 @@
       {
         "id": "food",
         "label": "Food",
-        "value": 0.0,
+        "value": 100.0,
         "perSecond": 1.0,
         "max": 500.0,
         "fullIsGood": true
@@ -17,7 +17,7 @@
       {
         "id": "brains",
         "label": "Brains",
-        "value": 0.0,
+        "value": 50.0,
         "perSecond": 1.0,
         "max": 100.0,
         "fullIsGood": true

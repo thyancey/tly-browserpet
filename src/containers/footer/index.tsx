@@ -9,8 +9,9 @@ import {
   selectActivePetStats, 
   selectPetList, 
   setActiveIdx 
-} from '../../services/petstore/petstore-slice';
+} from '../../services/petstore';
 import { PetInfo } from './pet-info';
+import { selectPingIdx } from '../../services/ui';
 
 const ScContainer = styled.div`
   margin-top: -1rem;

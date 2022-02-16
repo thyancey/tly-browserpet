@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../services/hooks';
 import { jsonc } from 'jsonc';
-import { setPet } from '../services/petstore/petstore-slice';
+import { setPet } from '../services/petstore';
 import { PetDefinition } from '../types';
 
 const readIt = (dispatch:any) => {

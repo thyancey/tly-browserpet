@@ -2,13 +2,14 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { getColor, getShade } from '../themes/';
 import { Footer } from './footer';
+import { Helper } from './helper';
 
 import styled from 'styled-components';
 import { Loader } from './loader';
 import { useAppSelector } from '../services/hooks';
 import {  
   selectActivePet, 
-} from '../services/petstore/petstore-slice';
+} from '../services/petstore';
 
 const ScHeader = styled.header`
   position: relative;  
@@ -72,9 +73,12 @@ export const Main = () => {
   let { push } = useHistory();
   const activePet = useAppSelector(selectActivePet) || {};
 
+  console.log('Main.render');
+
   return (
     <ScContainer>
       <ScHeader>
+        <Helper />
         <Loader />
         <ScLogo>{'Browser Pet'}</ScLogo>
         <ScHelpButton onClick={() => {push('/about')}}>

@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { PetDefinition, PetListItem, PetStatDefinition } from '../../types';
 
 import { RootState } from '../store';
+import { selectPingIdx } from '../ui';
 
 export type PetStoreState = {
   activeIdx: number,
@@ -48,21 +49,36 @@ export const selectActiveIdx = (state: RootState): number => {
   return state.petStore.activeIdx;
 };
 
-export const selectActivePet = (state: RootState): PetDefinition => {
-  return state.petStore.pets[state.petStore.activeIdx];
+export const selectPets = (state: RootState): PetDefinition[] => {
+  return state.petStore.pets;
 };
 
-export const selectActivePetStats = createSelector(selectActivePet, (activePet) => {
-  // TODO: all the delta stat stuff
-  return activePet?.stats || [];
-});
+export const selectActivePet = createSelector(
+  [selectPets, selectActiveIdx],
+  (pets, activeIdx) => {
+    return pets[activeIdx];
+  }
+);
 
-export const selectPetList = (state: RootState): PetListItem[] => {
-  return state.petStore.pets.map((p, idx) => ({
+export const selectActivePetStats = createSelector(
+  [selectActivePet, selectPingIdx], 
+  (activePet, pingIdx) => {
+    // TODO: all the delta stat stuff
+    const stats = activePet?.stats || [];
+    return stats.map(s => ({
+      ...s,
+      value: s.value + pingIdx
+    }));
+  }
+);
+
+export const selectPetList = createSelector(
+  [selectPets, selectActiveIdx],
+  (pets, activeIdx) => pets.map((p, idx) => ({
     name: p.name,
     id: p.id,
-    isActive: idx === state.petStore.activeIdx
-  }));
-};
+    isActive: idx === activeIdx
+  }))
+);
 
 export default petStoreSlice.reducer;

@@ -45,23 +45,19 @@ const ScBarFill = styled.div`
 
 type StatBarProps = {
   label: string,
-  percent: number,
   max: number,
   value: number
 };
 
-export const StatBar = ({label,percent, max, value}: StatBarProps) => {
-  const bigPercent = percent * 100;
-  const progressLabel = `${round(value)} / ${max}`;
-  // const progressLabel = `${round(value)} / ${max} (${round(bigPercent)}%)`;
-  // const progressLabel = `${round(bigPercent)}%`;
+export const StatBar = ({label, max, value}: StatBarProps) => {
+  const percent = Math.round((value / max) * 100) / 10;
 
   return (
     <ScContainer>
       <ScLabel>{label.toLocaleUpperCase()}</ScLabel>
       <ScBar>
-        <ScBarValue>{progressLabel}</ScBarValue>
-        <ScBarFill style={{width:`${bigPercent}%`}} />
+        <ScBarValue>{`${round(value)} / ${max}`}</ScBarValue>
+        <ScBarFill style={{width:`${percent}%`}} />
       </ScBar>
     </ScContainer>
   )

@@ -92,9 +92,8 @@ export const PetInfo = ({activePet, activeStats}: PetInfoProps) => {
           <StatBar 
             key={idx}
             label={s.label}
-            percent={0.5}
-            max={100}
-            value={50}
+            max={s.max}
+            value={s.value}
           />
         ))}
       </ScStats>

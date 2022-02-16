@@ -1,9 +1,11 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import petStoreReducer from './petstore/petstore-slice';
+import petStoreReducer from './petstore';
+import uiReducer from './ui';
 
 export const store = configureStore({
   reducer: {
-    petStore: petStoreReducer
+    petStore: petStoreReducer,
+    ui: uiReducer
   },
 });
 
