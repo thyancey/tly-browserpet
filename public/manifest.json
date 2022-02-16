@@ -1,6 +1,6 @@
 {
-  "name": "VirtualPet",
-  "description" : "VirtualPet Extension",
+  "name": "Browser Pet",
+  "description" : "Browser Pet Extension",
   "version": "1.0",
   "manifest_version": 2,
   "browser_action": {

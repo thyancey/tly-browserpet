@@ -15,3 +15,29 @@ export type PetData = {
   image: string,
   info: string
 }
+
+export type PetStatDefinition = {
+  id: string,
+  label: string,
+  value: number,
+  currentValue: number,
+  perSecond: number,
+  max: number,
+  fullIsGood: boolean
+}
+
+export type PetDefinition = {
+  id: string,
+  name: string,
+  info: string,
+  image: string,
+  level: number,
+  stats: PetStatDefinition[],
+  timestamp: number
+}
+
+export type PetListItem = {
+  name: string,
+  id: string,
+  isActive?: boolean
+}

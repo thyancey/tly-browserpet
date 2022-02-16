@@ -1,34 +1,48 @@
-import React, { useMemo, useState } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { getColor } from '../themes/';
-import { PetData } from '../types';
-
+import { getColor, getShade } from '../themes/';
 import { Footer } from './footer';
+import { Helper } from './helper';
 
 import styled from 'styled-components';
+import { Loader } from './loader';
+import { useAppSelector } from '../services/hooks';
+import {  
+  selectActivePet, 
+} from '../services/petstore';
+
+const ScHeader = styled.header`
+  position: relative;  
+`;
 
 const ScContainer = styled.div`
   padding:1rem;
   color: ${getColor('blue')};
+  min-width:30rem;
 `;
 
 const ScHelpButton = styled.div`
   position:absolute;
-  right:1rem;
-  top:1rem;
-  width:2.5rem;
-  height:2.5rem;
+  right:0rem;
+  bottom:-.5rem;
+  width:3rem;
+  height:3rem;
 
-  border-radius:2rem;
+  border-radius:2rem 2rem 0 0;
   background-color: ${getColor('blue')};
   color: ${getColor('white')};
 
-  font-size:2rem;
+  font-size:1.5rem;
   font-weight:bold;
   text-align:center;
   line-height:2rem;
   text-shadow: 1px 1px 1px ${getColor('black')};
-  border: 2px solid ${getColor('white')};
+  border: .5rem solid ${getColor('white')};
+
+  cursor:pointer;
+  &:hover{
+    background-color: ${getShade('blue', 20)};
+  }
 `;
 
 const ScLogo = styled.h1`
@@ -36,40 +50,14 @@ const ScLogo = styled.h1`
   text-align:left;
 `;
 
-const ScPetLabel = styled.div`
-  margin-top:.5rem;
-  color: ${getColor('green')};
-  width:100%;
-  display:flex;
-  flex-direction: row;
-
-  h2{
-    font-size:1.5rem;
-  }
-`;
-const ScPetName = styled.h2`
-  text-align:left;
-  display:inline-block;
-  flex:1;
-`;
-const ScPetLevel = styled.h2`
-  text-align:right;
-  color: ${getColor('yellow')};
-
-  &:first-child{
-    color: ${getColor('white')};
-  }
-`;
-
-
 const ScPetContainer = styled.div`
   background-color: ${getColor('blue')};
   border:.5rem solid ${getColor('white')};
-  border-radius:1rem 1rem 0 0;
-  width: 30rem;
+  border-radius:1rem 0 0 0;
+  width: 100%;
   height: 30rem;
 
-  padding-bottom: 2rem;
+  padding-bottom: 1rem;
 `;
 
 const ScPetImage = styled.div`
@@ -81,50 +69,24 @@ const ScPetImage = styled.div`
   text-align:center;
 `;
 
-const petData: PetData[] = [
-  {
-    name: 'Bunchie',
-    image: 'assets/bunchie.gif',
-    level: 3,
-    info: 'A big dumb hopping green llama.'
-  },{
-    name: 'Dead Raccoon',
-    image: 'assets/raccoon-dead.gif',
-    level: 2,
-    info: 'A dead, bloated raccoon, with a belly full of old seafood.'
-  }
-];
-
 export const Main = () => {
   let { push } = useHistory();
-  const [curPetIdx, setCurPetIdx] = useState<number>(0);
-
-  const pet:PetData = useMemo(() => {
-    return petData[curPetIdx]
-  }, [ petData, curPetIdx ])
+  const activePet = useAppSelector(selectActivePet) || {};
 
   return (
     <ScContainer>
-      <header>
-        <ScLogo>{'Virtual Pet'}</ScLogo>
+      <ScHeader>
+        <Helper />
+        <Loader />
+        <ScLogo>{'Browser Pet'}</ScLogo>
         <ScHelpButton onClick={() => {push('/about')}}>
           {'?'}
         </ScHelpButton>
-        <hr/>
-        <ScPetLabel>
-          <ScPetName>{pet.name}</ScPetName>
-          <ScPetLevel><span>{'Level: '}</span><span>{pet.level}</span></ScPetLevel>
-        </ScPetLabel>
-      </header>
+      </ScHeader>
       <ScPetContainer>
-        <ScPetImage style={{ backgroundImage: `url(${pet.image})` }}/>
+        <ScPetImage style={{ backgroundImage: `url(${activePet.image})` }}/>
       </ScPetContainer>
-      <Footer 
-        curPet={pet}
-        curPetIdx={curPetIdx}
-        pets={petData}
-        onTab={(tabId:number) => setCurPetIdx(tabId)}
-      />
+      <Footer />
     </ScContainer>
   )
 }

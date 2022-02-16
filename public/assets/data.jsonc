@@ -1,0 +1,71 @@
+[
+  {
+    "id": "bunchie",
+    "name": "Bunchie",
+    "info": "A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama.",
+    "image": "assets/pets/bunchie/happy.gif",
+    "level": 0,
+    "stats":[
+      {
+        "id": "food",
+        "label": "Food",
+        "value": 250.0,
+        "perSecond": -5.0,
+        "max": 500.0,
+        "fullIsGood": true
+      },
+      {
+        "id": "brains",
+        "label": "Brains",
+        "value": 50.0,
+        "perSecond": 0.0,
+        "max": 100.0,
+        "fullIsGood": true
+      },
+      {
+        "id": "poop",
+        "label": "Poop",
+        "value": 0.0,
+        "perSecond": 8.7,
+        "max": 100.0,
+        "fullIsGood": false
+      }
+    ]
+  },
+  {
+    "id": "raccoon",
+    "name": "A Racoon",
+    "info": "A dead, bloated raccoon, with a belly full of old seafood.",
+    "image": "assets/pets/raccoon/dead.gif",
+    "level": 0,
+    "stats":[
+      {
+        "id": "food",
+        "label": "Food",
+        "value": 0.0,
+        "perSecond": 1.0,
+        "min": 0.0,
+        "max": 500.0,
+        "fullIsGood": true
+      }
+    ]
+  },
+  {
+    "id": "mika",
+    "name": "Mika",
+    "info": "A dog",
+    "image": "assets/pets/mika/sleeping.gif",
+    "level": 0,
+    "stats":[
+      {
+        "id": "food",
+        "label": "Food",
+        "value": 0.0,
+        "perSecond": 1.0,
+        "min": 0.0,
+        "max": 500.0,
+        "fullIsGood": true
+      }
+    ]
+  }
+]
