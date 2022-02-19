@@ -17,3 +17,14 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   unknown,
   Action<string>
 >;
+
+// export type LocalStorageState = {
+//   config: any,
+//   pets: any[]
+// }
+// export const defaultLocalStorageState: LocalStorageState = {
+//   config:{},
+//   pets:[]
+// }
+
+export const defaultLocalStorageState: string = '';

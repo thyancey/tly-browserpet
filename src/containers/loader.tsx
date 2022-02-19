@@ -3,9 +3,15 @@ import { useAppDispatch, useAppSelector } from '../services/hooks';
 import { jsonc } from 'jsonc';
 import { setPet } from '../services/petstore';
 import { PetDefinition } from '../types';
+import useLocalStorage from '../util/hooks/useLocalStorage';
+import { defaultLocalStorageState } from '../services/store';
+// import useLocalStorage from '../util/hooks/useLocalStorage';
+// import { defaultLocalStorageState } from '../services/store';
 
-const readIt = (dispatch:any) => {
+const readIt = (dispatch:any, appData:string) => {
   const url =  `assets/data.jsonc`;
+
+  // const parsed = JSON.parse(appData)
 
   fetch(url, {
     mode: 'cors'
@@ -34,10 +40,22 @@ const readIt = (dispatch:any) => {
 
 export const Loader = () => {
   const dispatch = useAppDispatch();
+  const [ loaded, setLoaded ] = useState(false);
+  const [ appData, setAppData ] = useLocalStorage('browserpet', defaultLocalStorageState);
 
+  // useEffect(() => {
+  //   readIt(dispatch);
+  // }, []);
+  
   useEffect(() => {
-    readIt(dispatch);
-  }, [])
+    if(!loaded){
+      console.log('LOADED!!! appData is', appData);
 
-  return (null)
+      (global as any).hello = appData;
+      setLoaded(true);
+      readIt(dispatch, appData);
+    }
+  }, [ loaded, appData, setLoaded ]);
+
+  return (null);
 }

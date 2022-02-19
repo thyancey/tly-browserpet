@@ -8,18 +8,44 @@ import { selectPingIdx } from '../ui';
 
 export type PetStoreState = {
   activeIdx: number,
-  pets: PetDefinition[]
+  pets: PetDefinition[],
+  lastSaved: number,
+  savePayload: string
 }
 
 const initialState: PetStoreState = {
   activeIdx: 0,
-  pets: []
+  pets: [],
+  lastSaved: 0,
+  savePayload: ''
 };
 
 export const petStoreSlice = createSlice({
   name: 'petStore',
   initialState,
   reducers: {
+    triggerSave: (state: PetStoreState) => {
+      console.log('petStore: triggerSave!');
+      const ts = new Date().getTime();
+
+      const pet = state.pets[state.activeIdx];
+      const curStats = getDeltaStats(pet.stats, pet.timestamp, ts);
+      console.log('toSave', curStats);
+
+      const toSave = curStats.map(s => ({
+        id: s.id,
+        value: s.currentValue
+      }));
+
+      state.lastSaved = ts;
+      state.savePayload = JSON.stringify([
+        {
+          id: pet.id,
+          stats: toSave,
+          lastSaved: ts
+        }
+      ]);
+    },
     setActiveIdx: (state: PetStoreState, action: PayloadAction<any>) => {
       state.activeIdx = action.payload;
     },
@@ -54,7 +80,7 @@ export const petStoreSlice = createSlice({
   }
 });
 
-export const { setPet, setActiveIdx } = petStoreSlice.actions;
+export const { setPet, setActiveIdx, triggerSave } = petStoreSlice.actions;
 
 export const selectActiveIdx = (state: RootState): number => {
   return state.petStore.activeIdx;
@@ -62,6 +88,14 @@ export const selectActiveIdx = (state: RootState): number => {
 
 export const selectPets = (state: RootState): PetDefinition[] => {
   return state.petStore.pets;
+};
+
+export const selectLastSaved = (state: RootState): number => {
+  return state.petStore.lastSaved;
+};
+
+export const selectSavePayload = (state: RootState): string => {
+  return state.petStore.savePayload;
 };
 
 export const selectActivePet = createSelector(

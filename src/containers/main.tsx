@@ -1,15 +1,18 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
+
 import { getColor, getShade } from '../themes/';
 import { Footer } from './footer';
-import { Helper } from './helper';
+import { Pinger } from './pinger';
+import { Saver } from './saver';
 
-import styled from 'styled-components';
 import { Loader } from './loader';
-import { useAppSelector } from '../services/hooks';
+import { useAppDispatch, useAppSelector } from '../services/hooks';
 import {  
-  selectActivePet, 
+  selectActivePet
 } from '../services/petstore';
+import { triggerSave } from '../services/petstore';
 
 const ScHeader = styled.header`
   position: relative;  
@@ -69,16 +72,44 @@ const ScPetImage = styled.div`
   text-align:center;
 `;
 
+const ScSaveButton = styled.button`
+  position: absolute;
+  right: 1.5rem;
+
+  background-color: ${getColor('blue')};
+  border:.5rem solid ${getColor('white')};
+  border-radius:2rem 0 0 0;
+
+  padding: 0.5rem 2rem 0rem;
+  bottom: -0.5rem;
+
+  color: ${getColor('white')};
+  text-shadow: 1px 1px 1px ${getColor('black')};
+
+  font-size:1.5rem;
+  line-height:2rem;
+  font-weight:bold;
+  cursor: pointer;
+  &:hover{
+    background-color: ${getShade('blue', 20)};
+  }
+`
+
 export const Main = () => {
   let { push } = useHistory();
   const activePet = useAppSelector(selectActivePet) || {};
+  const dispatch = useAppDispatch();
 
   return (
     <ScContainer>
       <ScHeader>
-        <Helper />
+        <Pinger />
         <Loader />
+        <Saver />
         <ScLogo>{'Browser Pet'}</ScLogo>
+        <ScSaveButton onClick={() => {dispatch(triggerSave())}}>
+          <p>{'SAVE'}</p>
+        </ScSaveButton>
         <ScHelpButton onClick={() => {push('/about')}}>
           {'?'}
         </ScHelpButton>
