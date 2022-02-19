@@ -2,16 +2,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../services/hooks';
 import { jsonc } from 'jsonc';
 import { setPet } from '../services/petstore';
-import { PetDefinition } from '../types';
+import { LocalStorageState, PetDefinition } from '../types';
 import useLocalStorage from '../util/hooks/useLocalStorage';
 import { defaultLocalStorageState } from '../services/store';
-// import useLocalStorage from '../util/hooks/useLocalStorage';
-// import { defaultLocalStorageState } from '../services/store';
 
-const readIt = (dispatch:any, appData:string) => {
+const readIt = (dispatch:any, savedData: LocalStorageState) => {
   const url =  `assets/data.jsonc`;
-
-  // const parsed = JSON.parse(appData)
 
   fetch(url, {
     mode: 'cors'
@@ -25,9 +21,14 @@ const readIt = (dispatch:any, appData:string) => {
     ) //- bad url responds with 200/ok? so this doesnt get thrown
     .then(
       json => {
-        console.log(`data was read successfully`, json);
+        // console.log(`data was read successfully`, json);
+        // console.log('but id like to start with ', savedData)
         json.forEach((petDef: PetDefinition) => {
-          dispatch(setPet(petDef));
+          const savedStatus = savedData?.pets.find(p => p.id === petDef.id) || null;
+          dispatch(setPet({
+            petDefinition: petDef,
+            initialState: savedStatus
+          }))
         });
 
         return true;
@@ -41,16 +42,10 @@ const readIt = (dispatch:any, appData:string) => {
 export const Loader = () => {
   const dispatch = useAppDispatch();
   const [ loaded, setLoaded ] = useState(false);
-  const [ appData, setAppData ] = useLocalStorage('browserpet', defaultLocalStorageState);
+  const [ appData, _ ] = useLocalStorage('browserpet', defaultLocalStorageState);
 
-  // useEffect(() => {
-  //   readIt(dispatch);
-  // }, []);
-  
   useEffect(() => {
     if(!loaded){
-      console.log('LOADED!!! appData is', appData);
-
       (global as any).hello = appData;
       setLoaded(true);
       readIt(dispatch, appData);

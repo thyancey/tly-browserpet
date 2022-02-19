@@ -1,33 +1,25 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
-import { useAppDispatch, useAppSelector } from '../services/hooks';
+import { useAppSelector } from '../services/hooks';
 import { selectSavePayload } from '../services/petstore';
 import { defaultLocalStorageState } from '../services/store';
 import useLocalStorage from '../util/hooks/useLocalStorage';
 
 export const Saver = () => {
-  const [ appData, setAppData ] = useLocalStorage('browserpet', defaultLocalStorageState);
+  const [ _, setAppData ] = useLocalStorage('browserpet', defaultLocalStorageState);
   const savePayload = useAppSelector(selectSavePayload);
 
   useEffect(() => {
-    console.log('savePayload', savePayload);
+    console.log('savePayload?:', savePayload);
 
-    if(savePayload){
-      console.log('SAVING');
-      setAppData(prev => savePayload)
+    if(savePayload.length > 0){
+      console.log('(actually saving)');
+      setAppData(prev => ({
+        config: prev.config,
+        pets: savePayload
+      }));
     }
-
-    // console.log('curAppData', appData);
-    // setAppData(prev => ({
-    //   config: prev.config,
-    //   pets: savePayload
-    // }))
-    // setAppData()
-    // setAppData(prev => ({
-    //   config: appData.config,
-    //   pets: savePayload
-    // }))
-  }, [ savePayload, setAppData ])
+  }, [ savePayload ])
 
 
   return null;

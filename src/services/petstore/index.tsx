@@ -1,6 +1,6 @@
 // slightly evolving from create-react-app example
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PetDefinition } from '../../types';
+import { PetDefinition, SavedPetState } from '../../types';
 import { getDeltaStats } from '../../util/tools';
 
 import { RootState } from '../store';
@@ -10,14 +10,19 @@ export type PetStoreState = {
   activeIdx: number,
   pets: PetDefinition[],
   lastSaved: number,
-  savePayload: string
+  savePayload: any[]
+}
+
+export type SetPetPayload = {
+  petDefinition: PetDefinition,
+  initialState?: SavedPetState
 }
 
 const initialState: PetStoreState = {
   activeIdx: 0,
   pets: [],
   lastSaved: 0,
-  savePayload: ''
+  savePayload: []
 };
 
 export const petStoreSlice = createSlice({
@@ -28,53 +33,82 @@ export const petStoreSlice = createSlice({
       console.log('petStore: triggerSave!');
       const ts = new Date().getTime();
 
-      const pet = state.pets[state.activeIdx];
-      const curStats = getDeltaStats(pet.stats, pet.timestamp, ts);
-      console.log('toSave', curStats);
+      const savePl: any[] = [];
 
-      const toSave = curStats.map(s => ({
-        id: s.id,
-        value: s.currentValue
-      }));
+      state.pets.forEach(pet => {
+        const curStats = getDeltaStats(pet.stats, pet.timestamp, ts);
+  
+        const toSave = curStats.map(s => ({
+          id: s.id,
+          value: s.currentValue
+        }));
 
-      state.lastSaved = ts;
-      state.savePayload = JSON.stringify([
-        {
+        savePl.push({
           id: pet.id,
           stats: toSave,
           lastSaved: ts
-        }
-      ]);
+        });
+      });
+
+      state.lastSaved = ts;
+      state.savePayload = savePl;
+
+      // const pet = state.pets[state.activeIdx];
+      // const curStats = getDeltaStats(pet.stats, pet.timestamp, ts);
+      // console.log('toSave', curStats);
+
+      // const toSave = curStats.map(s => ({
+      //   id: s.id,
+      //   value: s.currentValue
+      // }));
+
+      // state.lastSaved = ts;
+      // state.savePayload = [
+      //   {
+      //     id: pet.id,
+      //     stats: toSave,
+      //     lastSaved: ts
+      //   }
+      // ];
     },
     setActiveIdx: (state: PetStoreState, action: PayloadAction<any>) => {
       state.activeIdx = action.payload;
     },
     setPet: (state: PetStoreState, action: PayloadAction<any>) => {
-      const petData = action.payload as PetDefinition;
-      const foundPet = state.pets.find(p => p.id === petData.id);
+      const { petDefinition, initialState } = action.payload as SetPetPayload;
+      const foundPet = state.pets.find(p => p.id === petDefinition.id);
       const nowTime = new Date().getTime();
 
-      if(foundPet){
-        console.error('already added pet, redoing it ', petData);
-        state.pets = state.pets.map(p => {
-          if(p.id === petData.id){
+      console.log('merge', petDefinition)
+      console.log('with', initialState)
+
+      const updatedDef = {
+        ...petDefinition,
+        stats: petDefinition.stats.map(pS => {
+          const foundStat = initialState?.stats.find(iS => iS.id === pS.id);
+          if(foundStat){
             return {
-              ...petData,
-              timestamp: nowTime
-            };
-          }else{
-            return {
-              ...p,
-              timestamp: nowTime
+              ...pS,
+              value: foundStat.value
             }
+          }else{
+            return pS
+          }
+        }),
+        timestamp: nowTime
+      }
+
+      if(foundPet){
+        console.error('already added pet, redoing it ', petDefinition);
+        state.pets = state.pets.map(p => {
+          if(p.id === petDefinition.id){
+            return updatedDef;
+          }else{
+            return p;
           }
         });
       }else{
-        console.log('adding pet ', petData);
-        state.pets.push({
-          ...petData,
-          timestamp: nowTime
-        });
+        state.pets.push(updatedDef);
       }
     }
   }
@@ -94,7 +128,7 @@ export const selectLastSaved = (state: RootState): number => {
   return state.petStore.lastSaved;
 };
 
-export const selectSavePayload = (state: RootState): string => {
+export const selectSavePayload = (state: RootState): any[] => {
   return state.petStore.savePayload;
 };
 
