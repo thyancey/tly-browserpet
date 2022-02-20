@@ -1,0 +1,23 @@
+{
+  "files": {
+    "background.js": "/tly-browserpet/static/js/background.js",
+    "background.js.map": "/tly-browserpet/static/js/background.js.map",
+    "content.js": "/tly-browserpet/static/js/content.js",
+    "content.js.map": "/tly-browserpet/static/js/content.js.map",
+    "main.css": "/tly-browserpet/static/css/main.ab0dcde8.css",
+    "main.js": "/tly-browserpet/static/js/main.js",
+    "main.js.map": "/tly-browserpet/static/js/main.js.map",
+    "static/js/3.11823c3d.chunk.js": "/tly-browserpet/static/js/3.11823c3d.chunk.js",
+    "static/js/3.11823c3d.chunk.js.map": "/tly-browserpet/static/js/3.11823c3d.chunk.js.map",
+    "static/js/4.f9b24604.chunk.js": "/tly-browserpet/static/js/4.f9b24604.chunk.js",
+    "static/js/4.f9b24604.chunk.js.map": "/tly-browserpet/static/js/4.f9b24604.chunk.js.map",
+    "index.html": "/tly-browserpet/index.html",
+    "static/css/main.ab0dcde8.css.map": "/tly-browserpet/static/css/main.ab0dcde8.css.map",
+    "static/js/3.11823c3d.chunk.js.LICENSE.txt": "/tly-browserpet/static/js/3.11823c3d.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/3.11823c3d.chunk.js",
+    "static/css/main.ab0dcde8.css",
+    "static/js/main.js"
+  ]
+}
