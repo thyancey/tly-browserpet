@@ -2,7 +2,7 @@
   "name": "tly-browserpet",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://thyancey.github.io/tly-browserpet",
+  "homepage": "./",
   "dependencies": {
     "@craco/craco": "^5.8.0",
     "@reduxjs/toolkit": "^1.7.2",
