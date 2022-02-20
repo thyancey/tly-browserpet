@@ -23,7 +23,45 @@ export type PetStatDefinition = {
   currentValue: number,
   perSecond: number,
   max: number,
-  fullIsGood: boolean
+  fullIsGood: boolean,
+  statEffects?: WhenThen[]
+}
+
+// export type PetStatusesDict = {
+//   [key: string]: PetStatusDefinition
+// }
+export type PetStatusDefinition = {
+  id: string,
+  label: string,
+  message: string
+}
+export type PetBehaviorDefinition = {
+  image: string
+}
+export type WhenThen = {
+  when: string[],
+  then: string
+}
+export type PetLogicGroup = {
+  stats: PetStatDefinition[],
+  statuses: PetStatusDefinition[],
+  behaviors: PetBehaviorDefinition[]
+  behaviorRules: WhenThen[]
+}
+
+export type RawPetJSON = {
+  id: string,
+  name: string,
+  info: string,
+  image: string,
+  level: number,
+  logic: {
+    stats: PetStatDefinition[],
+    statuses: PetStatusDefinition[],
+    behaviors: PetBehaviorDefinition[]
+    behaviorRules: WhenThen[]
+  },
+  timestamp: number
 }
 
 export type PetDefinition = {
@@ -32,7 +70,7 @@ export type PetDefinition = {
   info: string,
   image: string,
   level: number,
-  stats: PetStatDefinition[],
+  logic: PetLogicGroup,
   timestamp: number
 }
 
@@ -53,12 +91,10 @@ export type SavedPetState = {
   stats: SavedStat[]
 }
 
-export type SavedConfig = {
-  activePet?: string,
-  haveSaved?: boolean
-}
-
 export type LocalStorageState = {
-  config: SavedConfig,
+  config: {
+    activePet?: string,
+    haveSaved?: boolean
+  },
   pets: SavedPetState[]
 }

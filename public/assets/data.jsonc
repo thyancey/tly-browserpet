@@ -5,32 +5,85 @@
     "info": "A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama.",
     "image": "assets/pets/bunchie/happy.gif",
     "level": 0,
-    "stats":[
-      {
-        "id": "food",
-        "label": "Food",
-        "value": 250.0,
-        "perSecond": -2.0,
-        "max": 500.0,
-        "fullIsGood": true
-      },
-      {
-        "id": "brains",
-        "label": "Brains",
-        "value": 50.0,
-        "perSecond": 0.0,
-        "max": 100.0,
-        "fullIsGood": true
-      },
-      {
-        "id": "poop",
-        "label": "Poop",
-        "value": 0.0,
-        "perSecond": 2.3,
-        "max": 100.0,
-        "fullIsGood": false
-      }
-    ]
+    "logic":{
+      "stats":[
+        {
+          "id": "food",
+          "label": "Food",
+          "value": 250.0,
+          "perSecond": -2.0,
+          "max": 500.0,
+          "fullIsGood": true,
+          "statEffects":[
+            { "when": "<=_0", "then": "STATUS_DEAD" },
+            { "when": "<_25%", "then": "STATUS_HUNGRY" },
+            { "when": ">=_75%", "then": "STATUS_FULL" }
+          ]
+        },
+        {
+          "id": "brains",
+          "label": "Brains",
+          "value": 50.0,
+          "perSecond": -1.0,
+          "max": 100.0,
+          "fullIsGood": true,
+          "statEffects":[
+            { "when": "<=_0", "then": "STATUS_BRAINDEAD" },
+            { "when": "<_25%", "then": "STATUS_DUMB" },
+            { "when": ">=_75%", "then": "STATUS_SMART" }
+          ]
+        },
+        {
+          "id": "poop",
+          "label": "Poop",
+          "value": 0.0,
+          "perSecond": 2.3,
+          "max": 100.0,
+          "fullIsGood": false
+        }
+      ],
+      "statuses":[
+        {
+          "id": "STATUS_HUNGRY",
+          "label": "Hungry",
+          "message": "I'm sooo hungry!"
+        },
+        {
+          "id": "STATUS_FULL",
+          "label": "Full",
+          "message": "I'm Full!"
+        }
+      ],
+      "behaviorRules":[
+        {
+          "when":"STATUS_DEAD",
+          "then": "B_DEAD"
+        },
+        // OR next group, until a valid condition is met
+        {
+          "when":[ "STATUS_HUNGRY", "STATUS_DUMB" ], // AND within
+          "then": "BE_DUMBGRY"
+        },
+        {
+          "when":[ "STATUS_HUNGRY", "STATUS_BRAINDEAD" ],
+          "then": "BE_DUMBGRY"
+        },
+        {
+          "when":[ "STATUS_HUNGRY" ],
+          "then": "BE_HUNGRY"
+        },
+        {
+          "when":[], // use for default
+          "then": "BE_NORMAL"
+        }
+      ],
+      "behaviors":[
+        { "id": "BE_DEAD", "image": "assets/pets/raccoon/dead.gif" },
+        { "id": "BE_NORMAL", "image": "assets/pets/bunchie/happy.gif" },
+        { "id": "BE_HUNGRY", "image": "assets/pets/bunchie/hungry.gif" },
+        { "id": "BE_DUMBGRY", "image": "assets/pets/bunchie/hungry.gif" }
+      ]
+    }
   },
   {
     "id": "raccoon",
@@ -38,17 +91,23 @@
     "info": "A dead, bloated raccoon, with a belly full of old seafood.",
     "image": "assets/pets/raccoon/dead.gif",
     "level": 0,
-    "stats":[
-      {
-        "id": "food",
-        "label": "Food",
-        "value": 0.0,
-        "perSecond": 1.0,
-        "min": 0.0,
-        "max": 500.0,
-        "fullIsGood": true
-      }
-    ]
+    "logic":{
+      "stats":[
+        {
+          "id": "food",
+          "label": "Food",
+          "value": 0.0,
+          "perSecond": 1.0,
+          "min": 0.0,
+          "max": 500.0,
+          "fullIsGood": true,
+          "statEffects": []
+        }
+      ],
+      "statuses":[],
+      "behaviors":[],
+      "behaviorRules":[]
+    }
   },
   {
     "id": "mika",
@@ -56,16 +115,21 @@
     "info": "A dog",
     "image": "assets/pets/mika/sleeping.gif",
     "level": 0,
-    "stats":[
-      {
-        "id": "food",
-        "label": "Food",
-        "value": 0.0,
-        "perSecond": 1.0,
-        "min": 0.0,
-        "max": 500.0,
-        "fullIsGood": true
-      }
-    ]
+    "logic":{
+      "stats":[
+        {
+          "id": "food",
+          "label": "Food",
+          "value": 0.0,
+          "perSecond": 1.0,
+          "min": 0.0,
+          "max": 500.0,
+          "fullIsGood": true
+        }
+      ],
+      "statuses":[],
+      "behaviors":[],
+      "behaviorRules":[]
+    }
   }
 ]
