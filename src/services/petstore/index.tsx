@@ -2,6 +2,7 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { PetDefinition, SavedPetState, LocalStorageState, PetLogicGroup, RawPetJSON } from '../../types';
 import { getDeltaStats } from '../../util/tools';
+import { parseRawWhenThenGroup } from '../../util/whenthen';
 
 import { RootState } from '../store';
 import { selectPingIdx } from '../ui';
@@ -35,23 +36,27 @@ const initialStoreState: PetStoreState = {
 
 // might want to do some validation and pre-processing here
 export const parseLogicGroup = (petDefJSON: RawPetJSON, initialState: SavedPetState) => {
-  console.log('parseLogicGroup', petDefJSON, initialState)
-
   return {
     stats: petDefJSON.logic.stats.map(pS => {
       const foundStat = initialState?.stats.find(iS => iS.id === pS.id);
+      const statEffects = parseRawWhenThenGroup(pS.statEffects, 'stats');
+
       if(foundStat){
         return {
           ...pS,
-          value: foundStat.value
+          value: foundStat.value,
+          statEffects: statEffects
         }
       }else{
-        return pS
+        return {
+          ...pS,
+          statEffects: statEffects
+        }
       }
     }),
     statuses: petDefJSON.logic.statuses || [],
-    behaviorRules:petDefJSON.logic.behaviorRules || [],
-    behaviors:petDefJSON.logic.behaviors || [],
+    behaviorRules: parseRawWhenThenGroup(petDefJSON.logic.behaviorRules, 'statuses'),
+    behaviors: petDefJSON.logic.behaviors || [],
   } as PetLogicGroup;
 }
 

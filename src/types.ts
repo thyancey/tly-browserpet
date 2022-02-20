@@ -16,6 +16,17 @@ export type PetData = {
   info: string
 }
 
+export type RawPetStatDefinition = {
+  id: string,
+  label: string,
+  value: number,
+  currentValue: number,
+  perSecond: number,
+  max: number,
+  fullIsGood: boolean,
+  statEffects: RawWhenThen[]
+}
+
 export type PetStatDefinition = {
   id: string,
   label: string,
@@ -24,7 +35,7 @@ export type PetStatDefinition = {
   perSecond: number,
   max: number,
   fullIsGood: boolean,
-  statEffects?: WhenThen[]
+  statEffects: WhenThenNumber[]
 }
 
 // export type PetStatusesDict = {
@@ -38,15 +49,30 @@ export type PetStatusDefinition = {
 export type PetBehaviorDefinition = {
   image: string
 }
-export type WhenThen = {
+export type WhenNumber = {
+  condition: string, // could remove?
+  criteria: number,
+  isPercent: boolean,
+  direction: -1|0|1
+}
+export type RawWhenThen = {
+  when: string[],
+  then: string
+}
+export type WhenThenNumber = {
+  when: WhenNumber[],
+  then: string
+}
+
+export type WhenThenString = {
   when: string[],
   then: string
 }
 export type PetLogicGroup = {
   stats: PetStatDefinition[],
   statuses: PetStatusDefinition[],
-  behaviors: PetBehaviorDefinition[]
-  behaviorRules: WhenThen[]
+  behaviors: PetBehaviorDefinition[],
+  behaviorRules: WhenThenString[]
 }
 
 export type RawPetJSON = {
@@ -56,10 +82,10 @@ export type RawPetJSON = {
   image: string,
   level: number,
   logic: {
-    stats: PetStatDefinition[],
+    stats: RawPetStatDefinition[],
     statuses: PetStatusDefinition[],
     behaviors: PetBehaviorDefinition[]
-    behaviorRules: WhenThen[]
+    behaviorRules: {when:string[], then:string}[]
   },
   timestamp: number
 }

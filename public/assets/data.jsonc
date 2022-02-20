@@ -69,7 +69,7 @@
           "then": "BE_DUMBGRY"
         },
         {
-          "when":[ "STATUS_HUNGRY" ],
+          "when": "STATUS_HUNGRY",
           "then": "BE_HUNGRY"
         },
         {
