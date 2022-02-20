@@ -1,7 +1,8 @@
 {
-  "name": "chrome-react-extension-example",
+  "name": "tly-browserpet",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://thyancey.github.io/tly-browserpet",
   "dependencies": {
     "@craco/craco": "^5.8.0",
     "@reduxjs/toolkit": "^1.7.2",
@@ -28,7 +29,9 @@
     "start": "react-scripts start",
     "build": "cross-env INLINE_RUNTIME_CHUNK=false && craco build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "yarn run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -50,6 +53,7 @@
   },
   "devDependencies": {
     "@types/chrome": "^0.0.126",
-    "@types/react-router-dom": "^5.1.6"
+    "@types/react-router-dom": "^5.1.6",
+    "gh-pages": "^3.2.3"
   }
 }
