@@ -41,3 +41,24 @@ export type PetListItem = {
   id: string,
   isActive?: boolean
 }
+
+export type SavedStat = {
+  id: string,
+  value: number
+}
+
+export type SavedPetState = {
+  id: string,
+  lastSaved: number,
+  stats: SavedStat[]
+}
+
+export type SavedConfig = {
+  activePet?: string,
+  haveSaved?: boolean
+}
+
+export type LocalStorageState = {
+  config: SavedConfig,
+  pets: SavedPetState[]
+}

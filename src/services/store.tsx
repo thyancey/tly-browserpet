@@ -1,4 +1,5 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
+import { LocalStorageState } from '../types';
 import petStoreReducer from './petstore';
 import uiReducer from './ui';
 
@@ -17,3 +18,8 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   unknown,
   Action<string>
 >;
+
+export const defaultLocalStorageState: LocalStorageState = {
+  config:{},
+  pets:[]
+}

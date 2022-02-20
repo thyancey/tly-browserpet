@@ -1,15 +1,14 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { getColor, getShade } from '../themes/';
-import { Footer } from './footer';
-import { Helper } from './helper';
-
 import styled from 'styled-components';
-import { Loader } from './loader';
-import { useAppSelector } from '../services/hooks';
-import {  
-  selectActivePet, 
-} from '../services/petstore';
+
+import { getColor, getShade } from '../themes/';
+import { useAppDispatch, useAppSelector } from '../services/hooks';
+import { selectActivePet } from '../services/petstore';
+import { triggerSave, clearSave } from '../services/petstore';
+
+import { Footer } from './footer';
+import Helpers from './helpers';
 
 const ScHeader = styled.header`
   position: relative;  
@@ -69,16 +68,68 @@ const ScPetImage = styled.div`
   text-align:center;
 `;
 
+const ScSaveButton = styled.button`
+  position: absolute;
+  right: 1.5rem;
+
+  background-color: ${getColor('blue')};
+  border:.5rem solid ${getColor('white')};
+  border-radius:2rem 0 0 0;
+
+  padding: 0.5rem 2rem 0rem;
+  bottom: -0.5rem;
+
+  color: ${getColor('white')};
+  text-shadow: 1px 1px 1px ${getColor('black')};
+
+  font-size:1.5rem;
+  line-height:2rem;
+  font-weight:bold;
+  cursor: pointer;
+  &:hover{
+    background-color: ${getShade('blue', 20)};
+  }
+`
+
+const ScResetButton = styled.button`
+  position: absolute;
+  right: 12.5rem;
+
+  background-color: ${getColor('red')};
+  border:.5rem solid ${getColor('white')};
+  border-radius:2rem 0 0 0;
+
+  padding: 0.5rem 2rem 0rem;
+  bottom: -0.5rem;
+
+  color: ${getColor('white')};
+  text-shadow: 1px 1px 1px ${getColor('black')};
+
+  font-size:1.5rem;
+  line-height:2rem;
+  font-weight:bold;
+  cursor: pointer;
+  &:hover{
+    background-color: ${getShade('red', 40)};
+  }
+`
+
 export const Main = () => {
   let { push } = useHistory();
   const activePet = useAppSelector(selectActivePet) || {};
+  const dispatch = useAppDispatch();
 
   return (
     <ScContainer>
       <ScHeader>
-        <Helper />
-        <Loader />
+        <Helpers />
         <ScLogo>{'Browser Pet'}</ScLogo>
+        <ScResetButton onClick={() => {dispatch(clearSave())}}>
+          <p>{'CLEAR SAVE'}</p>
+        </ScResetButton>
+        <ScSaveButton onClick={() => {dispatch(triggerSave())}}>
+          <p>{'FORCE SAVE'}</p>
+        </ScSaveButton>
         <ScHelpButton onClick={() => {push('/about')}}>
           {'?'}
         </ScHelpButton>
