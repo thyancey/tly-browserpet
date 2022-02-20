@@ -53,7 +53,12 @@ export type SavedPetState = {
   stats: SavedStat[]
 }
 
+export type SavedConfig = {
+  activePet?: string,
+  haveSaved?: boolean
+}
+
 export type LocalStorageState = {
-  config: any,
+  config: SavedConfig,
   pets: SavedPetState[]
 }

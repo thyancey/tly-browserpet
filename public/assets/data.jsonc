@@ -10,7 +10,7 @@
         "id": "food",
         "label": "Food",
         "value": 250.0,
-        "perSecond": -5.0,
+        "perSecond": -2.0,
         "max": 500.0,
         "fullIsGood": true
       },
@@ -26,7 +26,7 @@
         "id": "poop",
         "label": "Poop",
         "value": 0.0,
-        "perSecond": 8.7,
+        "perSecond": 2.3,
         "max": 100.0,
         "fullIsGood": false
       }

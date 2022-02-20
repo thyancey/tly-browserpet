@@ -1,6 +1,6 @@
 // slightly evolving from create-react-app example
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PetDefinition, SavedPetState } from '../../types';
+import { PetDefinition, SavedPetState, LocalStorageState } from '../../types';
 import { getDeltaStats } from '../../util/tools';
 
 import { RootState } from '../store';
@@ -10,7 +10,7 @@ export type PetStoreState = {
   activeIdx: number,
   pets: PetDefinition[],
   lastSaved: number,
-  savePayload: any[]
+  savePayload: LocalStorageState
 }
 
 export type SetPetPayload = {
@@ -22,7 +22,12 @@ const initialState: PetStoreState = {
   activeIdx: 0,
   pets: [],
   lastSaved: 0,
-  savePayload: []
+  savePayload: {
+    config:{
+      activePet: ''
+    },
+    pets:[]
+  }
 };
 
 export const petStoreSlice = createSlice({
@@ -30,10 +35,14 @@ export const petStoreSlice = createSlice({
   initialState,
   reducers: {
     triggerSave: (state: PetStoreState) => {
-      console.log('petStore: triggerSave!');
       const ts = new Date().getTime();
 
-      const savePl: any[] = [];
+      const savePl: LocalStorageState = {
+        config:{
+          activePet: state.pets[state.activeIdx]?.id || ''
+        },
+        pets:[]
+      };
 
       state.pets.forEach(pet => {
         const curStats = getDeltaStats(pet.stats, pet.timestamp, ts);
@@ -43,7 +52,7 @@ export const petStoreSlice = createSlice({
           value: s.currentValue
         }));
 
-        savePl.push({
+        savePl.pets.push({
           id: pet.id,
           stats: toSave,
           lastSaved: ts
@@ -52,24 +61,18 @@ export const petStoreSlice = createSlice({
 
       state.lastSaved = ts;
       state.savePayload = savePl;
-
-      // const pet = state.pets[state.activeIdx];
-      // const curStats = getDeltaStats(pet.stats, pet.timestamp, ts);
-      // console.log('toSave', curStats);
-
-      // const toSave = curStats.map(s => ({
-      //   id: s.id,
-      //   value: s.currentValue
-      // }));
-
-      // state.lastSaved = ts;
-      // state.savePayload = [
-      //   {
-      //     id: pet.id,
-      //     stats: toSave,
-      //     lastSaved: ts
-      //   }
-      // ];
+    },
+    clearSave: () => {
+      // TODO, this should be handled differently, or taken out of redux otherwise
+      (global as any).localStorage.clear();
+      (global as any).location.reload();
+    },
+    setActiveId: (state: PetStoreState, action: PayloadAction<any>) => {
+      const petIdx = state.pets.findIndex((p:PetDefinition) => p.id === action.payload);
+      if(petIdx === -1){
+        throw `Cannot find pet with id "${action.payload}"`;
+      }
+      state.activeIdx = petIdx;
     },
     setActiveIdx: (state: PetStoreState, action: PayloadAction<any>) => {
       state.activeIdx = action.payload;
@@ -78,9 +81,6 @@ export const petStoreSlice = createSlice({
       const { petDefinition, initialState } = action.payload as SetPetPayload;
       const foundPet = state.pets.find(p => p.id === petDefinition.id);
       const nowTime = new Date().getTime();
-
-      console.log('merge', petDefinition)
-      console.log('with', initialState)
 
       const updatedDef = {
         ...petDefinition,
@@ -99,7 +99,6 @@ export const petStoreSlice = createSlice({
       }
 
       if(foundPet){
-        console.error('already added pet, redoing it ', petDefinition);
         state.pets = state.pets.map(p => {
           if(p.id === petDefinition.id){
             return updatedDef;
@@ -114,7 +113,7 @@ export const petStoreSlice = createSlice({
   }
 });
 
-export const { setPet, setActiveIdx, triggerSave } = petStoreSlice.actions;
+export const { setPet, setActiveIdx, setActiveId, triggerSave, clearSave } = petStoreSlice.actions;
 
 export const selectActiveIdx = (state: RootState): number => {
   return state.petStore.activeIdx;
@@ -128,7 +127,7 @@ export const selectLastSaved = (state: RootState): number => {
   return state.petStore.lastSaved;
 };
 
-export const selectSavePayload = (state: RootState): any[] => {
+export const selectSavePayload = (state: RootState): LocalStorageState => {
   return state.petStore.savePayload;
 };
 

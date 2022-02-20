@@ -1,5 +1,5 @@
 // slightly evolving from create-react-app example
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 
 export type UiSlice = {
@@ -16,17 +16,13 @@ export const uiSlice = createSlice({
   name: 'ui',
   initialState,
   reducers: {
-    triggerSave: (state: UiSlice) => {
-      console.log('triggerSave!')
-      state.lastSaved = new Date().getTime();
-    },
     pingStore: (state: UiSlice) => {
       state.pingIdx++;
     },
   }
 });
 
-export const { pingStore, triggerSave } = uiSlice.actions;
+export const { pingStore } = uiSlice.actions;
 
 export const selectPingIdx = (state: RootState): number => {
   return state.ui.pingIdx;
