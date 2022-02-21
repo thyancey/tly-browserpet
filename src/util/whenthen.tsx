@@ -4,10 +4,15 @@ import { RawWhenThen, WhenNumber, WhenThenNumber, WhenThenString } from '../type
 export const evaluateWhenThenNumberGroup = (whenThenGroup: WhenThenNumber[], exact: number, percent:number) => {
   return 'SOME_STATUS';
 } 
-// export type WhenThen = {
-//   when: string[] | WhenNumber[],
-//   then: string
-// }
+export const evaluateWhenThenStringGroup = (whenThenString: WhenThenString, stringCriteria: string[]) => {
+  // remember, an empty when skips this and just returns the result
+  if (whenThenString.when.find(w => stringCriteria.indexOf(w) === -1)){
+    // something in the required group was not found
+    return null;
+  };
+
+  return whenThenString.then;
+} 
 
 export const parseRawWhenThenGroup = (rawWhenThenGroup: RawWhenThen[], type: 'stats' | 'statuses') => {
   if(type === 'statuses'){
