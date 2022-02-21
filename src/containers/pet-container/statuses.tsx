@@ -4,7 +4,6 @@ import styled, { css } from 'styled-components';
 import { selectDetailedActiveDeltaStatuses } from '../../services/petstore';
 import { shallowEqual, useSelector } from 'react-redux';
 import { getColor, mixinColorBubble, tColor } from '../../themes';
-import { randBetween } from '../../util/tools';
 import { AlertType } from '../../types';
 
 const ScContainer = styled.div`
@@ -77,6 +76,7 @@ export const Statuses = () => {
         {activeDeltaStatuses.map((dS,i) => (
           <ScStatus 
             key={dS.id} 
+            id={dS.id}
             bubbleColors={getBubbleColors(dS.alertType) as tColor[]} 
             style={{ bottom: getBottom(i,activeDeltaStatuses.length), transform: `rotate(${getRotation(i)}deg)`}}>
               {dS.label}

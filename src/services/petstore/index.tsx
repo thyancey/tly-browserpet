@@ -1,8 +1,9 @@
 // slightly evolving from create-react-app example
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PetDefinition, SavedPetState, LocalStorageState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetStatDefinition } from '../../types';
+import { shallowEqual, useSelector } from 'react-redux';
+import { PetDefinition, SavedPetState, LocalStorageState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetStatDefinition, PetBehaviorDefinition } from '../../types';
 import { getDeltaStats } from '../../util/tools';
-import { evaluateWhenThenNumberGroup, parseRawWhenThenGroup } from '../../util/whenthen';
+import { evaluateWhenThenNumberGroup, evaluateWhenThenStringGroup, parseRawWhenThenGroup } from '../../util/whenthen';
 
 import { RootState } from '../store';
 import { selectPingIdx } from '../ui';
@@ -216,18 +217,21 @@ export const selectActiveDeltaStatuses = createSelector(
     // all stats should be evaluated, and output all unique statuses matched
     const findDeltaStat = (id: string) => deltaStats.find(ds => ds.id === id);
 
-    const statuses: string[] = [];
-    statDefinitions.forEach(sD => {
-      const dS = findDeltaStat(sD.id);
-      if(!dS) return;
+    const allStatuses = [];
+    for(let i = 0; i < statDefinitions.length; i++){
+      const dS = findDeltaStat(statDefinitions[i].id);
+      if(!dS) continue;
 
-      sD.statEffects.forEach(sE => {
-        const status = evaluateWhenThenNumberGroup(sE, dS.value, dS.max);
-        if(status && statuses.indexOf(status) === -1) statuses.push(status);
-      })
+      for(let j = 0; j < statDefinitions[i].statEffects.length; j++){
+        const status = evaluateWhenThenNumberGroup(statDefinitions[i].statEffects[j], dS.value, dS.max);
+        if(status && allStatuses.indexOf(status) === -1){
+          allStatuses.push(status);
+        }
+      }
+    }
+    return allStatuses.map((statusId, idx) => {
+      return statusId
     });
-
-    return statuses;
   }
 );
 
@@ -235,8 +239,28 @@ export const selectDetailedActiveDeltaStatuses = createSelector(
   [selectActiveDeltaStatuses, selectActiveStatusDefinitions],
   (deltaStatIds, statusDefinitions): PetStatusDefinition[] => {
     return deltaStatIds.map(dId => {
-      return statusDefinitions.find(sD => sD.id === dId) as PetStatusDefinition || null;
-    }).filter(ds => (ds !== null));
+      return statusDefinitions.find(sD => sD.id === dId) as PetStatusDefinition;
+    }).filter(e => !!e);
+  }
+);
+
+export const selectActiveBehavior = createSelector(
+  // [selectActiveDeltaStatuses, selectActiveBehaviorRuleDefinitions, selectActiveBehaviorDefinitions],
+  // (deltaStatIds, behaviorRules, behaviorDefinitions): (PetBehaviorDefinition | null) => {
+    [selectActiveDeltaStatuses, selectActiveBehaviorRuleDefinitions, selectActiveBehaviorDefinitions],
+    (deltaStatusIds, behaviorRules, behaviorDefinitions): (PetBehaviorDefinition | null) => {
+      for(let i = 0; i < behaviorRules.length; i++){
+        let finalBehaviorId = evaluateWhenThenStringGroup(behaviorRules[i], deltaStatusIds);
+        if(finalBehaviorId){
+          const f = behaviorDefinitions.find(bD => bD.id === finalBehaviorId);
+          if(!f){
+            throw `ERROR: invalid behaviorId: "${finalBehaviorId}"`;
+          }
+          return f;
+        }
+      }
+      return null;
+    // return finalBehavior as PetBehaviorDefinition;
   }
 );
 

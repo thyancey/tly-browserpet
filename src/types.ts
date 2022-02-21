@@ -49,6 +49,7 @@ export type PetStatusDefinition = {
   alertType?: AlertType
 }
 export type PetBehaviorDefinition = {
+  id: string,
   image: string
 }
 export type WhenNumber = {

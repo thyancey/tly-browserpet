@@ -2,8 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { getColor } from '../../themes/';
-import { selectActivePetImage } from '../../services/petstore';
-import { useSelector } from 'react-redux';
+import { selectActiveBehavior, selectActivePetImage } from '../../services/petstore';
+import { shallowEqual, useSelector } from 'react-redux';
 import { Statuses } from './statuses';
 
 const ScPetContainer = styled.div`
@@ -27,12 +27,14 @@ const ScPetImage = styled.div`
 `;
 
 export const PetContainer = () => {
-  const activePetImage = useSelector(selectActivePetImage);
-
+  const activeBehavior = useSelector(selectActiveBehavior, shallowEqual);
+  console.log('behavior', activeBehavior)
   return (
     <ScPetContainer>
       <Statuses />
-      <ScPetImage style={{ backgroundImage: `url(${activePetImage})` }}/>
+      { activeBehavior && (
+        <ScPetImage style={{ backgroundImage: `url(${activeBehavior.image})` }}/>
+      ) }
     </ScPetContainer>
   )
 }
