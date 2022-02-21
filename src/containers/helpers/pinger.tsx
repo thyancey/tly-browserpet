@@ -2,15 +2,15 @@ import React from 'react';
 
 import useInterval from '../../util/hooks/useInterval';
 import { pingStore } from '../../services/ui';
-import { useAppDispatch } from '../../services/hooks';
 import { triggerSave } from '../../services/petstore';
+import { useDispatch } from 'react-redux';
 
 const PING_RATE = 1000;
 const SAVE_RATE = 5000;
 
 export const Pinger = () => {
   const [pinger, setPinger] = React.useState(0);
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
 
   useInterval(() => {
     setPinger(pinger + 1);

@@ -9,11 +9,22 @@ export interface ChromeMessage {
   message: any
 }
 
-export type PetData = {
+export type PetInfo = {
+  id: string,
   name: string,
-  level: number,
-  image: string,
-  info: string
+  bio: string,
+  level: number
+}
+
+export type RawPetStatDefinition = {
+  id: string,
+  label: string,
+  value: number,
+  currentValue: number,
+  perSecond: number,
+  max: number,
+  fullIsGood: boolean,
+  statEffects: RawWhenThen[]
 }
 
 export type PetStatDefinition = {
@@ -23,16 +34,71 @@ export type PetStatDefinition = {
   currentValue: number,
   perSecond: number,
   max: number,
-  fullIsGood: boolean
+  fullIsGood: boolean,
+  statEffects: WhenThenNumberGroup[]
+}
+
+// export type PetStatusesDict = {
+//   [key: string]: PetStatusDefinition
+// }
+export type AlertType = 'alert' | 'warning' | 'reward';
+export type PetStatusDefinition = {
+  id: string,
+  label: string,
+  message: string,
+  alertType?: AlertType
+}
+export type PetBehaviorDefinition = {
+  id: string,
+  image: string
+}
+export type WhenNumber = {
+  condition: ConditionOperator,
+  criteria: number,
+  isPercent: boolean
+}
+export type RawWhenThen = {
+  when: string[],
+  then: string
+}
+export type WhenThenNumberGroup = {
+  when: WhenNumber[],
+  then: string
+}
+
+export type WhenThenStringGroup = {
+  when: string[],
+  then: string
+}
+export type PetLogicGroup = {
+  stats: PetStatDefinition[],
+  statuses: PetStatusDefinition[],
+  behaviors: PetBehaviorDefinition[],
+  behaviorRules: WhenThenStringGroup[]
+}
+
+export type RawPetJSON = {
+  id: string,
+  name: string,
+  bio: string,
+  image: string,
+  level: number,
+  logic: {
+    stats: RawPetStatDefinition[],
+    statuses: PetStatusDefinition[],
+    behaviors: PetBehaviorDefinition[]
+    behaviorRules: {when:string[], then:string}[]
+  },
+  timestamp: number
 }
 
 export type PetDefinition = {
   id: string,
   name: string,
-  info: string,
+  bio: string,
   image: string,
   level: number,
-  stats: PetStatDefinition[],
+  logic: PetLogicGroup,
   timestamp: number
 }
 
@@ -53,12 +119,19 @@ export type SavedPetState = {
   stats: SavedStat[]
 }
 
-export type SavedConfig = {
-  activePet?: string,
-  haveSaved?: boolean
+export type LocalStorageState = {
+  config: {
+    activePet?: string,
+    haveSaved?: boolean
+  },
+  pets: SavedPetState[]
 }
 
-export type LocalStorageState = {
-  config: SavedConfig,
-  pets: SavedPetState[]
+export type ConditionOperator = '='|'<'|'<='|'>'|'>=';
+
+export type DeltaStat = {
+  id: string,
+  value: number,
+  max: number,
+  label: string
 }

@@ -3,9 +3,10 @@ import { jsonc } from 'jsonc';
 
 import { LocalStorageState, PetDefinition } from '../../types';
 import useLocalStorage from '../../util/hooks/useLocalStorage';
-import { useAppDispatch } from '../../services/hooks';
-import { setPet, setActiveId } from '../../services/petstore';
+import { createPet, setActiveId } from '../../services/petstore';
 import { defaultLocalStorageState } from '../../services/store';
+import { useDispatch } from 'react-redux';
+
 
 const readIt = (dispatch:any, savedData: LocalStorageState) => {
   const url =  `assets/data.jsonc`;
@@ -26,7 +27,7 @@ const readIt = (dispatch:any, savedData: LocalStorageState) => {
         console.log(`saved data was read successfully`, savedData);
         json.forEach((petDef: PetDefinition) => {
           const savedStatus = savedData?.pets.find(p => p.id === petDef.id) || null;
-          dispatch(setPet({
+          dispatch(createPet({
             petDefinition: petDef,
             initialState: savedStatus
           }));
@@ -45,7 +46,7 @@ const readIt = (dispatch:any, savedData: LocalStorageState) => {
 }
 
 export const Loader = () => {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const [ loaded, setLoaded ] = useState(false);
   const [ appData, ] = useLocalStorage('browserpet', defaultLocalStorageState);
 
