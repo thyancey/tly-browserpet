@@ -46,17 +46,18 @@ const ScBarFill = styled.div`
 type StatBarProps = {
   label: string,
   max: number,
-  value: number
+  value: number,
+  hideStats?: boolean
 };
 
-export const StatBar = ({label, max, value}: StatBarProps) => {
+export const StatBar = ({label, max, value, hideStats = false}: StatBarProps) => {
   const percent = Math.round((value / max) * 1000) / 10;
 
   return (
     <ScContainer>
       <ScLabel>{label.toLocaleUpperCase()}</ScLabel>
       <ScBar>
-        <ScBarValue>{`${round(value)} / ${max}`}</ScBarValue>
+        <ScBarValue>{!hideStats && `${round(value)} / ${max} (${percent}%)`}</ScBarValue>
         <ScBarFill style={{width:`${percent}%`}} />
       </ScBar>
     </ScContainer>

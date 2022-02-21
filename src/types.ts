@@ -13,6 +13,7 @@ export type PetInfo = {
   id: string,
   name: string,
   bio: string,
+  bornOn?: number,
   level: number
 }
 
@@ -96,6 +97,7 @@ export type PetDefinition = {
   id: string,
   name: string,
   bio: string,
+  bornOn?: number,
   image: string,
   level: number,
   logic: PetLogicGroup,
@@ -116,6 +118,7 @@ export type SavedStat = {
 export type SavedPetState = {
   id: string,
   lastSaved: number,
+  bornOn?: number,
   stats: SavedStat[]
 }
 

@@ -8,6 +8,14 @@
     "logic":{
       "stats":[
         {
+          "id": "xp",
+          "label": "XP",
+          "value": 50.0,
+          "perSecond": 0,
+          "max": 100.0,
+          "fullIsGood": true
+        },
+        {
           "id": "food",
           "label": "Food",
           "value": 250.0,

@@ -59,13 +59,12 @@ const getBubbleColors = (alertType?: AlertType) => {
   }
 }
 
-const getRotation = (index:number) => {
+const getRotation = () => {
   return -5 + Math.random() * 5;
 }
-const getBottom = (index:number, total:number) => {
-  return (total - 1 - index) * 35;
+const getBottom = (index:number) => {
+  return index * 35;
 }
-
 
 export const Statuses = () => {
   const activeDeltaStatuses = useSelector(selectDetailedActiveDeltaStatuses, shallowEqual);
@@ -78,7 +77,7 @@ export const Statuses = () => {
             key={dS.id} 
             id={dS.id}
             bubbleColors={getBubbleColors(dS.alertType) as tColor[]} 
-            style={{ bottom: getBottom(i,activeDeltaStatuses.length), transform: `rotate(${getRotation(i)}deg)`}}>
+            style={{ bottom: getBottom(i), transform: `rotate(${getRotation()}deg)`}}>
               {dS.label}
           </ScStatus>
         ))}

@@ -1,7 +1,7 @@
 // slightly evolving from create-react-app example
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { shallowEqual, useSelector } from 'react-redux';
-import { PetDefinition, SavedPetState, LocalStorageState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetStatDefinition, PetBehaviorDefinition } from '../../types';
+import { PetDefinition, SavedPetState, LocalStorageState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetStatDefinition, PetBehaviorDefinition, RawPetStatDefinition } from '../../types';
 import { getDeltaStats } from '../../util/tools';
 import { evaluateWhenThenNumberGroup, evaluateWhenThenStringGroup, parseRawWhenThenGroup } from '../../util/whenthen';
 
@@ -38,28 +38,32 @@ const initialStoreState: PetStoreState = {
 // might want to do some validation and pre-processing here
 export const parseLogicGroup = (petDefJSON: RawPetJSON, initialState: SavedPetState) => {
   return {
-    stats: petDefJSON.logic.stats.map(pS => {
-      const foundStat = initialState?.stats.find(iS => iS.id === pS.id);
-      const statEffects = parseRawWhenThenGroup(pS.statEffects, 'stats');
-
-      if(foundStat){
-        return {
-          ...pS,
-          value: foundStat.value,
-          statEffects: statEffects
-        }
-      }else{
-        return {
-          ...pS,
-          statEffects: statEffects
-        }
-      }
-    }),
+    stats: parseStatsGroup(petDefJSON.logic.stats, initialState),
     statuses: petDefJSON.logic.statuses || [],
     behaviorRules: parseRawWhenThenGroup(petDefJSON.logic.behaviorRules, 'statuses'),
     behaviors: petDefJSON.logic.behaviors || [],
   } as PetLogicGroup;
 }
+
+export const parseStatsGroup = (statsDef: RawPetStatDefinition[], initialState: SavedPetState) => {
+  return statsDef.map(pS => {
+    const foundStat = initialState?.stats.find(iS => iS.id === pS.id);
+    const statEffects = parseRawWhenThenGroup(pS.statEffects, 'stats');
+
+    if(foundStat){
+      return {
+        ...pS,
+        value: foundStat.value,
+        statEffects: statEffects
+      }
+    }else{
+      return {
+        ...pS,
+        statEffects: statEffects
+      }
+    }
+  });
+};
 
 export const petStoreSlice = createSlice({
   name: 'petStore',
@@ -86,6 +90,7 @@ export const petStoreSlice = createSlice({
         savePl.pets.push({
           id: pet.id,
           stats: curStats,
+          bornOn: pet.bornOn,
           lastSaved: ts
         });
       });
@@ -119,6 +124,7 @@ export const petStoreSlice = createSlice({
       const updatedDef = {
         ...petDefinition,
         logic: logicGroup,
+        bornOn: initialState?.bornOn || new Date().getTime(),
         timestamp: nowTime
       } as PetDefinition;
 
@@ -175,7 +181,8 @@ export const selectActivePetInfo = createSelector(
       id: activePet.id,
       name: activePet.name,
       level: activePet.level,
-      bio: activePet.bio
+      bio: activePet.bio,
+      bornOn: activePet.bornOn
     };
   }
 );
