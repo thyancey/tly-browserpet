@@ -41,10 +41,12 @@ export type PetStatDefinition = {
 // export type PetStatusesDict = {
 //   [key: string]: PetStatusDefinition
 // }
+export type AlertType = 'alert' | 'warning' | 'reward';
 export type PetStatusDefinition = {
   id: string,
   label: string,
-  message: string
+  message: string,
+  alertType?: AlertType
 }
 export type PetBehaviorDefinition = {
   image: string

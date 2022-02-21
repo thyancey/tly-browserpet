@@ -1,4 +1,4 @@
-import { createGlobalStyle } from "styled-components"
+import { createGlobalStyle, css } from 'styled-components';
 
 export default createGlobalStyle`
   *{
@@ -121,7 +121,7 @@ const shadows = {
   z2: '-0.1rem 0.1rem .25rem .1rem rgba(0,0,0,0.36)',
   z3: '-.2rem .5rem 1rem .2rem rgba(0,0,0,.36)'
 }
-type tColor = 'black' | 'grey' | 'grey_light' | 'white' | 'blue' | 'green' | 'yellow' | 'red' | 'purple';
+export type tColor = 'black' | 'grey' | 'grey_light' | 'white' | 'blue' | 'green' | 'yellow' | 'red' | 'purple';
 const colors = {
   black: '#000000',
   grey: '#373737',
@@ -153,4 +153,29 @@ export const store: ThemeStore = {
   colors: colors,
   shadows: shadows,
   breakpoints: breakpoints
+}
+
+
+export const mixinFontFamily = (style: 'details'|'display') => {
+  switch(style){
+    case 'details' : return css`font-family: 'Roboto', sans-serif`;
+    case 'display': return css`font-family: 'Bevan', cursive`;
+    default: return css`font-family: 'Roboto', sans-serif`;
+  }
+}
+
+export const mixinBubble = () => {
+  return css`
+    border-radius:2rem;
+    border: .5rem solid;
+  `
+}
+
+export const mixinColorBubble = (background: tColor, borderAndText: tColor = 'white') => {
+  return css`
+    ${mixinBubble()}
+    border-color: ${getColor(borderAndText)};
+    color: ${getColor(borderAndText)};
+    background-color: ${getColor(background)};
+  `
 }

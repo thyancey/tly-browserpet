@@ -1,9 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { getColor } from '../themes/';
-import { selectActiveDeltaStatuses, selectActivePetImage } from '../services/petstore';
-import { shallowEqual, useSelector } from 'react-redux';
+import { getColor } from '../../themes/';
+import { selectActivePetImage } from '../../services/petstore';
+import { useSelector } from 'react-redux';
+import { Statuses } from './statuses';
 
 const ScPetContainer = styled.div`
   background-color: ${getColor('blue')};
@@ -13,6 +14,7 @@ const ScPetContainer = styled.div`
   height: 30rem;
 
   padding-bottom: 1rem;
+  position: relative;
 `;
 
 const ScPetImage = styled.div`
@@ -24,27 +26,12 @@ const ScPetImage = styled.div`
   text-align:center;
 `;
 
-const ScStatuses = styled.ul`
-`;
-
-const ScStatus = styled.li`
-  list-style:none;
-  color:black;
-  margin:1rem;
-  font-weight:bold;
-`;
-
 export const PetContainer = () => {
   const activePetImage = useSelector(selectActivePetImage);
-  const activeDeltaStatuses = useSelector(selectActiveDeltaStatuses, shallowEqual);
 
   return (
     <ScPetContainer>
-      <ScStatuses>
-        {activeDeltaStatuses.map((dS,i) => (
-          <ScStatus key={i}>{dS}</ScStatus>
-        ))}
-      </ScStatuses>
+      <Statuses />
       <ScPetImage style={{ backgroundImage: `url(${activePetImage})` }}/>
     </ScPetContainer>
   )

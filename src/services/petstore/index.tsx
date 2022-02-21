@@ -1,6 +1,6 @@
 // slightly evolving from create-react-app example
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PetDefinition, SavedPetState, LocalStorageState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo } from '../../types';
+import { PetDefinition, SavedPetState, LocalStorageState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetStatDefinition } from '../../types';
 import { getDeltaStats } from '../../util/tools';
 import { evaluateWhenThenNumberGroup, parseRawWhenThenGroup } from '../../util/whenthen';
 
@@ -228,6 +228,15 @@ export const selectActiveDeltaStatuses = createSelector(
     });
 
     return statuses;
+  }
+);
+
+export const selectDetailedActiveDeltaStatuses = createSelector(
+  [selectActiveDeltaStatuses, selectActiveStatusDefinitions],
+  (deltaStatIds, statusDefinitions): PetStatusDefinition[] => {
+    return deltaStatIds.map(dId => {
+      return statusDefinitions.find(sD => sD.id === dId) as PetStatusDefinition || null;
+    }).filter(ds => (ds !== null));
   }
 );
 

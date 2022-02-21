@@ -195,14 +195,14 @@ describe('#evaluateWhenNumber', () => {
     expect(
       evaluateWhenNumber({
         condition: '=',
-        criteria: 0.5,
+        criteria: 50,
         isPercent: true
       }, 50, 100)
     ).toBe(true);
     expect(
       evaluateWhenNumber({
         condition: '=',
-        criteria: 1,
+        criteria: 100,
         isPercent: true
       }, 100, 100)
     ).toBe(true);
@@ -211,7 +211,7 @@ describe('#evaluateWhenNumber', () => {
     expect(
       evaluateWhenNumber({
         condition: '=',
-        criteria: .501,
+        criteria: 50.1,
         isPercent: true
       }, 50, 100)
     ).toBe(false);
@@ -245,21 +245,21 @@ describe('#evaluateWhenNumber', () => {
     expect(
       evaluateWhenNumber({
         condition: '>',
-        criteria: 0.5,
+        criteria: 50,
         isPercent: true
       }, 60, 100)
     ).toBe(true);
     expect(
       evaluateWhenNumber({
         condition: '>',
-        criteria: 0.5,
+        criteria: 50,
         isPercent: true
       }, 40, 100)
     ).toBe(false);
     expect(
       evaluateWhenNumber({
         condition: '>',
-        criteria: 0.5,
+        criteria: 50,
         isPercent: true
       }, 50, 100)
     ).toBe(false);
@@ -293,21 +293,21 @@ describe('#evaluateWhenNumber', () => {
     expect(
       evaluateWhenNumber({
         condition: '>=',
-        criteria: 0.5,
+        criteria: 50,
         isPercent: true
       }, 60, 100)
     ).toBe(true);
     expect(
       evaluateWhenNumber({
         condition: '>=',
-        criteria: 0.5,
+        criteria: 50,
         isPercent: true
       }, 40, 100)
     ).toBe(false);
     expect(
       evaluateWhenNumber({
         condition: '>=',
-        criteria: 0.5,
+        criteria: 50,
         isPercent: true
       }, 50, 100)
     ).toBe(true);
@@ -341,21 +341,21 @@ describe('#evaluateWhenNumber', () => {
     expect(
       evaluateWhenNumber({
         condition: '<=',
-        criteria: 0.5,
+        criteria: 50,
         isPercent: true
       }, 60, 100)
     ).toBe(false);
     expect(
       evaluateWhenNumber({
         condition: '<=',
-        criteria: 0.5,
+        criteria: 50,
         isPercent: true
       }, 40, 100)
     ).toBe(true);
     expect(
       evaluateWhenNumber({
         condition: '<=',
-        criteria: 0.5,
+        criteria: 50,
         isPercent: true
       }, 50, 100)
     ).toBe(true);
@@ -389,21 +389,21 @@ describe('#evaluateWhenNumber', () => {
     expect(
       evaluateWhenNumber({
         condition: '<',
-        criteria: 0.5,
+        criteria: 50,
         isPercent: true
       }, 60, 100)
     ).toBe(false);
     expect(
       evaluateWhenNumber({
         condition: '<',
-        criteria: 0.5,
+        criteria: 50,
         isPercent: true
       }, 40, 100)
     ).toBe(true);
     expect(
       evaluateWhenNumber({
         condition: '<',
-        criteria: 0.5,
+        criteria: 50,
         isPercent: true
       }, 50, 100)
     ).toBe(false);
