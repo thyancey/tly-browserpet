@@ -35,7 +35,7 @@ export type PetStatDefinition = {
   perSecond: number,
   max: number,
   fullIsGood: boolean,
-  statEffects: WhenThenNumber[]
+  statEffects: WhenThenNumberGroup[]
 }
 
 // export type PetStatusesDict = {
@@ -50,21 +50,20 @@ export type PetBehaviorDefinition = {
   image: string
 }
 export type WhenNumber = {
-  condition: string, // could remove?
+  condition: ConditionOperator,
   criteria: number,
-  isPercent: boolean,
-  direction: -1|0|1
+  isPercent: boolean
 }
 export type RawWhenThen = {
   when: string[],
   then: string
 }
-export type WhenThenNumber = {
+export type WhenThenNumberGroup = {
   when: WhenNumber[],
   then: string
 }
 
-export type WhenThenString = {
+export type WhenThenStringGroup = {
   when: string[],
   then: string
 }
@@ -72,7 +71,7 @@ export type PetLogicGroup = {
   stats: PetStatDefinition[],
   statuses: PetStatusDefinition[],
   behaviors: PetBehaviorDefinition[],
-  behaviorRules: WhenThenString[]
+  behaviorRules: WhenThenStringGroup[]
 }
 
 export type RawPetJSON = {
@@ -124,3 +123,5 @@ export type LocalStorageState = {
   },
   pets: SavedPetState[]
 }
+
+export type ConditionOperator = '='|'<'|'<='|'>'|'>=';
