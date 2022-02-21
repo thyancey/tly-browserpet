@@ -10,7 +10,7 @@ import { Header } from './header';
 const ScContainer = styled.div`
   padding:1rem;
   color: ${getColor('blue')};
-  min-width:30rem;
+  min-width:36rem;
 `;
 
 export const Main = () => {

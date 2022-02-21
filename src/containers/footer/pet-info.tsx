@@ -49,13 +49,33 @@ const ScBioInfo = styled.p`
   padding-left:1rem;
 `;
 
-const ScPetLabel = styled.div`
+const ScHeader = styled.div`
   color: ${getColor('black')};
   width:100%;
   display:flex;
   flex-direction: row;
 
-  h4{
+  >div:first-child{
+    flex:1;
+  }
+`;
+
+const ScLabel = styled.div`
+  >p{
+    font-style:italic;
+  }
+
+  >h4{
+    margin-top:1rem;
+    margin-bottom:.5rem;
+  }
+`
+
+const ScPetLevel = styled.div`
+  text-align:right;
+  color: ${getColor('black')};
+  
+  >h4{
     margin-top:1rem;
     margin-bottom:.5rem;
   }
@@ -67,10 +87,19 @@ const ScPetName = styled.h4`
   flex:1;
 `;
 
-const ScPetLevel = styled.div`
-  text-align:right;
-  color: ${getColor('black')};
-`;
+
+const ScBornOn = styled.p`
+  
+`
+
+const getDateLabel = (epoch?: number) => {
+  if(!epoch){
+    return null;
+  }else{
+    const date = new Date(epoch);    
+    return date.toLocaleString("en-us");
+  }
+};
 
 export const PetInfo = () => {
   const petInfo = useSelector(selectActivePetInfo);
@@ -78,10 +107,15 @@ export const PetInfo = () => {
 
   return (
     <ScPetInfo>
-      <ScPetLabel>
-        <ScPetName>{petInfo.name}</ScPetName>
-        <ScPetLevel><h4>{`L-${petInfo.level}`}</h4></ScPetLevel>
-      </ScPetLabel>
+      <ScHeader>
+        <ScLabel>
+          <ScPetName>{petInfo.name}</ScPetName>
+          <ScBornOn>{`born on: ${getDateLabel(petInfo.bornOn)}`}</ScBornOn>
+        </ScLabel>
+        <ScPetLevel>
+          <h4>{`Level: ${petInfo.level}`}</h4>
+        </ScPetLevel>
+      </ScHeader>
       <hr/>
       <StatGroup />
       <hr/>
