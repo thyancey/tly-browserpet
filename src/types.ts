@@ -9,11 +9,11 @@ export interface ChromeMessage {
   message: any
 }
 
-export type PetData = {
+export type PetInfo = {
+  id: string,
   name: string,
-  level: number,
-  image: string,
-  info: string
+  bio: string,
+  level: number
 }
 
 export type RawPetStatDefinition = {
@@ -77,7 +77,7 @@ export type PetLogicGroup = {
 export type RawPetJSON = {
   id: string,
   name: string,
-  info: string,
+  bio: string,
   image: string,
   level: number,
   logic: {
@@ -92,7 +92,7 @@ export type RawPetJSON = {
 export type PetDefinition = {
   id: string,
   name: string,
-  info: string,
+  bio: string,
   image: string,
   level: number,
   logic: PetLogicGroup,
@@ -125,3 +125,10 @@ export type LocalStorageState = {
 }
 
 export type ConditionOperator = '='|'<'|'<='|'>'|'>=';
+
+export type DeltaStat = {
+  id: string,
+  value: number,
+  max: number,
+  label: string
+}

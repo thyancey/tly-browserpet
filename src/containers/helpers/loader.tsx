@@ -3,9 +3,9 @@ import { jsonc } from 'jsonc';
 
 import { LocalStorageState, PetDefinition } from '../../types';
 import useLocalStorage from '../../util/hooks/useLocalStorage';
-import { useAppDispatch } from '../../services/hooks';
 import { createPet, setActiveId } from '../../services/petstore';
 import { defaultLocalStorageState } from '../../services/store';
+import { useDispatch } from 'react-redux';
 
 
 const readIt = (dispatch:any, savedData: LocalStorageState) => {
@@ -46,7 +46,7 @@ const readIt = (dispatch:any, savedData: LocalStorageState) => {
 }
 
 export const Loader = () => {
-  const dispatch = useAppDispatch();
+  const dispatch = useDispatch();
   const [ loaded, setLoaded ] = useState(false);
   const [ appData, ] = useLocalStorage('browserpet', defaultLocalStorageState);
 

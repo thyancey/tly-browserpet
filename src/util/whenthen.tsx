@@ -84,7 +84,9 @@ export const parseExpressionString = (expressionString: string) => {
 
 export const evaluateWhenNumber = (whenNumber: WhenNumber, reference: number, referenceMax: number) => {
   try{
-    const referenceValue = whenNumber.isPercent ? reference / referenceMax : reference;
+    const referenceValue = whenNumber.isPercent ? 
+      Math.round((reference / referenceMax) * 100)
+      : reference;
     return EXPRESSION_MAP[whenNumber.condition](referenceValue, whenNumber.criteria);
   }catch(e){
     throw `could not evaluate "whenNumber:${whenNumber}", "reference:${reference}", "referenceMax:${reference}"`;

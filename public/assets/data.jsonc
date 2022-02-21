@@ -2,7 +2,7 @@
   {
     "id": "bunchie",
     "name": "Bunchie",
-    "info": "A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama.",
+    "bio": "A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama.",
     "image": "assets/pets/bunchie/happy.gif",
     "level": 0,
     "logic":{
@@ -11,7 +11,7 @@
           "id": "food",
           "label": "Food",
           "value": 250.0,
-          "perSecond": -2.0,
+          "perSecond": -30.0,
           "max": 500.0,
           "fullIsGood": true,
           "statEffects":[
@@ -88,7 +88,7 @@
   {
     "id": "raccoon",
     "name": "A Racoon",
-    "info": "A dead, bloated raccoon, with a belly full of old seafood.",
+    "bio": "A dead, bloated raccoon, with a belly full of old seafood.",
     "image": "assets/pets/raccoon/dead.gif",
     "level": 0,
     "logic":{
@@ -112,7 +112,7 @@
   {
     "id": "mika",
     "name": "Mika",
-    "info": "A dog",
+    "bio": "A dog",
     "image": "assets/pets/mika/sleeping.gif",
     "level": 0,
     "logic":{

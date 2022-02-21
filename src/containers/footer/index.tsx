@@ -2,13 +2,13 @@ import React from 'react';
 import { getColor, getShade } from '../../themes/';
 
 import styled, { css } from 'styled-components';
-import { useAppDispatch, useAppSelector } from '../../services/hooks';
 
 import { 
   selectPetList, 
   setActiveIdx 
 } from '../../services/petstore';
 import { PetInfo } from './pet-info';
+import { useDispatch, useSelector } from 'react-redux';
 
 const ScContainer = styled.div`
   margin-top: -1rem;
@@ -71,8 +71,8 @@ const ScTab = styled.li<ScTabProps>`
 `
 
 export const Footer = () => {
-  const petList = useAppSelector(selectPetList);
-  const dispatch = useAppDispatch();
+  const petList = useSelector(selectPetList);
+  const dispatch = useDispatch();
 
   return (
     <ScContainer>

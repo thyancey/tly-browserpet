@@ -1,8 +1,8 @@
 // slightly evolving from create-react-app example
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PetDefinition, SavedPetState, LocalStorageState, PetLogicGroup, RawPetJSON } from '../../types';
+import { PetDefinition, SavedPetState, LocalStorageState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo } from '../../types';
 import { getDeltaStats } from '../../util/tools';
-import { parseRawWhenThenGroup } from '../../util/whenthen';
+import { evaluateWhenThenNumberGroup, parseRawWhenThenGroup } from '../../util/whenthen';
 
 import { RootState } from '../store';
 import { selectPingIdx } from '../ui';
@@ -77,14 +77,14 @@ export const petStoreSlice = createSlice({
       state.pets.forEach(pet => {
         const curStats = getDeltaStats(pet.logic.stats, pet.timestamp, ts);
   
-        const toSave = curStats.map(s => ({
-          id: s.id,
-          value: s.currentValue
-        }));
+        // const toSave = curStats.map(s => ({
+        //   id: s.id,
+        //   value: s.currentValue
+        // }));
 
         savePl.pets.push({
           id: pet.id,
-          stats: toSave,
+          stats: curStats,
           lastSaved: ts
         });
       });
@@ -108,14 +108,12 @@ export const petStoreSlice = createSlice({
       state.activeIdx = action.payload;
     },
     createPet: (state: PetStoreState, action: PayloadAction<any>) => {
-      console.log('createPet', action.payload)
+      console.log('createPet', action.payload);
+      
       const { petDefinition, initialState } = action.payload as CreatePetPayload;
       const foundPet = state.pets.find(p => p.id === petDefinition.id);
       const nowTime = new Date().getTime();
-
-      console.log('initialState', initialState)
       const logicGroup = parseLogicGroup(petDefinition, initialState); 
-      console.log('logicGroup', logicGroup)
 
       const updatedDef = {
         ...petDefinition,
@@ -167,13 +165,69 @@ export const selectActivePet = createSelector(
   }
 );
 
-export const selectActivePetStats = createSelector(
+export const selectActivePetInfo = createSelector(
+  [selectActivePet],
+  (activePet): (PetInfo | null) => {
+    if(!activePet) return null;
+
+    return {
+      id: activePet.id,
+      name: activePet.name,
+      level: activePet.level,
+      bio: activePet.bio
+    };
+  }
+);
+
+export const selectActiveDeltaStats = createSelector(
   [selectActivePet, selectPingIdx], 
   (activePet, pingIdx) => {
     // TODO: all the delta stat stuff
     if(!activePet || !activePet.logic.stats) return [];
 
     return getDeltaStats(activePet.logic.stats, activePet.timestamp, new Date().getTime());
+  }
+);
+
+export const selectActivePetImage = createSelector(
+  [selectActivePet], 
+  (activePet) => {
+    return activePet?.image || '';
+  }
+);
+
+export const selectActiveStatDefinitions = createSelector(
+  [selectActivePet], (activePet) => { return activePet?.logic?.stats || []; }
+);
+export const selectActiveStatusDefinitions = createSelector(
+  [selectActivePet], (activePet) => { return activePet?.logic?.statuses || []; }
+);
+export const selectActiveBehaviorRuleDefinitions = createSelector(
+  [selectActivePet], (activePet) => { return activePet?.logic?.behaviorRules || []; }
+);
+export const selectActiveBehaviorDefinitions = createSelector(
+  [selectActivePet], (activePet) => { return activePet?.logic?.behaviors || []; }
+);
+
+export const selectActiveDeltaStatuses = createSelector(
+  [selectActiveDeltaStats, selectActiveStatDefinitions], 
+  (deltaStats, statDefinitions) => {
+    // for each statDef, look through statDef.statEffects, which is a whenThenNumberGroup[]
+    // all stats should be evaluated, and output all unique statuses matched
+    const findDeltaStat = (id: string) => deltaStats.find(ds => ds.id === id);
+
+    const statuses: string[] = [];
+    statDefinitions.forEach(sD => {
+      const dS = findDeltaStat(sD.id);
+      if(!dS) return;
+
+      sD.statEffects.forEach(sE => {
+        const status = evaluateWhenThenNumberGroup(sE, dS.value, dS.max);
+        if(status && statuses.indexOf(status) === -1) statuses.push(status);
+      })
+    });
+
+    return statuses;
   }
 );
 

@@ -1,4 +1,4 @@
-import { PetStatDefinition } from '../types';
+import { PetStatDefinition, DeltaStat } from '../types';
 
 // general
 export const round = (number:number, pad?:number) => {
@@ -24,8 +24,10 @@ export const getDeltaStats = (stats: PetStatDefinition[], prevTime: number, nowT
 
   return stats.map(s => {
     return {
-      ...s,
-      currentValue: Math.round(clamp(s.value + (s.perSecond * timeDiff), 0, s.max)),
-    }
+      id: s.id,
+      value: Math.round(clamp(s.value + (s.perSecond * timeDiff), 0, s.max)),
+      max: s.max,
+      label: s.label
+    } as DeltaStat;
   });
 };

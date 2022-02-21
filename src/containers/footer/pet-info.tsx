@@ -3,8 +3,8 @@ import { getColor } from '../../themes/';
 
 import styled from 'styled-components';
 import { StatGroup } from './stat-group';
-import { useAppSelector } from '../../services/hooks';
-import { selectActivePet } from '../../services/petstore';
+import { selectActivePetInfo } from '../../services/petstore';
+import { useSelector } from 'react-redux';
 
 const ScPetInfo = styled.div`
   width:100%;
@@ -73,20 +73,21 @@ const ScPetLevel = styled.div`
 `;
 
 export const PetInfo = () => {
-  const activePet = useAppSelector(selectActivePet) || {};
+  const petInfo = useSelector(selectActivePetInfo);
+  if(!petInfo) return null;
 
   return (
     <ScPetInfo>
       <ScPetLabel>
-        <ScPetName>{activePet.name}</ScPetName>
-        <ScPetLevel><h4>{`L-${activePet.level}`}</h4></ScPetLevel>
+        <ScPetName>{petInfo.name}</ScPetName>
+        <ScPetLevel><h4>{`L-${petInfo.level}`}</h4></ScPetLevel>
       </ScPetLabel>
       <hr/>
       <StatGroup />
       <hr/>
       <ScBio>
         <ScBioName>{'Description'}</ScBioName>
-        <ScBioInfo>{activePet.info}</ScBioInfo>
+        <ScBioInfo>{petInfo.bio}</ScBioInfo>
       </ScBio>
     </ScPetInfo>
   )
