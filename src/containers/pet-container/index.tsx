@@ -26,15 +26,27 @@ const ScPetImage = styled.div`
   text-align:center;
 `;
 
+const ScBehavior = styled.p`
+  font-size:2rem;
+  color:white;
+
+  position:absolute;
+  top:1rem;
+  left:1rem;
+`
+
 export const PetContainer = () => {
   const activeBehavior = useSelector(selectActiveBehavior, shallowEqual);
   console.log('behavior', activeBehavior)
   return (
     <ScPetContainer>
-      <Statuses />
-      { activeBehavior && (
+    { activeBehavior && (
+      <>
+        <ScBehavior>{`behavior: ${activeBehavior.id}`}</ScBehavior>
+        <Statuses />
         <ScPetImage style={{ backgroundImage: `url(${activeBehavior.image})` }}/>
-      ) }
+      </>
+    ) }
     </ScPetContainer>
   )
 }

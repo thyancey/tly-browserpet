@@ -231,7 +231,7 @@ export const selectActiveDeltaStatuses = createSelector(
     }
     return allStatuses.map((statusId, idx) => {
       return statusId
-    });
+    }).reverse();
   }
 );
 
@@ -245,22 +245,19 @@ export const selectDetailedActiveDeltaStatuses = createSelector(
 );
 
 export const selectActiveBehavior = createSelector(
-  // [selectActiveDeltaStatuses, selectActiveBehaviorRuleDefinitions, selectActiveBehaviorDefinitions],
-  // (deltaStatIds, behaviorRules, behaviorDefinitions): (PetBehaviorDefinition | null) => {
-    [selectActiveDeltaStatuses, selectActiveBehaviorRuleDefinitions, selectActiveBehaviorDefinitions],
-    (deltaStatusIds, behaviorRules, behaviorDefinitions): (PetBehaviorDefinition | null) => {
-      for(let i = 0; i < behaviorRules.length; i++){
-        let finalBehaviorId = evaluateWhenThenStringGroup(behaviorRules[i], deltaStatusIds);
-        if(finalBehaviorId){
-          const f = behaviorDefinitions.find(bD => bD.id === finalBehaviorId);
-          if(!f){
-            throw `ERROR: invalid behaviorId: "${finalBehaviorId}"`;
-          }
-          return f;
+  [selectActiveDeltaStatuses, selectActiveBehaviorRuleDefinitions, selectActiveBehaviorDefinitions],
+  (deltaStatusIds, behaviorRules, behaviorDefinitions): (PetBehaviorDefinition | null) => {
+    for(let i = 0; i < behaviorRules.length; i++){
+      let finalBehaviorId = evaluateWhenThenStringGroup(behaviorRules[i], deltaStatusIds);
+      if(finalBehaviorId){
+        const f = behaviorDefinitions.find(bD => bD.id === finalBehaviorId);
+        if(!f){
+          throw `ERROR: invalid behaviorId: "${finalBehaviorId}"`;
         }
+        return f;
       }
-      return null;
-    // return finalBehavior as PetBehaviorDefinition;
+    }
+    return null;
   }
 );
 

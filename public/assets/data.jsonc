@@ -84,15 +84,6 @@
           "when":"STATUS_DEAD",
           "then": "BE_DEAD"
         },
-        // OR next group, until a valid condition is met
-        {
-          "when":[ "STATUS_HUNGRY1", "STATUS_DUMB" ], // AND within
-          "then": "BE_DUMBGRY"
-        },
-        {
-          "when":[ "STATUS_HUNGRY1", "STATUS_BRAINDEAD" ],
-          "then": "BE_DUMBGRY"
-        },
         {
           "when": "STATUS_STARVING",
           "then": "BE_VERY_HUNGRY"
@@ -107,11 +98,11 @@
         }
       ],
       "behaviors":[
-        { "id": "BE_DEAD", "image": "assets/pets/bunchie/dead.gif" },
         { "id": "BE_NORMAL", "image": "assets/pets/bunchie/happy.gif" },
         { "id": "BE_HUNGRY", "image": "assets/pets/bunchie/sad.gif" },
         { "id": "BE_VERY_HUNGRY", "image": "assets/pets/bunchie/sad-tan.gif" },
-        { "id": "BE_DUMBGRY", "image": "assets/pets/bunchie/sad.gif" }
+        { "id": "BE_DUMBGRY", "image": "assets/pets/bunchie/sad.gif" },
+        { "id": "BE_DEAD", "image": "assets/pets/bunchie/dead.gif" }
       ]
     }
   },
@@ -134,9 +125,16 @@
           "statEffects": []
         }
       ],
-      "statuses":[],
-      "behaviors":[],
-      "behaviorRules":[]
+      "statuses":[{
+        "id": "STATUS_NORMAL",
+        "label": "normal",
+        "message": ""
+      }],
+      "behaviorRules":[{
+        "when": [],
+        "then": "BE_NORMAL"
+      }],
+      "behaviors":[{ "id": "BE_NORMAL", "image": "assets/pets/raccoon/dead.gif" }]
     }
   },
   {
@@ -154,12 +152,20 @@
           "perSecond": 1.0,
           "min": 0.0,
           "max": 500.0,
-          "fullIsGood": true
+          "fullIsGood": true,
+          "statEffects": []
         }
       ],
-      "statuses":[],
-      "behaviors":[],
-      "behaviorRules":[]
+      "statuses":[{
+        "id": "STATUS_NORMAL",
+        "label": "normal",
+        "message": ""
+      }],
+      "behaviorRules":[{
+        "when": [],
+        "then": "BE_NORMAL"
+      }],
+      "behaviors":[{ "id": "BE_NORMAL", "image": "assets/pets/mika/sleeping.gif" }]
     }
   }
 ]
