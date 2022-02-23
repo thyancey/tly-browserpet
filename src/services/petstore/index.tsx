@@ -1,12 +1,12 @@
 // slightly evolving from create-react-app example
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { shallowEqual, useSelector } from 'react-redux';
-import { PetDefinition, SavedPetState, LocalStorageState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetStatDefinition, PetBehaviorDefinition, RawPetStatDefinition } from '../../types';
+import { PetDefinition, SavedPetState, LocalStorageState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetStatDefinition, PetBehaviorDefinition, RawPetStatDefinition, PetInteractionDefinition, PetStatEffectDefinition, PetInteractionDetail } from '../../types';
 import { getDeltaStats } from '../../util/tools';
 import { evaluateWhenThenNumberGroup, evaluateWhenThenStringGroup, parseRawWhenThenGroup } from '../../util/whenthen';
 
 import { RootState } from '../store';
-import { selectPingIdx } from '../ui';
+import { selectActiveInteractionStatus, selectPingIdx } from '../ui';
 
 export type PetStoreState = {
   activeIdx: number,
@@ -37,13 +37,39 @@ const initialStoreState: PetStoreState = {
 
 // might want to do some validation and pre-processing here
 export const parseLogicGroup = (petDefJSON: RawPetJSON, initialState: SavedPetState) => {
+  console.log('got ', petDefJSON)
   return {
     stats: parseStatsGroup(petDefJSON.logic.stats, initialState),
     statuses: petDefJSON.logic.statuses || [],
     behaviorRules: parseRawWhenThenGroup(petDefJSON.logic.behaviorRules, 'statuses'),
     behaviors: petDefJSON.logic.behaviors || [],
+    interactions: parseInteractionsGroup(petDefJSON.logic.interactions, initialState),
   } as PetLogicGroup;
+};
+
+// could do some validation here
+export const parseStatEffects = (statEffectsJSON: PetStatEffectDefinition[]) => {
+  return statEffectsJSON.map(sE => ({
+    statId: sE.statId,
+    oneHit: sE.oneHit || 0,
+    perSecond: sE.perSecond || 0,
+    duration: sE.duration || 0,
+    delay: sE.delay || 0
+  }));
 }
+
+export const parseInteractionsGroup = (interactions: PetInteractionDefinition[], initialState: SavedPetState) => {
+  if(!interactions) return [];
+
+  return interactions.map(int => (
+    {
+      id: int.id,
+      label: int.label,
+      cooldown: int.cooldown,
+      statEffects: parseStatEffects(int.statEffects)
+    }
+  ));
+};
 
 export const parseStatsGroup = (statsDef: RawPetStatDefinition[], initialState: SavedPetState) => {
   return statsDef.map(pS => {
@@ -210,11 +236,42 @@ export const selectActiveStatDefinitions = createSelector(
 export const selectActiveStatusDefinitions = createSelector(
   [selectActivePet], (activePet) => { return activePet?.logic?.statuses || []; }
 );
+export const selectActiveInteractionDefinitions = createSelector(
+  [selectActivePet], (activePet) => { return activePet?.logic?.interactions || []; }
+);
 export const selectActiveBehaviorRuleDefinitions = createSelector(
   [selectActivePet], (activePet) => { return activePet?.logic?.behaviorRules || []; }
 );
 export const selectActiveBehaviorDefinitions = createSelector(
   [selectActivePet], (activePet) => { return activePet?.logic?.behaviors || []; }
+);
+
+export const selectActiveInteractionDetail = createSelector(
+  [selectActiveInteractionDefinitions, selectActiveInteractionStatus], 
+  (activeInteractionDefinitions, activeInteractions): PetInteractionDetail[] => { 
+    return activeInteractionDefinitions.map(iD => {
+      return {
+        id:iD.id,
+        label: iD.label,
+        startAt: activeInteractions.find(aI => aI.id === iD.id)?.startAt || 0,
+        endAt: activeInteractions.find(aI => aI.id === iD.id)?.endAt || 0
+      } as PetInteractionDetail
+    }); 
+  }
+);
+
+export const selectActiveInteraction2 = createSelector(
+  [selectActiveInteractionDefinitions, selectActiveInteractionStatus], 
+  (activeInteractionDefinitions, activeInteractions): PetInteractionDetail[] => { 
+    return activeInteractionDefinitions.map(iD => {
+      return {
+        id:iD.id,
+        label: iD.label,
+        startAt: activeInteractions.find(aI => aI.id === iD.id)?.startAt || 0,
+        endAt: activeInteractions.find(aI => aI.id === iD.id)?.endAt || 0
+      } as PetInteractionDetail
+    }); 
+  }
 );
 
 export const selectActiveDeltaStatuses = createSelector(

@@ -111,6 +111,33 @@
         { "id": "BE_VERY_HUNGRY", "image": "assets/pets/bunchie/sad-tan.gif" },
         { "id": "BE_DUMBGRY", "image": "assets/pets/bunchie/sad.gif" },
         { "id": "BE_DEAD", "image": "assets/pets/bunchie/dead.gif" }
+      ],
+      "interactions":[
+        {
+          "id":"INT_EAT",
+          "label": "Eat",
+          "cooldown": 2000,
+          "statEffects":[
+            {
+              "statId":"food",
+              "perSecond": 1.0,
+              "oneHit": 5.0,
+              "duration": 5000,
+              "delay": 0
+            },
+            {
+              "statId":"poop",
+              "perSecond": 0.5,
+              "duration": 4000,
+              "delay": 2000
+            },
+            {
+              "statId":"brains",
+              "oneHit": 50,
+              "delay": 3000
+            }
+          ]
+        }
       ]
     }
   },

@@ -49,6 +49,21 @@ export type PetStatusDefinition = {
   message: string,
   alertType?: AlertType
 }
+export type PetInteractionDefinition = {
+  id: string,
+  label: string,
+  cooldown: number,
+  statEffects: PetStatEffectDefinition[]
+}
+
+export type PetStatEffectDefinition = {
+  statId: string,
+  oneHit?: number,
+  perSecond?: number,
+  duration?: number,
+  delay?:number
+}
+
 export type PetBehaviorDefinition = {
   id: string,
   image: string
@@ -75,7 +90,8 @@ export type PetLogicGroup = {
   stats: PetStatDefinition[],
   statuses: PetStatusDefinition[],
   behaviors: PetBehaviorDefinition[],
-  behaviorRules: WhenThenStringGroup[]
+  behaviorRules: WhenThenStringGroup[],
+  interactions: PetInteractionDefinition[],
 }
 
 export type RawPetJSON = {
@@ -88,7 +104,8 @@ export type RawPetJSON = {
     stats: RawPetStatDefinition[],
     statuses: PetStatusDefinition[],
     behaviors: PetBehaviorDefinition[]
-    behaviorRules: {when:string[], then:string}[]
+    behaviorRules: {when:string[], then:string}[],
+    interactions: PetInteractionDefinition[]
   },
   timestamp: number
 }
@@ -120,6 +137,30 @@ export type SavedPetState = {
   lastSaved: number,
   bornOn?: number,
   stats: SavedStat[]
+}
+
+export type ActiveStatEffect = {
+  from: string, // "INT_EAT"
+  statId: string, // "food"
+  startDelayAt: number, // when not available, 0
+  startAt: number,
+  endAt: number,
+  perSecond: number,
+  isActive?: boolean // TODO: maybe not necessary
+}
+
+export type ActiveInteractionStatus = {
+  id: string,
+  startAt: number,
+  endAt: number // result of cooldown, if cooldown is 0, this whole record wouldnt have been saved
+}
+
+export type PetInteractionDetail = {
+  id: string,
+  label: string,
+  startAt: number,
+  endAt: number,
+  progress: number,
 }
 
 export type LocalStorageState = {
