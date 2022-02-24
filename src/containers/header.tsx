@@ -3,10 +3,11 @@ import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { getColor, getShade } from '../themes/';
-import { triggerSave, clearSave } from '../services/petstore';
+import { clearSave } from '../services/petstore';
 
 import Helpers from './helpers';
 import { useDispatch } from 'react-redux';
+import { pingStore } from '../services/ui';
 
 const ScHeader = styled.header`
   position: relative;  
@@ -98,7 +99,7 @@ export const Header = () => {
       <ScResetButton onClick={() => {dispatch(clearSave())}}>
         <p>{'CLEAR SAVE'}</p>
       </ScResetButton>
-      <ScSaveButton onClick={() => {dispatch(triggerSave())}}>
+      <ScSaveButton onClick={() => {dispatch(pingStore({ time: new Date().getTime(), doSave: true }))}}>
         <p>{'FORCE SAVE'}</p>
       </ScSaveButton>
       <ScHelpButton onClick={() => {push('/about')}}>

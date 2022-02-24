@@ -1,12 +1,11 @@
 // slightly evolving from create-react-app example
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { shallowEqual, useSelector } from 'react-redux';
 import { PetDefinition, SavedPetState, LocalStorageState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetStatDefinition, PetBehaviorDefinition, RawPetStatDefinition, PetInteractionDefinition, PetStatEffectDefinition, PetInteractionDetail } from '../../types';
 import { getDeltaStats } from '../../util/tools';
 import { evaluateWhenThenNumberGroup, evaluateWhenThenStringGroup, parseRawWhenThenGroup } from '../../util/whenthen';
 
 import { RootState } from '../store';
-import { selectActiveInteractionStatus, selectPingIdx } from '../ui';
+import { selectActiveInteractionStatus, selectTime } from '../ui';
 
 export type PetStoreState = {
   activeIdx: number,
@@ -37,7 +36,6 @@ const initialStoreState: PetStoreState = {
 
 // might want to do some validation and pre-processing here
 export const parseLogicGroup = (petDefJSON: RawPetJSON, initialState: SavedPetState) => {
-  console.log('got ', petDefJSON)
   return {
     stats: parseStatsGroup(petDefJSON.logic.stats, initialState),
     statuses: petDefJSON.logic.statuses || [],
@@ -95,8 +93,8 @@ export const petStoreSlice = createSlice({
   name: 'petStore',
   initialState: initialStoreState,
   reducers: {
-    triggerSave: (state: PetStoreState) => {
-      const ts = new Date().getTime();
+    triggerSave: (state: PetStoreState, action: PayloadAction<any>) => {
+      const ts = action.payload;
 
       const savePl: LocalStorageState = {
         config:{
@@ -107,12 +105,6 @@ export const petStoreSlice = createSlice({
 
       state.pets.forEach(pet => {
         const curStats = getDeltaStats(pet.logic.stats, pet.timestamp, ts);
-  
-        // const toSave = curStats.map(s => ({
-        //   id: s.id,
-        //   value: s.currentValue
-        // }));
-
         savePl.pets.push({
           id: pet.id,
           stats: curStats,
@@ -179,10 +171,6 @@ export const selectPets = (state: RootState): PetDefinition[] => {
   return state.petStore.pets;
 };
 
-export const selectLastSaved = (state: RootState): number => {
-  return state.petStore.lastSaved;
-};
-
 export const selectSavePayload = (state: RootState): LocalStorageState => {
   return state.petStore.savePayload;
 };
@@ -214,12 +202,11 @@ export const selectActivePetInfo = createSelector(
 );
 
 export const selectActiveDeltaStats = createSelector(
-  [selectActivePet, selectPingIdx], 
-  (activePet, pingIdx) => {
-    // TODO: all the delta stat stuff
-    if(!activePet || !activePet.logic.stats) return [];
+  [selectActivePet, selectTime], 
+  (activePet, time) => {
+    if(!time || !activePet || !activePet.logic.stats) return [];
 
-    return getDeltaStats(activePet.logic.stats, activePet.timestamp, new Date().getTime());
+    return getDeltaStats(activePet.logic.stats, activePet.timestamp, time);
   }
 );
 

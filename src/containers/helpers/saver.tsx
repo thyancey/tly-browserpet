@@ -6,14 +6,15 @@ import { defaultLocalStorageState } from '../../services/store';
 import { useSelector } from 'react-redux';
 
 export const Saver = () => {
-  const [ _, setAppData ] = useLocalStorage('browserpet', defaultLocalStorageState);
+  const [ , setLocalStorage ] = useLocalStorage('browserpet', defaultLocalStorageState);
   const savePayload = useSelector(selectSavePayload);
 
+  // this needs to get reworked, cause adding 'setLocalStorage' to the dep. array causes a reload feedback loop
   useEffect(() => {
     // this check avoids trying to save the initialState on first load, maybe there's a better way around this.
     if(!!savePayload.config.activePet){
-      console.log('(saving)', savePayload);
-      setAppData(() => savePayload);
+      // console.log('(saving)', savePayload);
+      setLocalStorage(() => savePayload);
     }
   }, [ savePayload ])
 

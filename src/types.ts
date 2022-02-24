@@ -94,6 +94,11 @@ export type PetLogicGroup = {
   interactions: PetInteractionDefinition[],
 }
 
+export type PingPayload = {
+  time: number,
+  doSave?: boolean
+}
+
 export type RawPetJSON = {
   id: string,
   name: string,

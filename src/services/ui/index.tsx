@@ -1,18 +1,18 @@
 // slightly evolving from create-react-app example
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ActiveInteractionStatus, ActiveStatEffect, PetInteractionDefinition } from '../../types';
+import { ActiveInteractionStatus, ActiveStatEffect, PetInteractionDefinition, PingPayload } from '../../types';
 import { RootState } from '../store';
 
 export type UiSlice = {
-  pingIdx: number,
+  time: number,
   lastSaved: number,
   interactions: ActiveInteractionStatus[],
   statEffects: ActiveStatEffect[]
 }
 
 const initialState: UiSlice = {
-  pingIdx: 0,
-  lastSaved: -1,
+  time: 0,
+  lastSaved: 0,
   interactions: [],
   statEffects: []
 };
@@ -21,15 +21,18 @@ export const uiSlice = createSlice({
   name: 'ui',
   initialState,
   reducers: {
-    pingStore: (state: UiSlice) => {
-      const nowTime = new Date().getTime();
+    pingStore: (state: UiSlice, action: PayloadAction<PingPayload>) => {
+      const nowTime = action.payload.time;
 
       state.interactions = state.interactions.filter(interaction => interaction.endAt > nowTime);
       state.statEffects = state.statEffects.filter(statEffect => statEffect.endAt > nowTime).map(sE => ({
         ...sE,
         isActive: nowTime > sE.startAt
       }));
-      state.pingIdx++;
+      state.time = nowTime;
+      if(action.payload.doSave){
+        state.lastSaved = nowTime;
+      }
     },
     addInteractionEvent: (state: UiSlice, action: PayloadAction<any>) => {
       
@@ -63,19 +66,15 @@ export const uiSlice = createSlice({
           } as ActiveStatEffect))
         ];
       }
-      state.pingIdx++;
+      state.time = nowTime;
     },
   }
 });
 
 export const { pingStore, addInteractionEvent } = uiSlice.actions;
 
-export const selectPingIdx = (state: RootState): number => {
-  return state.ui.pingIdx;
-};
-export const selectLastSaved = (state: RootState): number => {
-  return state.ui.lastSaved;
-};
+export const selectTime = (state: RootState): number => state.ui.time;
+export const selectLastSaved = (state: RootState): number => state.ui.lastSaved;
 
 export const getActiveInteractions = (state: RootState): ActiveInteractionStatus[] => state.ui.interactions;
 export const getActiveStatEffects = (state: RootState): ActiveStatEffect[] => state.ui.statEffects;
