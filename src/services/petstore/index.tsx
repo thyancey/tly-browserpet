@@ -5,7 +5,7 @@ import { getDeltaStats } from '../../util/tools';
 import { evaluateWhenThenNumberGroup, evaluateWhenThenStringGroup, parseRawWhenThenGroup } from '../../util/whenthen';
 
 import { RootState } from '../store';
-import { selectActiveInteractionStatus, selectTime } from '../ui';
+import { selectActiveInteractionStatus, selectActiveStatEffects, selectTime } from '../ui';
 
 export type PetStoreState = {
   activeIdx: number,
@@ -104,7 +104,7 @@ export const petStoreSlice = createSlice({
       };
 
       state.pets.forEach(pet => {
-        const curStats = getDeltaStats(pet.logic.stats, pet.timestamp, ts);
+        const curStats = getDeltaStats(pet.logic.stats, [], pet.timestamp, ts);
         savePl.pets.push({
           id: pet.id,
           stats: curStats,
@@ -112,6 +112,21 @@ export const petStoreSlice = createSlice({
           lastSaved: ts
         });
       });
+
+      // state.pets = state.pets.map(pet => {
+      //   const curStats = getDeltaStats(pet.logic.stats, [], pet.timestamp, ts);
+      //   savePl.pets.push({
+      //     id: pet.id,
+      //     stats: curStats,
+      //     bornOn: pet.bornOn,
+      //     lastSaved: ts
+      //   });
+
+      //   return {
+      //     ...pet,
+      //     timestamp: ts
+      //   }
+      // })
 
       state.lastSaved = ts;
       state.savePayload = savePl;
@@ -138,12 +153,14 @@ export const petStoreSlice = createSlice({
       const foundPet = state.pets.find(p => p.id === petDefinition.id);
       const nowTime = new Date().getTime();
       const logicGroup = parseLogicGroup(petDefinition, initialState); 
+      console.log('INTIIAL STATE', initialState)
 
       const updatedDef = {
         ...petDefinition,
         logic: logicGroup,
         bornOn: initialState?.bornOn || new Date().getTime(),
-        timestamp: nowTime
+        // timestamp: nowTime
+        timestamp: initialState?.lastSaved ? initialState.lastSaved : nowTime
       } as PetDefinition;
 
       if(foundPet){
@@ -219,9 +236,9 @@ export const selectActiveInfo = createSelector(
 );
 
 export const selectActiveDeltaStats = createSelector(
-  [selectActiveStatDefinitions, selectActiveTime, selectTime], 
-  (activePetStats, activePetTimestamp, time) => {
-    return getDeltaStats(activePetStats, activePetTimestamp, time);
+  [selectActiveStatDefinitions, selectActiveStatEffects, selectActiveTime, selectTime], 
+  (petStatus, statEffects, petTime, time) => {
+    return getDeltaStats(petStatus, statEffects, petTime, time);
   }
 );
 
@@ -298,7 +315,5 @@ export const selectPetList = createSelector(
     isActive: idx === activeIdx
   }))
 );
-
-
 
 export default petStoreSlice.reducer;

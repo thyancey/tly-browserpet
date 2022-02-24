@@ -19,6 +19,7 @@ export const Pinger = () => {
 
     if((((pinger + 1) * PING_RATE) % SAVE_RATE) === 0){
       dispatch(pingStore({ time: t, doSave: true}));
+      // dispatch(pingStore({ time: t, doSave: false}));
     }else{
       dispatch(pingStore({ time: t, doSave: false}));
     }

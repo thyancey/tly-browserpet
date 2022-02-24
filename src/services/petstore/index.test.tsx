@@ -66,6 +66,7 @@ describe('#petstore.selectors', () => {
             statEffects: []
           }
         ],
+        [],
         lastTime,
         time
       )).toEqual([{
@@ -91,6 +92,7 @@ describe('#petstore.selectors', () => {
             statEffects: []
           }
         ],
+        [],
         lastTime,
         time
       )).toEqual([{
@@ -124,6 +126,7 @@ describe('#petstore.selectors', () => {
             statEffects: []
           }
         ],
+        [],
         lastTime,
         time
       )).toEqual([{
@@ -135,6 +138,48 @@ describe('#petstore.selectors', () => {
         id: 'other',
         label: 'Other',
         value: 0,
+        max: 10
+      }]);
+    });
+    test('stat should be affected by statEffect', () => {
+      const lastTime = 1000;
+      const time = 3000;
+      expect(selectActiveDeltaStats.resultFunc(
+        [
+          {
+            id: 'food',
+            label: 'Food',
+            value: 5,
+            perSecond: 1,
+            max: 10,
+            fullIsGood: true,
+            statEffects: []
+          }
+        ],
+        [
+          {
+            from:'INT_SOMETHIN',
+            statId: 'food',
+            startDelayAt:0,
+            startAt:1000,
+            endAt:3000,
+            perSecond: 0.3
+          },
+          {
+            from:'INT_SOMETHIN_ELSE',
+            statId: 'food',
+            startDelayAt:0,
+            startAt:1000,
+            endAt:3000,
+            perSecond: 0.3
+          }
+        ],
+        lastTime,
+        time
+      )).toEqual([{
+        id: 'food',
+        label: 'Food',
+        value: 8.2,
         max: 10
       }]);
     });

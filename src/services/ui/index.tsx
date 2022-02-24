@@ -84,8 +84,7 @@ export const selectActiveInteractionStatus = createSelector(
   (activeInteractions:ActiveInteractionStatus[]) => activeInteractions
 );
 export const selectActiveStatEffects = createSelector(
-  [getActiveStatEffects],
-  (activeStatEffect:ActiveStatEffect[]) => activeStatEffect
+  [getActiveStatEffects], (activeStatEffects:ActiveStatEffect[]) => activeStatEffects
 );
 
 export default uiSlice.reducer;
