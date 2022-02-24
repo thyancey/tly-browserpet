@@ -175,18 +175,35 @@ export const selectSavePayload = (state: RootState): LocalStorageState => {
   return state.petStore.savePayload;
 };
 
-export const selectAltSavePayload = (state: RootState): LocalStorageState => {
-  return state.petStore.savePayload;
-};
-
 export const selectActivePet = createSelector(
   [selectPets, selectActiveIdx],
   (pets, activeIdx) => {
     return pets[activeIdx];
   }
 );
+export const selectActiveTime = createSelector(
+  [selectActivePet], (activePet) => activePet?.timestamp || 0
+);
+export const selectActiveImage = createSelector(
+  [selectActivePet], (activePet) => activePet?.image || ''
+);
+export const selectActiveStatDefinitions = createSelector(
+  [selectActivePet], (activePet) => activePet?.logic?.stats || []
+);
+export const selectActiveStatusDefinitions = createSelector(
+  [selectActivePet], (activePet) => activePet?.logic?.statuses || []
+);
+export const selectActiveInteractionDefinitions = createSelector(
+  [selectActivePet], (activePet) => activePet?.logic?.interactions || []
+);
+export const selectActiveBehaviorRuleDefinitions = createSelector(
+  [selectActivePet], (activePet) => activePet?.logic?.behaviorRules || []
+);
+export const selectActiveBehaviorDefinitions = createSelector(
+  [selectActivePet], (activePet) => activePet?.logic?.behaviors || []
+);
 
-export const selectActivePetInfo = createSelector(
+export const selectActiveInfo = createSelector(
   [selectActivePet],
   (activePet): (PetInfo | null) => {
     if(!activePet) return null;
@@ -202,52 +219,13 @@ export const selectActivePetInfo = createSelector(
 );
 
 export const selectActiveDeltaStats = createSelector(
-  [selectActivePet, selectTime], 
-  (activePet, time) => {
-    if(!time || !activePet || !activePet.logic.stats) return [];
-
-    return getDeltaStats(activePet.logic.stats, activePet.timestamp, time);
+  [selectActiveStatDefinitions, selectActiveTime, selectTime], 
+  (activePetStats, activePetTimestamp, time) => {
+    return getDeltaStats(activePetStats, activePetTimestamp, time);
   }
-);
-
-export const selectActivePetImage = createSelector(
-  [selectActivePet], 
-  (activePet) => {
-    return activePet?.image || '';
-  }
-);
-
-export const selectActiveStatDefinitions = createSelector(
-  [selectActivePet], (activePet) => { return activePet?.logic?.stats || []; }
-);
-export const selectActiveStatusDefinitions = createSelector(
-  [selectActivePet], (activePet) => { return activePet?.logic?.statuses || []; }
-);
-export const selectActiveInteractionDefinitions = createSelector(
-  [selectActivePet], (activePet) => { return activePet?.logic?.interactions || []; }
-);
-export const selectActiveBehaviorRuleDefinitions = createSelector(
-  [selectActivePet], (activePet) => { return activePet?.logic?.behaviorRules || []; }
-);
-export const selectActiveBehaviorDefinitions = createSelector(
-  [selectActivePet], (activePet) => { return activePet?.logic?.behaviors || []; }
 );
 
 export const selectActiveInteractionDetail = createSelector(
-  [selectActiveInteractionDefinitions, selectActiveInteractionStatus], 
-  (activeInteractionDefinitions, activeInteractions): PetInteractionDetail[] => { 
-    return activeInteractionDefinitions.map(iD => {
-      return {
-        id:iD.id,
-        label: iD.label,
-        startAt: activeInteractions.find(aI => aI.id === iD.id)?.startAt || 0,
-        endAt: activeInteractions.find(aI => aI.id === iD.id)?.endAt || 0
-      } as PetInteractionDetail
-    }); 
-  }
-);
-
-export const selectActiveInteraction2 = createSelector(
   [selectActiveInteractionDefinitions, selectActiveInteractionStatus], 
   (activeInteractionDefinitions, activeInteractions): PetInteractionDetail[] => { 
     return activeInteractionDefinitions.map(iD => {

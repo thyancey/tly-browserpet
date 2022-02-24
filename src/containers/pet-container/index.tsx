@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { getColor, getShade } from '../../themes/';
-import { selectActiveBehavior, selectActivePetImage } from '../../services/petstore';
+import { selectActiveBehavior, selectActiveImage } from '../../services/petstore';
 import { shallowEqual, useSelector } from 'react-redux';
 import { Statuses } from './statuses';
 import { Interactions } from './interactions';

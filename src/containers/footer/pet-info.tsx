@@ -3,7 +3,7 @@ import { getColor } from '../../themes/';
 
 import styled from 'styled-components';
 import { StatGroup } from './stat-group';
-import { selectActivePetInfo } from '../../services/petstore';
+import { selectActiveInfo } from '../../services/petstore';
 import { useSelector } from 'react-redux';
 
 const ScPetInfo = styled.div`
@@ -102,7 +102,7 @@ const getDateLabel = (epoch?: number) => {
 };
 
 export const PetInfo = () => {
-  const petInfo = useSelector(selectActivePetInfo);
+  const petInfo = useSelector(selectActiveInfo);
   if(!petInfo) return null;
 
   return (
