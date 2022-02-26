@@ -1,7 +1,7 @@
 import React from 'react';
 import { getColor } from '../../themes/';
 
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { getShade } from '../../themes';
 import { round } from '../../util/tools';
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import useInterval from '../../util/hooks/useInterval';
 import { pingStore, selectLastSaved } from '../../services/ui';
@@ -27,7 +27,7 @@ export const Pinger = () => {
 
   useEffect(() => {
     dispatch(triggerSave(lastSaved)); // TODO: this double dispatch may be an antipattern
-  }, [ lastSaved ])
+  }, [ lastSaved, dispatch ])
 
   return null;
 }

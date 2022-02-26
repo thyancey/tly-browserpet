@@ -3,8 +3,7 @@ import styled, { css } from 'styled-components';
 
 import { selectActiveInteractionDefinitions } from '../../services/petstore';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { getColor, mixinColorBubble, tColor } from '../../themes';
-import { AlertType } from '../../types';
+import { getColor, mixinColorBubble } from '../../themes';
 import { addInteractionEvent, selectActiveInteractionStatus, selectActiveStatEffects } from '../../services/ui';
 
 const ScContainer = styled.div`

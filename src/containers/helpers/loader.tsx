@@ -55,7 +55,7 @@ export const Loader = () => {
       setLoaded(true);
       readIt(dispatch, appData);
     }
-  }, [ loaded, appData, setLoaded ]);
+  }, [ loaded, appData, setLoaded, dispatch ]);
 
   return (null);
 }
