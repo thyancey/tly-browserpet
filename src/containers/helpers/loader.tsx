@@ -11,7 +11,6 @@ import { Dispatch } from '@reduxjs/toolkit';
 
 
 const readIt = (dispatch:any, savedData: LocalStorageState) => {
-  console.log('READ IT')
   const url =  `assets/data.jsonc`;
 
   fetch(url, {

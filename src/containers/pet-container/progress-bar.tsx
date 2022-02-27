@@ -7,28 +7,25 @@ type ScProgressBarProps = {
 }
 
 const ScWrapper = styled.div`
-  /* position:absolute; */
+  position:absolute;
   left:0;
-  top:100%;
-  height:2rem;
+  bottom:0;
+  /* height:2rem; */
+  height:100%;
   width:100%;
-  border: .5rem solid ${getColor('white')};
-  border-radius: 1rem;
-  position:relative;
 `;
 
 const ScProgressBg = styled.div`
-  background-color:${getColor('red')};
+  background-color:${getColor('white')};
   position:absolute;
   left:0;
   top:0;
   right:0;
   bottom:0;
-  z-index:-1;
 `;
 
 const ScProgressBar = styled.div<ScProgressBarProps>`
-  background-color:${getColor('green')};
+  background-color:${getColor('red')};
   position:absolute;
   height:100%;
   left:0;
@@ -36,8 +33,9 @@ const ScProgressBar = styled.div<ScProgressBarProps>`
 
   &.full{
     width:100% !important;
+    background-color: ${getColor('purple')};
   }
-  /* z-index:1; */
+  z-index:1;
 `
 
 type ProgressBarProps = {
@@ -58,7 +56,7 @@ export const ProgressBar = ({startProgress, duration}: ProgressBarProps) => {
       <ScProgressBar 
         startWidth={`${startProgress * 100}%`} 
         className={loaded ? 'full' : ''} 
-        style={{ transition: `width ${duration}s linear` }} />
+        style={{ transition: `all ${duration}s linear` }} />
       <ScProgressBg />
     </ScWrapper>
   )

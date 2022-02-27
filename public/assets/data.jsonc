@@ -116,11 +116,11 @@
         {
           "id":"INT_EAT",
           "label": "Eat",
-          "cooldown": 20000,
+          "cooldown": 10000,
           "changeStats":[
             {
               "statId":"food",
-              "value": 20.0
+              "value": 50.0
             },
             {
               "statId":"poop",
@@ -128,7 +128,7 @@
             },
             {
               "statId":"brains",
-              "value": 50
+              "value": 10
             }
           ]
         }
