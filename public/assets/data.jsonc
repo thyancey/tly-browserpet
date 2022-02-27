@@ -116,7 +116,7 @@
         {
           "id":"INT_EAT",
           "label": "Eat",
-          "cooldown": 2000,
+          "cooldown": 5000,
           "changeStats":[
             {
               "statId":"food",

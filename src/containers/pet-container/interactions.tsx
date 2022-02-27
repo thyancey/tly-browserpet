@@ -1,10 +1,12 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 
-import { selectActiveInteractionDefinitions } from '../../services/petstore';
+import { selectActiveInteractionDefinitions, addInteractionEvent, selectActiveInteractionStatus, removeInteractionEvent, changeStatEvent } from '../../services/petstore';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { getColor, mixinColorBubble } from '../../themes';
-import { addInteractionEvent, selectActiveInteractionStatus } from '../../services/ui';
+import { PetInteractionDefinition } from '../../types';
+import { Dispatch } from '@reduxjs/toolkit';
+import { pingStore } from '../../services/ui';
 
 const ScContainer = styled.div`
   color:${getColor('black')};
@@ -50,17 +52,33 @@ const ScStats = styled.ul`
 export const Interactions = () => {
   const interactionDefs = useSelector(selectActiveInteractionDefinitions, shallowEqual);
   const interactionStatus = useSelector(selectActiveInteractionStatus, shallowEqual);
+
+  // thunk madness, cause I don't know how else to do this.
   const dispatch = useDispatch();
+  const addTemporaryInteraction = (interaction: PetInteractionDefinition) => {
+    dispatch((thunkDispatch: Dispatch) => {
+      thunkDispatch(addInteractionEvent({ interaction: interaction, time: new Date().getTime() }));
+      thunkDispatch(changeStatEvent({ changedStats: interaction.changeStats, time: new Date().getTime() }));
+      thunkDispatch(pingStore({ time: new Date().getTime(), doSave: true}));
+      if(interaction.cooldown){
+        window.setTimeout(() => {
+          thunkDispatch(removeInteractionEvent(interaction.id))
+        }, interaction.cooldown);
+      }
+    });
+  }
 
   return (
     <ScContainer>
       <ScInteractions>
-        {interactionDefs.map((interaction, i) => (
-          <ScInteraction key={interaction.id} isActive={!!interactionStatus.find(iS => iS.id === interaction.id)} onClick={() => dispatch(addInteractionEvent(interaction))} >
-            {`${interaction.label}`}
-          </ScInteraction>
-        ))}
-
+        {interactionDefs.map((interaction, i) => {
+          const isActive = !!interactionStatus.find(iS => iS.id === interaction.id);
+          return(
+            <ScInteraction key={interaction.id} isActive={isActive} onClick={() => !isActive && addTemporaryInteraction(interaction)} >
+              {`${interaction.label}`}
+            </ScInteraction>
+          );
+        })}
       </ScInteractions>
       <ScStats>
       </ScStats>

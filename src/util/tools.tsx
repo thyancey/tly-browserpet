@@ -31,8 +31,8 @@ export const getRenderedDeltaStats = (stats: PetStatDefinition[], prevTime: numb
   }));
 };
 
-export const getSaveDeltaStats = (stats: PetStatDefinition[], prevTime: number, nowTime: number) =>{
-  const timeDiff = (nowTime - prevTime) / 1000;
+export const getSaveDeltaStats = (stats: PetStatDefinition[], oldSaveTime: number, newSaveTime: number) =>{
+  const timeDiff = (newSaveTime - oldSaveTime) / 1000;
 
   return stats.map(s => {
     return {
