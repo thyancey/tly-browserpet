@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { jsonc } from 'jsonc';
 
-import { LocalStorageState, PetDefinition } from '../../types';
+import { LocalStorageState, PetDefinition, PetManifestEntry, PetStatDefinitionJSON, RawPetJSON } from '../../types';
 import useLocalStorage from '../../util/hooks/useLocalStorage';
 import { createPet, removeInteractionEvent, restoreInteractionFromSave, setActiveId } from '../../services/petstore';
 import { DEFAULT_LOCALSTORAGE_STATE } from '../../services/store';
@@ -10,64 +10,112 @@ import { pingStore } from '../../services/ui';
 import { Dispatch } from '@reduxjs/toolkit';
 
 
-const readIt = (dispatch:any, savedData: LocalStorageState) => {
-  const url =  `assets/data.jsonc`;
+const fetchAllData = async (url: string, dispatch: any, savedData: LocalStorageState) => {
+  console.log('\n\n\n');
+  console.log('-------fetchAllData----------');
+  const pets = await readManifest(url)
+  console.log('fetchAllData: received pets', pets);
 
-  fetch(url, {
-    mode: 'cors'
-  })
-    .then(res => res.text())
-    .then(
-      text => jsonc.parse(text), 
-      err => {
-        console.error(`Error fretching item from ${url}`, err);
-      }
-    ) //- bad url responds with 200/ok? so this doesnt get thrown
-    .then(
-      json => {
-        const now = new Date().getTime();
-        console.log(`JSON definitions parsed successfully`, json);
-        console.log(`LocalStorage was read successfully`, savedData);
-        json.forEach((petDef: PetDefinition) => {
-          const savedStatus = savedData?.pets.find(p => p.id === petDef.id) || null;
-          dispatch(createPet({
-            petDefinition: petDef,
-            initialState: savedStatus
-          }));
-        });
+  const parsedPets = await fetchPetFiles(pets)
+  console.log('fetchAllData: received parsedPets', parsedPets);
 
-        if(savedData.config.activePet){
-          dispatch(setActiveId(savedData.config.activePet));
-        }
-        savedData.interactions.filter(interaction => interaction.endAt > now).forEach(interaction => {
-          dispatch((thunkDispatch:Dispatch) => {
-            thunkDispatch(restoreInteractionFromSave(interaction))
-            window.setTimeout(() => {
-              thunkDispatch(removeInteractionEvent(interaction.id))
-            }, interaction.endAt - now);
-          });
-        });
+  finishUp(parsedPets, dispatch, savedData)
 
-        dispatch(pingStore({ time: now, doSave: true }));
-        return true;
-      }, 
-      err => {
-        console.error(`Error parsing (the url (${url}) was bad), skipping`, err?.stack || err);
-      }
-    );
+  console.log('\n\n\n');
+}
+
+const readManifest = async (url: string) => {
+  console.log(`readManifest: reading manifest from ${url}`);
+  const petsList = await fetchManifest(url).then(json => {
+    console.log('readManifest: fetched:', json);
+    return json.pets.map((p:any) => ({
+      id: p.id,
+      url: p.location + '/data.jsonc'
+    }));
+  });
+
+  console.log('readManifest: returning', petsList);
+  return petsList;
+}
+
+const fetchManifest = async (url: string) => {
+  try{
+    const response = await fetch(url, { mode: 'cors'});
+    if(!response.ok){
+      throw `bad response`;
+    }
+    
+    const text = await response.text();
+    return jsonc.parse(text);
+  } catch(e){
+    console.error(`Error fetching or parsing manifest from ${url}`, e);
+    return {};
+  }
+}
+
+const fetchPetFiles = async (petFiles: PetManifestEntry[]) => {
+  let promises = [] as Promise<RawPetJSON>[];
+  petFiles.forEach(pF => promises.push(getPetPromise(pF)));
+  const result = await Promise.all(promises);
+  return result
+}
+
+const getPetPromise = (petFile: PetManifestEntry): Promise<RawPetJSON> => {
+  return new Promise(resolve => resolve(fetchPetFile(petFile.url)));
+}
+
+const fetchPetFile = async (url:string) => {
+  try{
+    const response = await fetch(url, { mode: 'cors'});
+    if(!response.ok){
+      throw `bad response`;
+    }
+    return jsonc.parse(await response.text());
+  } catch(e){
+    console.error(`Error fetching or parsing pet manifest from ${url}`, e);
+    return {};
+  }
+}
+
+const finishUp = (parsedPets: RawPetJSON[], dispatch: any, savedData: LocalStorageState) => {
+  const now = new Date().getTime();
+  console.log('>>> FINISH UP')
+  console.log(`JSON definitions parsed successfully`, parsedPets);
+  console.log(`LocalStorage was read successfully`, savedData);
+  parsedPets.forEach((petDef: RawPetJSON) => {
+    const savedStatus = savedData?.pets.find(p => p.id === petDef.id) || null;
+    dispatch(createPet({
+      petDefinition: petDef,
+      initialState: savedStatus
+    }));
+  });
+
+  if(savedData.config.activePet){
+    dispatch(setActiveId(savedData.config.activePet));
+  }
+  savedData.interactions.filter(interaction => interaction.endAt > now).forEach(interaction => {
+    dispatch((thunkDispatch:Dispatch) => {
+      thunkDispatch(restoreInteractionFromSave(interaction))
+      window.setTimeout(() => {
+        thunkDispatch(removeInteractionEvent(interaction.id))
+      }, interaction.endAt - now);
+    });
+  });
+
+  dispatch(pingStore({ time: now, doSave: true }));
 }
 
 export const Loader = () => {
   const dispatch = useDispatch();
   const [ loaded, setLoaded ] = useState(false);
-  const [ appData, ] = useLocalStorage('browserpet', DEFAULT_LOCALSTORAGE_STATE);
+  const [ savedData, ] = useLocalStorage('browserpet', DEFAULT_LOCALSTORAGE_STATE);
 
   useEffect(() => {
     if(!loaded){
       setLoaded(true);
-      readIt(dispatch, appData);
+      fetchAllData(`assets/pet-manifest.jsonc`, dispatch, savedData);
     }
-  }, [ loaded, appData, setLoaded, dispatch ]);
+  }, [ loaded, savedData, setLoaded, dispatch ]);
 
   return (null);
 }

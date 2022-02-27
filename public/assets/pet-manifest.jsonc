@@ -1,0 +1,16 @@
+{
+  /*
+    pingRate
+    how often in milliseconds to check behavior/stat loop
+    integer, can be "50" - "5000", but why would you want that
+
+    http://thomasyancey.com/projects/virtualpet-external/pets/rizzo-raccoon
+  */
+  // "renderRate": 1000,
+  // "saveRate": 3000,
+  "pets":[
+    { "id": "bunchie", "location": "assets/pets/bunchie" },
+    { "id": "mika", "location": "assets/pets/mika" },
+    { "id": "raccoon", "location": "assets/pets/raccoon" }
+  ]
+}

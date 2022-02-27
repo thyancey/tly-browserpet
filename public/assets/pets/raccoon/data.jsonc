@@ -1,0 +1,31 @@
+{
+  "id": "raccoon",
+  "name": "A Racoon",
+  "bio": "A dead, bloated raccoon, with a belly full of old seafood.",
+  "image": "assets/pets/raccoon/dead.gif",
+  "level": 0,
+  "logic":{
+    "stats":[
+      {
+        "id": "food",
+        "label": "Food",
+        "value": 0.0,
+        "perSecond": 1.0,
+        "min": 0.0,
+        "max": 500.0,
+        "fullIsGood": true,
+        "statEffects": []
+      }
+    ],
+    "statuses":[{
+      "id": "STATUS_NORMAL",
+      "label": "normal",
+      "message": ""
+    }],
+    "behaviorRules":[{
+      "when": [],
+      "then": "BE_NORMAL"
+    }],
+    "behaviors":[{ "id": "BE_NORMAL", "image": "assets/pets/raccoon/dead.gif" }]
+  }
+}

@@ -37,6 +37,11 @@ export type PetStatDefinition = {
   statEffects: WhenThenNumberGroup[]
 }
 
+export type PetManifestEntry = {
+  id: string,
+  url: string
+}
+
 export type AlertType = 'alert' | 'warning' | 'reward';
 export type PetStatusDefinition = {
   id: string,
