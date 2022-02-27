@@ -23,6 +23,9 @@ export default createGlobalStyle`
   
   #root{
     margin:0 auto;
+    /* for chrome extension */
+    min-width:35rem;
+    min-height:65rem;
   }
   h1, h2, h3, h4, h5, h6{
     font-family: 'Bevan', cursive;

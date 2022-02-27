@@ -1,6 +1,8 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+import { clearSave } from '../../services/petstore';
 
 import { getColor, getShade } from '../../themes/';
 import { PetTabs } from './pet-tabs';
@@ -13,7 +15,7 @@ const ScHelpButton = styled.div`
   height:3rem;
 
   border-radius:2rem 2rem 0 0;
-  background-color: ${getColor('blue')};
+  background-color: ${getColor('red')};
   color: ${getColor('white')};
 
   font-size:1.5rem;
@@ -25,7 +27,7 @@ const ScHelpButton = styled.div`
 
   cursor:pointer;
   &:hover{
-    background-color: ${getShade('blue', 20)};
+    background-color: ${getShade('red', 40)};
   }
 `;
 
@@ -47,7 +49,8 @@ const ScContainer = styled.div`
 `
 
 export const HeaderTop = () => {
-  let { push } = useHistory();
+  // let { push } = useHistory();
+  const dispatch = useDispatch();
 
   return (
     <ScContainer>
@@ -56,8 +59,9 @@ export const HeaderTop = () => {
       </div>
       <div>
         <ScLogo>{'Browser Pet'}</ScLogo>
-        <ScHelpButton onClick={() => {push('/about')}}>
-          {'?'}
+        {/* <ScHelpButton onClick={() => {push('/about')}}> */}
+        <ScHelpButton onClick={() => dispatch(clearSave())}>
+          {'X'}
         </ScHelpButton>
       </div>
     </ScContainer>
