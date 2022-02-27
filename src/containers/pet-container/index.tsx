@@ -46,7 +46,7 @@ export const PetContainer = () => {
         <>
           <ScBehavior>{`behavior: ${activeBehavior.id}`}</ScBehavior>
           <Statuses />
-          <ScPetImage style={{ backgroundImage: `url(${activeBehavior.image})` }}/>
+          <ScPetImage style={{ backgroundImage: `url(${activeBehavior.imageUrl})` }}/>
         </>
       ) }
     </ScContainer>

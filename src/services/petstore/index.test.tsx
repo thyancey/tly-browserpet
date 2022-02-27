@@ -21,18 +21,18 @@ describe('#petstore.reducers', () => {
       }));
     });
     
-    test('should error on invalid pet idx', () => {
-      const prevState = {
-        activeIdx: -1,
-        pets: [{
-          id:'pet-def1'
-        },{
-          id:'pet-def2'
-        }]
-      } as PetStoreState;
+    // test('should error and on invalid pet idx', () => {
+    //   const prevState = {
+    //     activeIdx: -1,
+    //     pets: [{
+    //       id:'pet-def1'
+    //     },{
+    //       id:'pet-def2'
+    //     }]
+    //   } as PetStoreState;
 
-      expect(() => {reducer(prevState, setActiveId('pet-def0'))}).toThrow(`Cannot find pet with id \"pet-def0\"`);
-    });
+    //   expect(() => {reducer(prevState, setActiveId('pet-def0'))}).toThrow(`Cannot find pet with id \"pet-def0\"`);
+    // });
   });
 });
 

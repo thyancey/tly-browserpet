@@ -30,7 +30,7 @@ const readManifest = async (url: string) => {
     console.log('readManifest: fetched:', json);
     return json.pets.map((p:any) => ({
       id: p.id,
-      url: p.location + '/data.jsonc'
+      baseUrl: p.baseUrl
     }));
   });
 
@@ -61,16 +61,20 @@ const fetchPetFiles = async (petFiles: PetManifestEntry[]) => {
 }
 
 const getPetPromise = (petFile: PetManifestEntry): Promise<RawPetJSON> => {
-  return new Promise(resolve => resolve(fetchPetFile(petFile.url)));
+  return new Promise(resolve => resolve(fetchPetFile(petFile)));
 }
 
-const fetchPetFile = async (url:string) => {
+const fetchPetFile = async (petManifestEntry: PetManifestEntry) => {
+  const url = petManifestEntry.baseUrl + '/data.jsonc';
   try{
     const response = await fetch(url, { mode: 'cors'});
     if(!response.ok){
       throw `bad response`;
     }
-    return jsonc.parse(await response.text());
+    const petJson = jsonc.parse(await response.text());
+    petJson.baseUrl = petManifestEntry.baseUrl;
+    
+    return petJson;
   } catch(e){
     console.error(`Error fetching or parsing pet manifest from ${url}`, e);
     return {};

@@ -1,6 +1,6 @@
 // slightly evolving from create-react-app example
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PetDefinition, SavedPetState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetBehaviorDefinition, PetStatDefinitionJSON, PetInteractionDefinition, StatChangeDefinition, PetInteractionDetail, LocalStorageState, ActiveInteractionStatus, DeltaStat, PetStatDefinition } from '../../types';
+import { PetDefinition, SavedPetState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetBehaviorDefinition, PetStatDefinitionJSON, PetInteractionDefinition, StatChangeDefinition, PetInteractionDetail, LocalStorageState, ActiveInteractionStatus, DeltaStat, PetBehaviorJSON } from '../../types';
 import { clamp, getRenderedDeltaStats, getSaveDeltaStats } from '../../util/tools';
 import { evaluateWhenThenNumberGroup, evaluateWhenThenStringGroup, parseRawWhenThenGroup } from '../../util/whenthen';
 
@@ -39,10 +39,17 @@ export const parseLogicGroup = (petDefJSON: RawPetJSON, initialState: SavedPetSt
     stats: parseStatsGroup(petDefJSON.logic.stats, initialState),
     statuses: petDefJSON.logic.statuses || [],
     behaviorRules: parseRawWhenThenGroup(petDefJSON.logic.behaviorRules, 'statuses'),
-    behaviors: petDefJSON.logic.behaviors || [],
+    behaviors: parsePetBehaviors(petDefJSON.logic.behaviors || [], petDefJSON.baseUrl),
     interactions: parseInteractionsGroup(petDefJSON.logic.interactions, initialState),
   } as PetLogicGroup;
 };
+
+export const parsePetBehaviors = (petBehaviorsJson: PetBehaviorJSON[], baseUrl: string) => {
+  return petBehaviorsJson.map(pB => ({
+    ...pB,
+    imageUrl: pB.image ? `${baseUrl}/${pB.image}` : pB.imageUrl || ''
+  }))
+}
 
 // could do some validation here
 export const parseStatChanges = (statChangesJSON: StatChangeDefinition[] = []) => {
@@ -97,9 +104,10 @@ export const petStoreSlice = createSlice({
     setActiveId: (state: PetStoreState, action: PayloadAction<any>) => {
       const petIdx = state.pets.findIndex((p:PetDefinition) => p.id === action.payload);
       if(petIdx === -1){
-        throw `Cannot find pet with id "${action.payload}"`;
+        console.log(`Cannot find pet with id "${action.payload}"`);
+      }else{
+        state.activeIdx = petIdx;
       }
-      state.activeIdx = petIdx;
     },
     setActiveIdx: (state: PetStoreState, action: PayloadAction<any>) => {
       state.activeIdx = action.payload;
@@ -213,9 +221,6 @@ export const selectActivePet = createSelector(
 export const selectActiveTime = createSelector(
   [selectActivePet], (activePet) => activePet?.timestamp || 0
 );
-export const selectActiveImage = createSelector(
-  [selectActivePet], (activePet) => activePet?.image || ''
-);
 export const selectActiveStatDefinitions = createSelector(
   [selectActivePet], (activePet) => activePet?.logic?.stats || []
 );
@@ -316,7 +321,8 @@ export const selectActiveBehavior = createSelector(
       if(finalBehaviorId){
         const f = behaviorDefinitions.find(bD => bD.id === finalBehaviorId);
         if(!f){
-          throw `ERROR: invalid behaviorId: "${finalBehaviorId}"`;
+          console.log(`ERROR: invalid behaviorId: "${finalBehaviorId}"`);
+          return null;
         }
         return f;
       }

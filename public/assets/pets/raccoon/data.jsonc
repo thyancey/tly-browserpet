@@ -2,7 +2,6 @@
   "id": "raccoon",
   "name": "A Racoon",
   "bio": "A dead, bloated raccoon, with a belly full of old seafood.",
-  "image": "assets/pets/raccoon/dead.gif",
   "level": 0,
   "logic":{
     "stats":[
@@ -26,6 +25,6 @@
       "when": [],
       "then": "BE_NORMAL"
     }],
-    "behaviors":[{ "id": "BE_NORMAL", "image": "assets/pets/raccoon/dead.gif" }]
+    "behaviors":[{ "id": "BE_NORMAL", "image": "assets/dead.gif" }]
   }
 }

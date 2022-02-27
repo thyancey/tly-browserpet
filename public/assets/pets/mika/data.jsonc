@@ -2,7 +2,6 @@
   "id": "mika",
   "name": "Mika",
   "bio": "A dog",
-  "image": "assets/pets/mika/sleeping.gif",
   "level": 0,
   "logic":{
     "stats":[
@@ -26,6 +25,6 @@
       "when": [],
       "then": "BE_NORMAL"
     }],
-    "behaviors":[{ "id": "BE_NORMAL", "image": "assets/pets/mika/sleeping.gif" }]
+    "behaviors":[{ "id": "BE_NORMAL", "image": "assets/sleeping.gif" }]
   }
 }

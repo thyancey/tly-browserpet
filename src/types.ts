@@ -39,7 +39,7 @@ export type PetStatDefinition = {
 
 export type PetManifestEntry = {
   id: string,
-  url: string
+  baseUrl: string
 }
 
 export type AlertType = 'alert' | 'warning' | 'reward';
@@ -63,8 +63,15 @@ export type StatChangeDefinition = {
 
 export type PetBehaviorDefinition = {
   id: string,
-  image: string
+  imageUrl: string
 }
+
+export type PetBehaviorJSON = {
+  id: string,
+  image?: string,
+  imageUrl?: string
+}
+
 export type WhenNumber = {
   condition: ConditionOperator,
   criteria: number,
@@ -100,12 +107,12 @@ export type RawPetJSON = {
   id: string,
   name: string,
   bio: string,
-  image: string,
   level: number,
+  baseUrl: string,
   logic: {
     stats: PetStatDefinitionJSON[],
     statuses: PetStatusDefinition[],
-    behaviors: PetBehaviorDefinition[]
+    behaviors: PetBehaviorJSON[],
     behaviorRules: {when:string[], then:string}[],
     interactions: PetInteractionDefinition[]
   },
@@ -117,7 +124,6 @@ export type PetDefinition = {
   name: string,
   bio: string,
   bornOn?: number,
-  image: string,
   level: number,
   logic: PetLogicGroup,
   timestamp: number
@@ -128,7 +134,6 @@ export type PetListItem = {
   id: string,
   isActive?: boolean
 }
-
 
 // slimmer save object for localStorage
 export type SavedPetState = {

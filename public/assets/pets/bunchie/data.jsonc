@@ -2,7 +2,6 @@
   "id": "bunchie",
   "name": "Bunchie!!",
   "bio": "A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama.",
-  "image": "assets/pets/bunchie/assets/happy.gif",
   "level": 0,
   "logic":{
     "stats":[
@@ -107,11 +106,11 @@
       }
     ],
     "behaviors":[
-      { "id": "BE_NORMAL", "image": "assets/pets/bunchie/assets/happy.gif" },
-      { "id": "BE_HUNGRY", "image": "assets/pets/bunchie/assets/sad.gif" },
-      { "id": "BE_DUMBGRY", "image": "assets/pets/bunchie/assets/sad.gif" },
-      { "id": "BE_FAT", "image": "assets/pets/bunchie/assets/fat.gif" },
-      { "id": "BE_DEAD", "image": "assets/pets/bunchie/assets/dead.gif" }
+      { "id": "BE_NORMAL", "image": "assets/happy.gif" }, // 'imageUrl' with explicit url to image is supported
+      { "id": "BE_HUNGRY", "image": "assets/sad.gif" },
+      { "id": "BE_DUMBGRY", "image": "assets/sad.gif" },
+      { "id": "BE_FAT", "image": "assets/fat.gif" },
+      { "id": "BE_DEAD", "image": "assets/dead.gif" }
     ],
     "interactions":[
       {
