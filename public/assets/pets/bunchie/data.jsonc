@@ -1,0 +1,168 @@
+{
+  "id": "bunchie",
+  "name": "Bunchie!!",
+  "bio": "A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama.",
+  "level": 0,
+  "logic":{
+    "stats":[
+      {
+        "id": "xp",
+        "label": "XP",
+        "value": 50.0,
+        "perSecond": 0,
+        "max": 100.0,
+        "fullIsGood": true
+      },
+      {
+        "id": "food",
+        "label": "Food",
+        "value": 250.0,
+        "perSecond": -10.0,
+        "max": 500.0,
+        "fullIsGood": true,
+        "statEffects":[
+          { "when": "<=_0", "then": "STATUS_DEAD" },
+          { "when": "<_50%", "then": "STATUS_HUNGRY" },
+          { "when": "<_15%", "then": "STATUS_STARVING" },
+          { "when": ">=_75%", "then": "STATUS_FULL" },
+          { "when": ">=_95%", "then": "STATUS_TOO_FULL" }
+        ]
+      },
+      {
+        "id": "brains",
+        "label": "Brains",
+        "value": 50.0,
+        "perSecond": -1.0,
+        "max": 100.0,
+        "fullIsGood": true,
+        "statEffects":[
+          { "when": "<=_0", "then": "STATUS_BRAINDEAD" },
+          { "when": "<_25%", "then": "STATUS_DUMB" },
+          { "when": ">=_75%", "then": "STATUS_SMART" }
+        ]
+      },
+      {
+        "id": "poop",
+        "label": "Poop",
+        "value": 0.0,
+        "perSecond": 2.3,
+        "max": 100.0,
+        "fullIsGood": false
+      }
+    ],
+    "statuses":[
+      {
+        "id": "STATUS_HUNGRY",
+        "label": "a little hungry",
+        "message": ""
+      },{
+        "id": "STATUS_STARVING",
+        "label": "i'm starving!!",
+        "message": "",
+        "alertType": "alert" 
+      },
+      {
+        "id": "STATUS_FULL",
+        "label": "i'm full",
+        "message": "",
+        "alertType": "reward" 
+      },
+      {
+        "id": "STATUS_TOO_FULL",
+        "label": "i'm about to bust!",
+        "message": ""
+      },
+      {
+        "id": "STATUS_DEAD",
+        "label": "i'm dead :(",
+        "message": "",
+        "alertType": "alert"
+      }
+    ],
+    "behaviorRules":[
+      {
+        "when":"STATUS_DEAD",
+        "then": "BE_DEAD"
+      },
+      {
+        "when": "STATUS_HUNGRY",
+        "then": "BE_HUNGRY"
+      },
+      {
+        "when": [ "STATUS_STARVING" ],
+        "then": "BE_HUNGRY"
+      },
+      {
+        "when": "STATUS_TOO_FULL",
+        "then": "BE_FAT"
+      },
+      {
+        "when": "STATUS_FULL",
+        "then": "BE_FAT"
+      },
+      {
+        "when":[], // use for default
+        "then": "BE_NORMAL"
+      }
+    ],
+    "behaviors":[
+      { "id": "BE_NORMAL", "image": "assets/happy.gif" }, // 'imageUrl' with explicit url to image is supported
+      { "id": "BE_HUNGRY", "image": "assets/sad.gif" },
+      { "id": "BE_DUMBGRY", "image": "assets/sad.gif" },
+      { "id": "BE_FAT", "image": "assets/fat.gif" },
+      { "id": "BE_DEAD", "image": "assets/dead.gif" }
+    ],
+    "interactions":[
+      {
+        "id":"INT_EAT",
+        "label": "Eat",
+        "cooldown": 3000,
+        "changeStats":[
+          {
+            "statId":"food",
+            "value": 50.0
+          },
+          {
+            "statId":"poop",
+            "value": 20
+          },
+          {
+            "statId":"brains",
+            "value": 10
+          }
+        ]
+      },
+      {
+        "id":"INT_RELIEVE",
+        "label": "lil dumps",
+        "cooldown": 3000,
+        "changeStats":[
+          {
+            "statId":"poop",
+            "value": -10
+          },
+          {
+            "statId":"brains",
+            "value": -10
+          }
+        ]
+      },
+      {
+        "id":"INT_RELIEVE2",
+        "label": "big dumps",
+        "cooldown": 10000,
+        "changeStats":[
+          {
+            "statId":"poop",
+            "value": -50
+          },
+          {
+            "statId":"brains",
+            "value": -20
+          }
+        ]
+      }
+    ]
+  }
+}
+  
