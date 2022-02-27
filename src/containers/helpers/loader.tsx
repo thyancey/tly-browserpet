@@ -4,11 +4,12 @@ import { jsonc } from 'jsonc';
 import { LocalStorageState, PetDefinition } from '../../types';
 import useLocalStorage from '../../util/hooks/useLocalStorage';
 import { createPet, setActiveId } from '../../services/petstore';
-import { defaultLocalStorageState } from '../../services/store';
+import { DEFAULT_LOCALSTORAGE_STATE } from '../../services/store';
 import { useDispatch } from 'react-redux';
 
 
 const readIt = (dispatch:any, savedData: LocalStorageState) => {
+  console.log('READ IT')
   const url =  `assets/data.jsonc`;
 
   fetch(url, {
@@ -48,7 +49,7 @@ const readIt = (dispatch:any, savedData: LocalStorageState) => {
 export const Loader = () => {
   const dispatch = useDispatch();
   const [ loaded, setLoaded ] = useState(false);
-  const [ appData, ] = useLocalStorage('browserpet', defaultLocalStorageState);
+  const [ appData, ] = useLocalStorage('browserpet', DEFAULT_LOCALSTORAGE_STATE);
 
   useEffect(() => {
     if(!loaded){

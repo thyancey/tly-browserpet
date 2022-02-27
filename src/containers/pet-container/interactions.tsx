@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 import { selectActiveInteractionDefinitions } from '../../services/petstore';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { getColor, mixinColorBubble } from '../../themes';
-import { addInteractionEvent, selectActiveInteractionStatus, selectActiveStatEffects } from '../../services/ui';
+import { addInteractionEvent, selectActiveInteractionStatus } from '../../services/ui';
 
 const ScContainer = styled.div`
   color:${getColor('black')};
@@ -47,35 +47,9 @@ const ScStats = styled.ul`
   
 `;
 
-type ScStatProps = {
-  isPositive?: boolean,
-  isActive?: boolean
-};
-
-const ScStat = styled.li<ScStatProps>`
-  display:inline-block;
-  list-style:none;
-  color:black;
-  
-  font-weight:bold;
-  font-size: 2rem;
-
-  background-color:black;
-  padding: 1rem 2rem;
-  margin:1rem;
-
-  opacity: ${p => p.isActive ? 1 : .5};
-  
-  color: ${p => p.isPositive ? getColor('green') : getColor('red')};
-
-  transition: all .2s;
-`;
-
-
 export const Interactions = () => {
   const interactionDefs = useSelector(selectActiveInteractionDefinitions, shallowEqual);
   const interactionStatus = useSelector(selectActiveInteractionStatus, shallowEqual);
-  const statEffects = useSelector(selectActiveStatEffects, shallowEqual);
   const dispatch = useDispatch();
 
   return (
@@ -89,14 +63,6 @@ export const Interactions = () => {
 
       </ScInteractions>
       <ScStats>
-        {statEffects.map((statEffect, i) => (
-          <ScStat isPositive={(statEffect.perSecond > 0)} isActive={(statEffect.isActive)} key={statEffect.statId} >
-            <span>{`${statEffect.statId}: `}</span>
-            <span>{`${(statEffect.perSecond > 0) ? '+' : '-'}${statEffect.perSecond}`}</span>
-            <p>{`delay: ${Math.round((statEffect.startAt - statEffect.startDelayAt) / 1000)} seconds`}</p>
-            <p>{`${Math.round((statEffect.endAt - statEffect.startAt) / 1000)} seconds`}</p>
-          </ScStat>
-        ))}
       </ScStats>
     </ScContainer>
   )

@@ -17,7 +17,7 @@ export type PetInfo = {
   level: number
 }
 
-export type RawPetStatDefinition = {
+export type PetStatDefinitionJSON = {
   id: string,
   label: string,
   value: number,
@@ -37,9 +37,6 @@ export type PetStatDefinition = {
   statEffects: WhenThenNumberGroup[]
 }
 
-// export type PetStatusesDict = {
-//   [key: string]: PetStatusDefinition
-// }
 export type AlertType = 'alert' | 'warning' | 'reward';
 export type PetStatusDefinition = {
   id: string,
@@ -51,15 +48,12 @@ export type PetInteractionDefinition = {
   id: string,
   label: string,
   cooldown: number,
-  statEffects: PetStatEffectDefinition[]
+  alterStats: AlterPetStatDefinition[]
 }
 
-export type PetStatEffectDefinition = {
+export type AlterPetStatDefinition = {
   statId: string,
-  oneHit?: number,
-  perSecond?: number,
-  duration?: number,
-  delay?:number
+  value: number
 }
 
 export type PetBehaviorDefinition = {
@@ -104,7 +98,7 @@ export type RawPetJSON = {
   image: string,
   level: number,
   logic: {
-    stats: RawPetStatDefinition[],
+    stats: PetStatDefinitionJSON[],
     statuses: PetStatusDefinition[],
     behaviors: PetBehaviorDefinition[]
     behaviorRules: {when:string[], then:string}[],
@@ -130,26 +124,16 @@ export type PetListItem = {
   isActive?: boolean
 }
 
-export type SavedStat = {
-  id: string,
-  value: number
-}
 
+// slimmer save object for localStorage
 export type SavedPetState = {
   id: string,
   lastSaved: number,
   bornOn?: number,
-  stats: SavedStat[]
-}
-
-export type ActiveStatEffect = {
-  from: string, // "INT_EAT"
-  statId: string, // "food"
-  startDelayAt: number, // when not available, 0
-  startAt: number,
-  endAt: number,
-  perSecond: number,
-  isActive?: boolean // TODO: maybe not necessary
+  stats: {
+    id: string,
+    value: number
+  }[]
 }
 
 export type ActiveInteractionStatus = {
@@ -169,16 +153,6 @@ export type PetInteractionDetail = {
 export type LocalStorageState = {
   config: {
     activePet?: string,
-    haveSaved?: boolean
-  },
-  pets: SavedPetState[]
-}
-
-
-export type NewLocalStorageState = {
-  config: {
-    activePet?: string,
-    haveSaved?: boolean,
     lastSaved?: number,
   },
   interactions: ActiveInteractionStatus[],

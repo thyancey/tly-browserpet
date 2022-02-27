@@ -1,14 +1,13 @@
 // slightly evolving from create-react-app example
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { shallowEqual, useSelector } from 'react-redux';
-import { PetDefinition, SavedPetState, LocalStorageState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetStatDefinition, PetBehaviorDefinition, RawPetStatDefinition, PetInteractionDefinition, PetStatEffectDefinition, PetInteractionDetail, NewLocalStorageState } from '../../types';
-import { getDeltaStats, getSaveDeltaStats } from '../../util/tools';
+import { PetDefinition, SavedPetState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetBehaviorDefinition, PetStatDefinitionJSON, PetInteractionDefinition, AlterPetStatDefinition, PetInteractionDetail, LocalStorageState } from '../../types';
+import { getRenderedDeltaStats, getSaveDeltaStats } from '../../util/tools';
 import { evaluateWhenThenNumberGroup, evaluateWhenThenStringGroup, parseRawWhenThenGroup } from '../../util/whenthen';
 
 import { RootState } from '../store';
-import { selectActiveInteractionStatus, selectActiveStatEffects, selectLastSaved, selectLastRendered } from '../ui';
+import { selectActiveInteractionStatus, selectLastSaved, selectLastRendered } from '../ui';
 
-const DEFAULT_LOCALSTORAGE_STATE: NewLocalStorageState = {
+const DEFAULT_LOCALSTORAGE_STATE: LocalStorageState = {
   config:{
     activePet: '',
     lastSaved: -1
@@ -19,9 +18,7 @@ const DEFAULT_LOCALSTORAGE_STATE: NewLocalStorageState = {
 
 export type PetStoreState = {
   activeIdx: number,
-  pets: PetDefinition[],
-  lastSaved: number,
-  lastSavedPayload: LocalStorageState
+  pets: PetDefinition[]
 }
 
 export type CreatePetPayload = {
@@ -31,12 +28,7 @@ export type CreatePetPayload = {
 
 const initialStoreState: PetStoreState = {
   activeIdx: 0,
-  pets: [],
-  lastSaved: 0,
-  // although this savePayload seems strange in the store, since the stats are changing CONSTANTLY, using a normal selector
-  // isnt performant. If I can figure out a way to only reselect when something elses, perhaps this could get removed and 
-  // immediately derived from the existing pets[]
-  lastSavedPayload: DEFAULT_LOCALSTORAGE_STATE
+  pets: []
 };
 
 // might want to do some validation and pre-processing here
@@ -51,13 +43,10 @@ export const parseLogicGroup = (petDefJSON: RawPetJSON, initialState: SavedPetSt
 };
 
 // could do some validation here
-export const parseStatEffects = (statEffectsJSON: PetStatEffectDefinition[]) => {
-  return statEffectsJSON.map(sE => ({
+export const parseStatAlterations = (statAlterationsJSON: AlterPetStatDefinition[] = []) => {
+  return statAlterationsJSON.map(sE => ({
     statId: sE.statId,
-    oneHit: sE.oneHit || 0,
-    perSecond: sE.perSecond || 0,
-    duration: sE.duration || 0,
-    delay: sE.delay || 0
+    value: sE.value || 0
   }));
 }
 
@@ -69,12 +58,12 @@ export const parseInteractionsGroup = (interactions: PetInteractionDefinition[],
       id: int.id,
       label: int.label,
       cooldown: int.cooldown,
-      statEffects: parseStatEffects(int.statEffects)
+      alterStats: parseStatAlterations(int.alterStats)
     }
   ));
 };
 
-export const parseStatsGroup = (statsDef: RawPetStatDefinition[], initialState: SavedPetState) => {
+export const parseStatsGroup = (statsDef: PetStatDefinitionJSON[], initialState: SavedPetState) => {
   return statsDef.map(pS => {
     const foundStat = initialState?.stats.find(iS => iS.id === pS.id);
     const statEffects = parseRawWhenThenGroup(pS.statEffects, 'stats');
@@ -98,17 +87,6 @@ export const petStoreSlice = createSlice({
   name: 'petStore',
   initialState: initialStoreState,
   reducers: {
-    triggerSave: (state: PetStoreState, action: PayloadAction<any>) => {
-      const ts = action.payload;
-      console.log('triggerSave');
-
-      state.lastSaved = ts;
-    },
-    setLastSavedPayload: (state: PetStoreState, action: PayloadAction<any>) => {
-      console.log('setLastSavedPayload');
-
-      state.lastSavedPayload = action.payload;
-    },
     clearSave: () => {
       // TODO, this should be handled differently, or taken out of redux otherwise
       (global as any).localStorage.clear();
@@ -131,7 +109,6 @@ export const petStoreSlice = createSlice({
       const foundPet = state.pets.find(p => p.id === petDefinition.id);
       const nowTime = new Date().getTime();
       const logicGroup = parseLogicGroup(petDefinition, initialState); 
-      console.log('INTIIAL STATE', initialState)
 
       const updatedDef = {
         ...petDefinition,
@@ -156,7 +133,7 @@ export const petStoreSlice = createSlice({
   }
 });
 
-export const { createPet, setActiveIdx, setActiveId, triggerSave, clearSave, setLastSavedPayload } = petStoreSlice.actions;
+export const { createPet, setActiveIdx, setActiveId, clearSave } = petStoreSlice.actions;
 
 export const selectActiveIdx = (state: RootState): number => state.petStore.activeIdx;
 export const selectPets = (state: RootState): PetDefinition[] => state.petStore.pets;
@@ -205,9 +182,9 @@ export const selectActiveInfo = createSelector(
 );
 
 export const selectActiveDeltaStats = createSelector(
-  [selectActiveStatDefinitions, selectActiveStatEffects, selectActiveTime, selectLastRendered], 
-  (petStatus, statEffects, petTime, time) => {
-    return getDeltaStats(petStatus, statEffects, petTime, time);
+  [selectActiveStatDefinitions, selectActiveTime, selectLastRendered], 
+  (petStatus, petTime, time) => {
+    return getRenderedDeltaStats(petStatus, petTime, time);
   }
 );
 
@@ -285,29 +262,6 @@ export const selectPetList = createSelector(
   }))
 );
 
-
-
-/*
-const ts = action.payload;
-
-const savePl: LocalStorageState = {
-  config:{
-    activePet: state.pets[state.activeIdx]?.id || ''
-  },
-  pets:[]
-};
-
-state.pets.forEach(pet => {
-  const curStats = getDeltaStats(pet.logic.stats, [], pet.timestamp, ts);
-  savePl.pets.push({
-    id: pet.id,
-    stats: curStats,
-    bornOn: pet.bornOn,
-    lastSaved: ts
-  })
-});*/
-
-
 export const selectSavedDeltaStats = createSelector(
   [selectActiveStatDefinitions, selectActiveTime, selectLastSaved], 
   (petStatus, petTime, lastSavedTime) => {
@@ -315,32 +269,9 @@ export const selectSavedDeltaStats = createSelector(
   }
 );
 
-// export const selectNewSavePayload = createSelector(
-//   [selectLastSaved, selectSavedDeltaStats, selectActivePet, selectActiveInteractionStatus],
-//   (lastSaved, deltaStats, activePet, activeInteractions): NewLocalStorageState => {
-//     console.log('lastSaved', lastSaved)
-//     if(!activePet){
-//       return DEFAULT_LOCALSTORAGE_STATE;
-//     }
-//     return {
-//       config:{
-//         activePet: activePet?.id || '',
-//         lastSaved: lastSaved
-//       },
-//       interactions:activeInteractions,
-//       pets:[{
-//         id: activePet.id,
-//         stats: deltaStats,
-//         bornOn: activePet.bornOn,
-//         lastSaved: lastSaved
-//       }]
-//     };
-//   }
-// );
-
 export const selectNewSavePayload = createSelector(
   [selectLastSaved, selectSavedDeltaStats, selectActivePet, selectActiveInteractionStatus],
-  (lastSaved, deltaStats, activePet, activeInteractions): NewLocalStorageState => {
+  (lastSaved, deltaStats, activePet, activeInteractions): LocalStorageState => {
     console.log('activeInteractions', activeInteractions)
     if(!activePet){
       return DEFAULT_LOCALSTORAGE_STATE;

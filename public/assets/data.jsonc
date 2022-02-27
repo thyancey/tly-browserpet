@@ -117,23 +117,18 @@
           "id":"INT_EAT",
           "label": "Eat",
           "cooldown": 2000,
-          "statEffects":[
+          "alterStats":[
             {
               "statId":"food",
-              "perSecond": 20.0,
-              "duration": 5000,
-              "delay": 0
+              "value": 20.0
             },
             {
               "statId":"poop",
-              "perSecond": 0.5,
-              "duration": 4000,
-              "delay": 2000
+              "value": 20
             },
             {
               "statId":"brains",
-              "oneHit": 50,
-              "delay": 3000
+              "value": 50
             }
           ]
         }

@@ -1,20 +1,18 @@
 // slightly evolving from create-react-app example
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ActiveInteractionStatus, ActiveStatEffect, PetInteractionDefinition, PingPayload } from '../../types';
+import { ActiveInteractionStatus, PetInteractionDefinition, PingPayload } from '../../types';
 import { RootState } from '../store';
 
 export type UiSlice = {
   lastRendered: number,
   lastSaved: number,
-  interactions: ActiveInteractionStatus[],
-  statEffects: ActiveStatEffect[]
+  interactions: ActiveInteractionStatus[]
 }
 
 const initialState: UiSlice = {
   lastRendered: 0,
   lastSaved: 0,
-  interactions: [],
-  statEffects: []
+  interactions: []
 };
 
 export const uiSlice = createSlice({
@@ -36,6 +34,7 @@ export const uiSlice = createSlice({
       
       // // these are added by a user interaction
       if(!state.interactions.find(iE => iE.id === intDefinition.id)){
+        console.log('addInteraction', intDefinition)
         state.interactions.push({
           id: intDefinition.id,
           startAt: nowTime,
@@ -56,14 +55,10 @@ export const selectLastRendered = (state: RootState): number => state.ui.lastRen
 export const selectLastSaved = (state: RootState): number => state.ui.lastSaved;
 
 export const getActiveInteractions = (state: RootState): ActiveInteractionStatus[] => state.ui.interactions;
-export const getActiveStatEffects = (state: RootState): ActiveStatEffect[] => state.ui.statEffects;
 
 export const selectActiveInteractionStatus = createSelector(
   [getActiveInteractions], 
   (activeInteractions:ActiveInteractionStatus[]) => activeInteractions
-);
-export const selectActiveStatEffects = createSelector(
-  [getActiveStatEffects], (activeStatEffects:ActiveStatEffect[]) => activeStatEffects
 );
 
 export default uiSlice.reducer;
