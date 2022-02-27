@@ -1,93 +1,89 @@
 import React from 'react';
-import { getColor, getShade } from '../../themes/';
+import { getColor } from '../../themes/';
 
-import styled, { css } from 'styled-components';
-
-import { 
-  selectPetList, 
-  setActiveIdx 
-} from '../../services/petstore';
-import { PetInfo } from './pet-info';
-import { useDispatch, useSelector } from 'react-redux';
+import styled from 'styled-components';
+import { StatGroup } from './stat-group';
+import { selectActiveInfo } from '../../services/petstore';
+import { useSelector } from 'react-redux';
+import { Interactions } from './interactions';
 
 const ScContainer = styled.div`
-  margin-top: -1rem;
-  position:relative;
-`;
-
-const ScTabs = styled.ul`
-  width:100%;
-  margin-bottom:-.5rem;
-  padding-left:1rem;
   position:absolute;
   left:0;
-  bottom:100%;
-`;
+  right:0;
+  top:-.5rem;
+  bottom:0;
 
-type ScTabProps = {
-  isActive?: boolean
-};
-
-const ScTab = styled.li<ScTabProps>`
-  list-style:none;
-  margin:none;
-  
-  display:inline-block;
-  vertical-align:bottom;
-  background-color:white;
-  color: black;
-
-  font-size:2rem;
-  line-height:2rem;
-  font-weight:bold;
-  padding: .25rem 1rem;
-  padding-bottom: 0rem;
-  margin-right:.25rem;
-
+  background-color:${getColor('green')};
   border:.5rem solid ${getColor('white')};
-  border-radius:1rem 1rem 0 0;
+  border-radius:2rem;
+  overflow:hidden;
 
-  background-color:${getColor('blue')};
-  border-bottom-color: ${getColor('white')};
-  color:${getColor('black')};
-  transition: padding-bottom .1s ease-in-out, background-color .1s ease-in-out;
-
-  &:hover{
-    background-color:${getShade('blue', 20)};
-  }
-  
-  ${props => props.isActive && css`
-    background-color:${getColor('green')};
-    padding-bottom: .75rem;
-    padding-top: .5rem;
-    transition: padding .2s ease-out, background-color .2s ease-out;
-
-    &:hover{
-      background-color:${getShade('green', 40)};
-    }
-  `};
-
-  cursor:pointer;
+  box-shadow: .25rem .25rem .55rem .45rem ${getColor('grey')};
 `
 
+const ScPetInfo = styled.div`
+  width:100%;
+  height:16rem;
+
+  font-size: 1.5rem;
+  line-height: 1.5rem;
+  padding: 0.25rem .5rem .5rem .5rem;
+  font-weight:500;
+  padding:2rem;
+  
+  color: black;
+  
+
+  overflow-y:auto;
+
+  hr{
+    border-color:${getColor('blue')};
+    border-style:dashed;
+    margin-top:.5rem;
+    margin-bottom:.5rem;
+
+    margin-left:10%;
+    width:80%;
+  }
+`
+
+const ScBio = styled.div`
+  width:100%;
+`;
+
+const ScBioName = styled.h4`
+  margin-top:1rem;
+  margin-bottom:.5rem;
+`;
+
+const ScBioInfo = styled.p`
+  margin-top:1rem;
+  padding-left:1rem;
+`;
+
+const ScInteractions = styled.div`
+  min-height:5rem;
+  width:100%;
+`;
+
 export const Footer = () => {
-  const petList = useSelector(selectPetList);
-  const dispatch = useDispatch();
+  const petInfo = useSelector(selectActiveInfo);
+  if(!petInfo) return null;
 
   return (
     <ScContainer>
-      <ScTabs>
-        {petList.map((p, idx) => (
-          <ScTab 
-            key={idx} 
-            onClick={() => dispatch(setActiveIdx(idx))} 
-            isActive={p.isActive}
-          >
-            {idx + 1}
-          </ScTab>
-        ))}
-      </ScTabs>
-      <PetInfo/>
+      <ScInteractions>
+        <Interactions />
+      </ScInteractions>
+      <ScPetInfo>
+        <StatGroup />
+        <hr/>
+        <ScBio>
+          <ScBioName>{'Description'}</ScBioName>
+          <ScBioInfo>{petInfo.bio}</ScBioInfo>
+        </ScBio>
+      </ScPetInfo>
     </ScContainer>
   )
 }

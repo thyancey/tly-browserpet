@@ -1,30 +1,36 @@
 import React from 'react';
 import styled from 'styled-components';
-import { getColor, mixinColorBubble } from '../../themes';
-import { ActiveInteractionStatus, PetInteractionDefinition } from '../../types';
+import { getColor } from '../../../themes';
+import { ActiveInteractionStatus, PetInteractionDefinition } from '../../../types';
 import { ProgressBar } from './progress-bar';
 
 
 const ScInteraction = styled.li`
-  display:inline-block;
-  list-style:none;
+  text-align:center;
 `;
 
 const ScButton = styled.div`
   font-weight:bold;
   font-size: 2rem;
 
-  ${mixinColorBubble('purple')}
   padding:1rem 1.5rem;
 
   position:relative;
   overflow: hidden;
   cursor:pointer;
+
+  
+  background-color: ${getColor('blue')};
+  color: ${getColor('white')};
+  border: .5rem solid ${getColor('white')};
+  border-radius: 1rem;
 `;
 
 const ScCooldownButton = styled(ScButton)`
-  ${mixinColorBubble('red')}
-  color: ${getColor('black')};
+  background-color: ${getColor('red')};
+  border-color: ${getColor('white')};
+  color: ${getColor('white')};
+
   cursor:not-allowed;
 `;
 

@@ -5,17 +5,17 @@ import { getColor } from '../../themes/';
 import { selectActiveBehavior } from '../../services/petstore';
 import { shallowEqual, useSelector } from 'react-redux';
 import { Statuses } from './statuses';
-import { Interactions } from './interactions';
 
-const ScPetContainer = styled.div`
+const ScContainer = styled.div`
+  position:absolute;
+  left:0;
+  right:0;
+  top:-2rem;
+  padding-top:2rem;
+  bottom:-2rem;
+  padding-bottom:2rem;
   background-color: ${getColor('blue')};
   border:.5rem solid ${getColor('white')};
-  border-radius:1rem 0 0 0;
-  width: 100%;
-  height: 30rem;
-
-  padding-bottom: 1rem;
-  position: relative;
 `;
 
 const ScPetImage = styled.div`
@@ -41,15 +41,14 @@ export const PetContainer = () => {
   const activeBehavior = useSelector(selectActiveBehavior, shallowEqual);
   console.log('behavior', activeBehavior)
   return (
-    <ScPetContainer>
-    { activeBehavior && (
-      <>
-        <ScBehavior>{`behavior: ${activeBehavior.id}`}</ScBehavior>
-        <Interactions />
-        <Statuses />
-        <ScPetImage style={{ backgroundImage: `url(${activeBehavior.image})` }}/>
-      </>
-    ) }
-    </ScPetContainer>
+    <ScContainer>
+      { activeBehavior && (
+        <>
+          <ScBehavior>{`behavior: ${activeBehavior.id}`}</ScBehavior>
+          <Statuses />
+          <ScPetImage style={{ backgroundImage: `url(${activeBehavior.image})` }}/>
+        </>
+      ) }
+    </ScContainer>
   )
 }

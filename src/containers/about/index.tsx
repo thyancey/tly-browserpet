@@ -3,6 +3,9 @@ import { useHistory } from 'react-router-dom';
 import { getColor } from '../../themes/';
 
 import styled from 'styled-components';
+import { clearSave } from '../../services/petstore';
+import { pingStore } from '../../services/ui';
+import { useDispatch } from 'react-redux';
 
 const ScContainer = styled.div`
   padding:1rem;
@@ -31,6 +34,8 @@ const ScButton = styled.button`
 
 export const About = () => {
   let { push } = useHistory();
+  const dispatch = useDispatch();
+
 
   return (
     <ScContainer>
@@ -39,6 +44,13 @@ export const About = () => {
       <ScButton onClick={() => {push('/')}}>
         {'BACK'}
       </ScButton>
+      <ScButton onClick={() => {dispatch(clearSave())}}>
+        {'Clear Save'}
+      </ScButton>
+      <ScButton onClick={() => {dispatch(pingStore({ time: new Date().getTime(), doSave: true }))}}>
+        {'Force Save'}
+      </ScButton>
     </ScContainer>
   )
 }
+
