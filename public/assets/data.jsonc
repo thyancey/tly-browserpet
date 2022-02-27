@@ -136,12 +136,12 @@
         },
         {
           "id":"INT_RELIEVE",
-          "label": "Pee",
+          "label": "lil dumps",
           "cooldown": 3000,
           "changeStats":[
             {
               "statId":"poop",
-              "value": -20
+              "value": -10
             },
             {
               "statId":"brains",
@@ -151,7 +151,7 @@
         },
         {
           "id":"INT_RELIEVE2",
-          "label": "Poo",
+          "label": "big dumps",
           "cooldown": 10000,
           "changeStats":[
             {
