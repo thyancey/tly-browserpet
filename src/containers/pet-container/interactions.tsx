@@ -7,6 +7,7 @@ import { getColor, mixinColorBubble } from '../../themes';
 import { PetInteractionDefinition } from '../../types';
 import { Dispatch } from '@reduxjs/toolkit';
 import { pingStore } from '../../services/ui';
+import { ProgressBar } from './progress-bar';
 
 const ScContainer = styled.div`
   color:${getColor('black')};
@@ -26,10 +27,7 @@ const ScInteractions = styled.ul`
   text-align: left;
 `;
 
-type ScInteractionProps = {
-  isActive?: boolean
-}
-const ScInteraction = styled.li<ScInteractionProps>`
+const ScInteraction = styled.li`
   display:inline-block;
   list-style:none;
   color:black;
@@ -37,17 +35,18 @@ const ScInteraction = styled.li<ScInteractionProps>`
   font-weight:bold;
   font-size: 2rem;
   
-  ${mixinColorBubble('purple')}
+  ${mixinColorBubble('green')}
   padding:.5rem 1rem;
+`;
 
-  ${p => p.isActive && css`
-    background-color: ${getColor('red')};
-  `}
+const ScActiveInteraction = styled(ScInteraction)`
+  ${mixinColorBubble('red')}
 `;
 
 const ScStats = styled.ul`
   
 `;
+
 
 export const Interactions = () => {
   const interactionDefs = useSelector(selectActiveInteractionDefinitions, shallowEqual);
@@ -72,12 +71,27 @@ export const Interactions = () => {
     <ScContainer>
       <ScInteractions>
         {interactionDefs.map((interaction, i) => {
-          const isActive = !!interactionStatus.find(iS => iS.id === interaction.id);
-          return(
-            <ScInteraction key={interaction.id} isActive={isActive} onClick={() => !isActive && addTemporaryInteraction(interaction)} >
-              {`${interaction.label}`}
-            </ScInteraction>
-          );
+          const activeStatus = interactionStatus.find(iS => iS.id === interaction.id);
+          if(activeStatus){
+            const total = activeStatus.endAt - activeStatus.startAt; 
+            const progress = (total - (activeStatus.endAt - new Date().getTime())) / total;
+            const timeLeft = (activeStatus.endAt - new Date().getTime()) / 1000;
+
+            console.log(`${interaction.id} is %${progress * 100} complete with ${timeLeft} left.`)
+            console.log(`of ${total / 1000} seconds`)
+            return(
+              <ScActiveInteraction key={interaction.id} >
+                {interaction.label}
+                <ProgressBar startProgress={progress} duration={timeLeft} />
+              </ScActiveInteraction>
+            );
+          }else{
+            return(
+              <ScInteraction key={interaction.id} onClick={() => addTemporaryInteraction(interaction)} >
+                {`${interaction.label}`}
+              </ScInteraction>
+            );
+          }
         })}
       </ScInteractions>
       <ScStats>

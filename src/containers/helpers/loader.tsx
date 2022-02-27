@@ -3,7 +3,7 @@ import { jsonc } from 'jsonc';
 
 import { LocalStorageState, PetDefinition } from '../../types';
 import useLocalStorage from '../../util/hooks/useLocalStorage';
-import { addInteractionEvent, createPet, removeInteractionEvent, restoreInteractionFromSave, setActiveId } from '../../services/petstore';
+import { createPet, removeInteractionEvent, restoreInteractionFromSave, setActiveId } from '../../services/petstore';
 import { DEFAULT_LOCALSTORAGE_STATE } from '../../services/store';
 import { useDispatch } from 'react-redux';
 import { pingStore } from '../../services/ui';
@@ -46,15 +46,10 @@ const readIt = (dispatch:any, savedData: LocalStorageState) => {
             window.setTimeout(() => {
               thunkDispatch(removeInteractionEvent(interaction.id))
             }, interaction.endAt - now);
-          })
-
+          });
         });
 
-        if(savedData.config.lastSaved){
-          console.log('send lastSaved', savedData.config.lastSaved)
-          dispatch(pingStore({ time: savedData.config.lastSaved, doSave: true }));
-        }
-
+        dispatch(pingStore({ time: now, doSave: true }));
         return true;
       }, 
       err => {

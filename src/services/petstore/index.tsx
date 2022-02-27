@@ -71,12 +71,14 @@ export const parseStatsGroup = (statsDef: PetStatDefinitionJSON[], initialState:
     const statEffects = parseRawWhenThenGroup(pS.statEffects, 'stats');
 
     if(foundStat){
+      console.log('foundStat for ', pS.id,foundStat)
       return {
         ...pS,
         value: foundStat.value,
         statEffects: statEffects
       }
     }else{
+      console.log('returning default for ', pS.id, pS)
       return {
         ...pS,
         statEffects: statEffects
@@ -181,6 +183,8 @@ export const petStoreSlice = createSlice({
         bornOn: initialState?.bornOn || new Date().getTime(),
         timestamp: nowTime
       } as PetDefinition;
+
+      console.error(`food is ${updatedDef.logic.stats.find(s => s.id === 'food')?.value}`);
 
       if(foundPet){
         state.pets = state.pets.map(p => {
