@@ -3,9 +3,11 @@ import { jsonc } from 'jsonc';
 
 import { LocalStorageState, PetDefinition } from '../../types';
 import useLocalStorage from '../../util/hooks/useLocalStorage';
-import { createPet, setActiveId } from '../../services/petstore';
-import { defaultLocalStorageState } from '../../services/store';
+import { createPet, removeInteractionEvent, restoreInteractionFromSave, setActiveId } from '../../services/petstore';
+import { DEFAULT_LOCALSTORAGE_STATE } from '../../services/store';
 import { useDispatch } from 'react-redux';
+import { pingStore } from '../../services/ui';
+import { Dispatch } from '@reduxjs/toolkit';
 
 
 const readIt = (dispatch:any, savedData: LocalStorageState) => {
@@ -23,8 +25,9 @@ const readIt = (dispatch:any, savedData: LocalStorageState) => {
     ) //- bad url responds with 200/ok? so this doesnt get thrown
     .then(
       json => {
-        console.log(`data was read successfully`, json);
-        console.log(`saved data was read successfully`, savedData);
+        const now = new Date().getTime();
+        console.log(`JSON definitions parsed successfully`, json);
+        console.log(`LocalStorage was read successfully`, savedData);
         json.forEach((petDef: PetDefinition) => {
           const savedStatus = savedData?.pets.find(p => p.id === petDef.id) || null;
           dispatch(createPet({
@@ -36,7 +39,16 @@ const readIt = (dispatch:any, savedData: LocalStorageState) => {
         if(savedData.config.activePet){
           dispatch(setActiveId(savedData.config.activePet));
         }
+        savedData.interactions.filter(interaction => interaction.endAt > now).forEach(interaction => {
+          dispatch((thunkDispatch:Dispatch) => {
+            thunkDispatch(restoreInteractionFromSave(interaction))
+            window.setTimeout(() => {
+              thunkDispatch(removeInteractionEvent(interaction.id))
+            }, interaction.endAt - now);
+          });
+        });
 
+        dispatch(pingStore({ time: now, doSave: true }));
         return true;
       }, 
       err => {
@@ -48,14 +60,14 @@ const readIt = (dispatch:any, savedData: LocalStorageState) => {
 export const Loader = () => {
   const dispatch = useDispatch();
   const [ loaded, setLoaded ] = useState(false);
-  const [ appData, ] = useLocalStorage('browserpet', defaultLocalStorageState);
+  const [ appData, ] = useLocalStorage('browserpet', DEFAULT_LOCALSTORAGE_STATE);
 
   useEffect(() => {
     if(!loaded){
       setLoaded(true);
       readIt(dispatch, appData);
     }
-  }, [ loaded, appData, setLoaded ]);
+  }, [ loaded, appData, setLoaded, dispatch ]);
 
   return (null);
 }

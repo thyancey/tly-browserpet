@@ -4,7 +4,7 @@ import { Pinger } from './pinger';
 import { Saver } from './saver';
 
 
-export default () => {
+const Helper = () => {
   return (
     <>
       <Saver />
@@ -13,3 +13,5 @@ export default () => {
     </>
   );
 }
+
+export default Helper;

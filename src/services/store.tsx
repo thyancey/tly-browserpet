@@ -19,7 +19,11 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   Action<string>
 >;
 
-export const defaultLocalStorageState: LocalStorageState = {
-  config:{},
+export const DEFAULT_LOCALSTORAGE_STATE: LocalStorageState = {
+  config:{
+    activePet: '',
+    lastSaved: -1
+  },
+  interactions:[],
   pets:[]
-}
+};

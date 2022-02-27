@@ -67,7 +67,8 @@ export const parseExpressionString = (expressionString: string) => {
     const percentageSplit = valueCriteria.split('%');
 
     if(!EXPRESSION_MAP[condition]){
-      throw `parseExpressionString(): invalid condition "${condition}" from expressionString "${expressionString}"`
+      console.error(`parseExpressionString(): invalid condition "${condition}" from expressionString "${expressionString}"`);
+      return null;
     }
   
     return {
@@ -89,7 +90,8 @@ export const evaluateWhenNumber = (whenNumber: WhenNumber, reference: number, re
       : reference;
     return EXPRESSION_MAP[whenNumber.condition](referenceValue, whenNumber.criteria);
   }catch(e){
-    throw `could not evaluate "whenNumber:${whenNumber}", "reference:${reference}", "referenceMax:${reference}"`;
+    console.log(`could not evaluate "whenNumber:${whenNumber}", "reference:${reference}", "referenceMax:${reference}"`);
+    return null;
   }
 };
 

@@ -24,10 +24,10 @@ export default createGlobalStyle`
   #root{
     margin:0 auto;
   }
-  h1, h2, h3, h4{
+  h1, h2, h3, h4, h5, h6{
     font-family: 'Bevan', cursive;
   }
-  a, p, span, h5, h6{
+  a, p, span {
     font-family: 'Cabin', sans-serif;
   }
   h1{
@@ -43,7 +43,7 @@ export default createGlobalStyle`
     font-size: 2.5rem;
   }
   h5{
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
   p, span{
     font-size:1.5rem;

@@ -17,11 +17,10 @@ export type PetInfo = {
   level: number
 }
 
-export type RawPetStatDefinition = {
+export type PetStatDefinitionJSON = {
   id: string,
   label: string,
   value: number,
-  currentValue: number,
   perSecond: number,
   max: number,
   fullIsGood: boolean,
@@ -32,16 +31,12 @@ export type PetStatDefinition = {
   id: string,
   label: string,
   value: number,
-  currentValue: number,
   perSecond: number,
   max: number,
   fullIsGood: boolean,
   statEffects: WhenThenNumberGroup[]
 }
 
-// export type PetStatusesDict = {
-//   [key: string]: PetStatusDefinition
-// }
 export type AlertType = 'alert' | 'warning' | 'reward';
 export type PetStatusDefinition = {
   id: string,
@@ -49,6 +44,18 @@ export type PetStatusDefinition = {
   message: string,
   alertType?: AlertType
 }
+export type PetInteractionDefinition = {
+  id: string,
+  label: string,
+  cooldown: number,
+  changeStats: StatChangeDefinition[]
+}
+
+export type StatChangeDefinition = {
+  statId: string,
+  value: number
+}
+
 export type PetBehaviorDefinition = {
   id: string,
   image: string
@@ -75,7 +82,13 @@ export type PetLogicGroup = {
   stats: PetStatDefinition[],
   statuses: PetStatusDefinition[],
   behaviors: PetBehaviorDefinition[],
-  behaviorRules: WhenThenStringGroup[]
+  behaviorRules: WhenThenStringGroup[],
+  interactions: PetInteractionDefinition[],
+}
+
+export type PingPayload = {
+  time: number,
+  doSave?: boolean
 }
 
 export type RawPetJSON = {
@@ -85,10 +98,11 @@ export type RawPetJSON = {
   image: string,
   level: number,
   logic: {
-    stats: RawPetStatDefinition[],
+    stats: PetStatDefinitionJSON[],
     statuses: PetStatusDefinition[],
     behaviors: PetBehaviorDefinition[]
-    behaviorRules: {when:string[], then:string}[]
+    behaviorRules: {when:string[], then:string}[],
+    interactions: PetInteractionDefinition[]
   },
   timestamp: number
 }
@@ -110,23 +124,38 @@ export type PetListItem = {
   isActive?: boolean
 }
 
-export type SavedStat = {
-  id: string,
-  value: number
-}
 
+// slimmer save object for localStorage
 export type SavedPetState = {
   id: string,
   lastSaved: number,
   bornOn?: number,
-  stats: SavedStat[]
+  stats: {
+    id: string,
+    value: number
+  }[]
+}
+
+export type ActiveInteractionStatus = {
+  id: string,
+  startAt: number,
+  endAt: number // result of cooldown, if cooldown is 0, this whole record wouldnt have been saved
+}
+
+export type PetInteractionDetail = {
+  id: string,
+  label: string,
+  startAt: number,
+  endAt: number,
+  progress: number,
 }
 
 export type LocalStorageState = {
   config: {
     activePet?: string,
-    haveSaved?: boolean
+    lastSaved?: number,
   },
+  interactions: ActiveInteractionStatus[],
   pets: SavedPetState[]
 }
 

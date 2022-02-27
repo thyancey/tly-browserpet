@@ -19,7 +19,7 @@
           "id": "food",
           "label": "Food",
           "value": 250.0,
-          "perSecond": -30.0,
+          "perSecond": -10.0,
           "max": 500.0,
           "fullIsGood": true,
           "statEffects":[
@@ -111,6 +111,27 @@
         { "id": "BE_VERY_HUNGRY", "image": "assets/pets/bunchie/sad-tan.gif" },
         { "id": "BE_DUMBGRY", "image": "assets/pets/bunchie/sad.gif" },
         { "id": "BE_DEAD", "image": "assets/pets/bunchie/dead.gif" }
+      ],
+      "interactions":[
+        {
+          "id":"INT_EAT",
+          "label": "Eat",
+          "cooldown": 10000,
+          "changeStats":[
+            {
+              "statId":"food",
+              "value": 50.0
+            },
+            {
+              "statId":"poop",
+              "value": 20
+            },
+            {
+              "statId":"brains",
+              "value": 10
+            }
+          ]
+        }
       ]
     }
   },
