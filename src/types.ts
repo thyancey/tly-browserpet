@@ -48,10 +48,10 @@ export type PetInteractionDefinition = {
   id: string,
   label: string,
   cooldown: number,
-  alterStats: AlterPetStatDefinition[]
+  changeStats: StatChangeDefinition[]
 }
 
-export type AlterPetStatDefinition = {
+export type StatChangeDefinition = {
   statId: string,
   value: number
 }

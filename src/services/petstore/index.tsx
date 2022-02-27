@@ -1,6 +1,6 @@
 // slightly evolving from create-react-app example
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PetDefinition, SavedPetState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetBehaviorDefinition, PetStatDefinitionJSON, PetInteractionDefinition, AlterPetStatDefinition, PetInteractionDetail, LocalStorageState } from '../../types';
+import { PetDefinition, SavedPetState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetBehaviorDefinition, PetStatDefinitionJSON, PetInteractionDefinition, StatChangeDefinition, PetInteractionDetail, LocalStorageState } from '../../types';
 import { getRenderedDeltaStats, getSaveDeltaStats } from '../../util/tools';
 import { evaluateWhenThenNumberGroup, evaluateWhenThenStringGroup, parseRawWhenThenGroup } from '../../util/whenthen';
 
@@ -43,8 +43,8 @@ export const parseLogicGroup = (petDefJSON: RawPetJSON, initialState: SavedPetSt
 };
 
 // could do some validation here
-export const parseStatAlterations = (statAlterationsJSON: AlterPetStatDefinition[] = []) => {
-  return statAlterationsJSON.map(sE => ({
+export const parseStatChanges = (statChangesJSON: StatChangeDefinition[] = []) => {
+  return statChangesJSON.map(sE => ({
     statId: sE.statId,
     value: sE.value || 0
   }));
@@ -58,7 +58,7 @@ export const parseInteractionsGroup = (interactions: PetInteractionDefinition[],
       id: int.id,
       label: int.label,
       cooldown: int.cooldown,
-      alterStats: parseStatAlterations(int.alterStats)
+      changeStats: parseStatChanges(int.changeStats)
     }
   ));
 };
