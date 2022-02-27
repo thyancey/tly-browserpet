@@ -174,6 +174,17 @@ export type LocalStorageState = {
   pets: SavedPetState[]
 }
 
+
+export type NewLocalStorageState = {
+  config: {
+    activePet?: string,
+    haveSaved?: boolean,
+    lastSaved?: number,
+  },
+  interactions: ActiveInteractionStatus[],
+  pets: SavedPetState[]
+}
+
 export type ConditionOperator = '='|'<'|'<='|'>'|'>=';
 
 export type DeltaStat = {

@@ -16,17 +16,17 @@ export const Pinger = () => {
   useInterval(() => {
     const t = new Date().getTime();
     setPinger(pinger + 1);
-
+    console.log('-------------------- ');
     if((((pinger + 1) * PING_RATE) % SAVE_RATE) === 0){
       dispatch(pingStore({ time: t, doSave: true}));
-      // dispatch(pingStore({ time: t, doSave: false}));
     }else{
       dispatch(pingStore({ time: t, doSave: false}));
     }
   }, PING_RATE);
 
   useEffect(() => {
-    dispatch(triggerSave(lastSaved)); // TODO: this double dispatch may be an antipattern
+    // console.log('>>> useEffect')
+    // dispatch(triggerSave(lastSaved)); // TODO: this double dispatch may be an antipattern
   }, [ lastSaved, dispatch ])
 
   return null;

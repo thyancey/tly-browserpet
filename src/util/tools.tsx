@@ -47,3 +47,14 @@ export const getDeltaStats = (stats: PetStatDefinition[], activeStatEffects: Act
     } as DeltaStat;
   });
 };
+
+export const getSaveDeltaStats = (stats: PetStatDefinition[], prevTime: number, nowTime: number) =>{
+  const timeDiff = (nowTime - prevTime) / 1000;
+
+  return stats.map(s => {
+    return {
+      id: s.id,
+      value: Math.round((clamp(s.value + (s.perSecond * timeDiff), 0, s.max)) * 100) / 100
+    } as DeltaStat;
+  });
+};
