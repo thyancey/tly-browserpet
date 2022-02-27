@@ -136,27 +136,27 @@
         },
         {
           "id":"INT_RELIEVE",
-          "label": "Relieve",
-          "cooldown": 10000,
+          "label": "Pee",
+          "cooldown": 3000,
           "changeStats":[
             {
               "statId":"poop",
-              "value": -30
+              "value": -20
             },
             {
               "statId":"brains",
-              "value": -20
+              "value": -10
             }
           ]
         },
         {
           "id":"INT_RELIEVE2",
-          "label": "Relieve",
+          "label": "Poo",
           "cooldown": 10000,
           "changeStats":[
             {
               "statId":"poop",
-              "value": -30
+              "value": -50
             },
             {
               "statId":"brains",

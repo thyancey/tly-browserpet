@@ -10,10 +10,8 @@ const ScContainer = styled.div`
   color:${getColor('black')};
   position:absolute;
   right:0;
-  bottom:0;
-`;
-const ScTitle = styled.h4`
-  
+  bottom:1rem;
+  z-index:1;
 `;
 const ScStatuses = styled.ul`
   max-width: 14rem;

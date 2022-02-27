@@ -1,6 +1,6 @@
 // slightly evolving from create-react-app example
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PetDefinition, SavedPetState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetBehaviorDefinition, PetStatDefinitionJSON, PetInteractionDefinition, StatChangeDefinition, PetInteractionDetail, LocalStorageState, ActiveInteractionStatus } from '../../types';
+import { PetDefinition, SavedPetState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetBehaviorDefinition, PetStatDefinitionJSON, PetInteractionDefinition, StatChangeDefinition, PetInteractionDetail, LocalStorageState, ActiveInteractionStatus, DeltaStat, PetStatDefinition } from '../../types';
 import { clamp, getRenderedDeltaStats, getSaveDeltaStats } from '../../util/tools';
 import { evaluateWhenThenNumberGroup, evaluateWhenThenStringGroup, parseRawWhenThenGroup } from '../../util/whenthen';
 
@@ -132,18 +132,17 @@ export const petStoreSlice = createSlice({
       }
     },
     changeStatEvent: (state: PetStoreState, action: PayloadAction<any>) => {
-      const { changedStats, time } = action.payload as {
+      const { changedStats, time, activeStats } = action.payload as {
         changedStats: StatChangeDefinition[],
-        time: number
+        time: number,
+        activeStats: DeltaStat[]
       };
       
       // // these are added by a user interaction
 
-      const newStats = state.pets[state.activeIdx].logic.stats.map(stat => {
+      const newStats = activeStats.map(stat => {
         const toChange = changedStats.find(cStat => cStat.statId === stat.id);
         if(toChange){
-          console.log(`changing ${toChange.value} to ${toChange.statId}`);
-          console.log(`will be ${clamp(stat.value + toChange.value, 0, stat.max)}`);
           return {
             ...stat,
             value: clamp(stat.value + toChange.value, 0, stat.max)
@@ -157,13 +156,15 @@ export const petStoreSlice = createSlice({
         timestamp: time,
         logic:{
           ...state.pets[state.activeIdx].logic,
-          stats: newStats
+          stats: state.pets[state.activeIdx].logic.stats.map(s => ({
+            ...s,
+            value: newStats.find(ns => ns.id === s.id)?.value || s.value
+          }))
         }
       }
     },
     removeInteractionEvent: (state: PetStoreState, action: PayloadAction<any>) => {
       const intId = action.payload as string;
-      console.warn('removeInteractionEvent', intId)
       
       state.interactions = state.interactions.filter(interaction => interaction.id !== intId);
     },
