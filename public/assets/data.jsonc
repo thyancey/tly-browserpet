@@ -24,11 +24,10 @@
           "fullIsGood": true,
           "statEffects":[
             { "when": "<=_0", "then": "STATUS_DEAD" },
-            { "when": "<_50%", "then": "STATUS_HUNGRY1" },
-            { "when": "<_30%", "then": "STATUS_HUNGRY2" },
-            { "when": "<_10%", "then": "STATUS_STARVING" },
-            { "when": ">=_75%", "then": "STATUS_FULL1" },
-            { "when": ">=_95%", "then": "STATUS_FULL2" }
+            { "when": "<_50%", "then": "STATUS_HUNGRY" },
+            { "when": "<_15%", "then": "STATUS_STARVING" },
+            { "when": ">=_75%", "then": "STATUS_FULL" },
+            { "when": ">=_95%", "then": "STATUS_TOO_FULL" }
           ]
         },
         {
@@ -55,14 +54,9 @@
       ],
       "statuses":[
         {
-          "id": "STATUS_HUNGRY1",
+          "id": "STATUS_HUNGRY",
           "label": "a little hungry",
           "message": ""
-        },{
-          "id": "STATUS_HUNGRY2",
-          "label": "very hungry",
-          "message": "",
-          "alertType": "warning" 
         },{
           "id": "STATUS_STARVING",
           "label": "i'm starving!!",
@@ -70,13 +64,13 @@
           "alertType": "alert" 
         },
         {
-          "id": "STATUS_FULL1",
+          "id": "STATUS_FULL",
           "label": "i'm full",
           "message": "",
           "alertType": "reward" 
         },
         {
-          "id": "STATUS_FULL2",
+          "id": "STATUS_TOO_FULL",
           "label": "i'm about to bust!",
           "message": ""
         },
@@ -93,12 +87,20 @@
           "then": "BE_DEAD"
         },
         {
-          "when": "STATUS_STARVING",
-          "then": "BE_VERY_HUNGRY"
+          "when": "STATUS_HUNGRY",
+          "then": "BE_HUNGRY"
         },
         {
-          "when": "STATUS_HUNGRY1",
+          "when": [ "STATUS_STARVING" ],
           "then": "BE_HUNGRY"
+        },
+        {
+          "when": "STATUS_TOO_FULL",
+          "then": "BE_FAT"
+        },
+        {
+          "when": "STATUS_FULL",
+          "then": "BE_FAT"
         },
         {
           "when":[], // use for default
@@ -108,15 +110,15 @@
       "behaviors":[
         { "id": "BE_NORMAL", "image": "assets/pets/bunchie/happy.gif" },
         { "id": "BE_HUNGRY", "image": "assets/pets/bunchie/sad.gif" },
-        { "id": "BE_VERY_HUNGRY", "image": "assets/pets/bunchie/sad-tan.gif" },
         { "id": "BE_DUMBGRY", "image": "assets/pets/bunchie/sad.gif" },
+        { "id": "BE_FAT", "image": "assets/pets/bunchie/fat.gif" },
         { "id": "BE_DEAD", "image": "assets/pets/bunchie/dead.gif" }
       ],
       "interactions":[
         {
           "id":"INT_EAT",
           "label": "Eat",
-          "cooldown": 10000,
+          "cooldown": 3000,
           "changeStats":[
             {
               "statId":"food",
@@ -129,6 +131,36 @@
             {
               "statId":"brains",
               "value": 10
+            }
+          ]
+        },
+        {
+          "id":"INT_RELIEVE",
+          "label": "Relieve",
+          "cooldown": 10000,
+          "changeStats":[
+            {
+              "statId":"poop",
+              "value": -30
+            },
+            {
+              "statId":"brains",
+              "value": -20
+            }
+          ]
+        },
+        {
+          "id":"INT_RELIEVE2",
+          "label": "Relieve",
+          "cooldown": 10000,
+          "changeStats":[
+            {
+              "statId":"poop",
+              "value": -30
+            },
+            {
+              "statId":"brains",
+              "value": -20
             }
           ]
         }

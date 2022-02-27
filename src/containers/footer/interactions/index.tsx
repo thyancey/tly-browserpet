@@ -1,32 +1,28 @@
 import React from 'react';
 import styled from 'styled-components';
-
-import { selectActiveInteractionDefinitions, addInteractionEvent, selectActiveInteractionStatus, removeInteractionEvent, changeStatEvent } from '../../services/petstore';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { getColor } from '../../themes';
-import { PetInteractionDefinition } from '../../types';
 import { Dispatch } from '@reduxjs/toolkit';
-import { pingStore } from '../../services/ui';
+
+import { selectActiveInteractionDefinitions, addInteractionEvent, selectActiveInteractionStatus, removeInteractionEvent, changeStatEvent } from '../../../services/petstore';
+import { PetInteractionDefinition } from '../../../types';
+import { pingStore } from '../../../services/ui';
 import { InteractionButton } from './interaction-button';
 
-const ScContainer = styled.div`
-  color:${getColor('black')};
-  position:absolute;
-  left:0;
-  top:0;
-  
-  border: .25rem dashed white;
-  padding: 1rem;
-  border-bottom-right-radius: 2rem;
-  border-left:0;
-  border-top:0;
-`;
-
 const ScInteractions = styled.ul`
-  max-width: 14rem;
-  text-align: left;
-`;
+  border-bottom: .25rem dashed black;
+  display: flex;
+  flex-wrap: wrap;
 
+  >li{
+    margin:.5rem;
+    margin-left: .25rem;
+    &:first-child{
+      margin-left: .5rem;
+    }
+    flex: 1;
+    list-style:none;
+  }
+`;
 
 export const Interactions = () => {
   const interactionDefs = useSelector(selectActiveInteractionDefinitions, shallowEqual);
@@ -48,16 +44,14 @@ export const Interactions = () => {
   }
 
   return (
-    <ScContainer>
-      <ScInteractions>
-        {interactionDefs.map((interaction, i) => (
-          <InteractionButton
-            key={interaction.id}
-            activeStatus={interactionStatus.find(iS => iS.id === interaction.id)}
-            interaction={interaction}
-            onClickHandler={() => addTemporaryInteraction(interaction)} />
-        ))}
-      </ScInteractions>
-    </ScContainer>
+    <ScInteractions>
+      {interactionDefs.map((interaction, i) => (
+        <InteractionButton
+          key={interaction.id}
+          activeStatus={interactionStatus.find(iS => iS.id === interaction.id)}
+          interaction={interaction}
+          onClickHandler={() => addTemporaryInteraction(interaction)} />
+      ))}
+    </ScInteractions>
   )
 }
