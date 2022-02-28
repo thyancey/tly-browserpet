@@ -116,7 +116,7 @@ export type RawPetJSON = {
     behaviorRules: {when:string[], then:string}[],
     interactions: PetInteractionDefinition[]
   },
-  timestamp: number
+  lastSaved: number
 }
 
 export type PetDefinition = {
@@ -126,7 +126,7 @@ export type PetDefinition = {
   bornOn?: number,
   level: number,
   logic: PetLogicGroup,
-  timestamp: number
+  lastSaved: number
 }
 
 export type PetListItem = {

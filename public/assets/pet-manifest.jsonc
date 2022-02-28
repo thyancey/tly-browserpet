@@ -12,5 +12,6 @@
     { "id": "bunchie", "baseUrl": "assets/pets/bunchie" },
     { "id": "mika", "baseUrl": "assets/pets/mika" },
     { "id": "raccoon", "baseUrl": "assets/pets/raccoon" }
+    // { "id": "raccoon", "baseUrl": "https://thomasyancey.com/tests/browserpet/pets/raccoon" } //hosted files are ok too
   ]
 }

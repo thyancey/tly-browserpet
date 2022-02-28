@@ -19,7 +19,8 @@ const DEFAULT_LOCALSTORAGE_STATE: LocalStorageState = {
 export type PetStoreState = {
   activeIdx: number,
   pets: PetDefinition[],
-  interactions: ActiveInteractionStatus[]
+  interactions: ActiveInteractionStatus[],
+  savedPets: SavedPetState[]
 }
 
 export type CreatePetPayload = {
@@ -30,7 +31,8 @@ export type CreatePetPayload = {
 const initialStoreState: PetStoreState = {
   activeIdx: 0,
   pets: [],
-  interactions: []
+  interactions: [],
+  savedPets: []
 };
 
 // might want to do some validation and pre-processing here
@@ -139,6 +141,10 @@ export const petStoreSlice = createSlice({
         });
       }
     },
+    setSavedPetData: (state: PetStoreState, action: PayloadAction<any>) => {
+      const savedPets = action.payload as SavedPetState[];
+      state.savedPets = savedPets;
+    },
     changeStatEvent: (state: PetStoreState, action: PayloadAction<any>) => {
       const { changedStats, time, activeStats } = action.payload as {
         changedStats: StatChangeDefinition[],
@@ -159,9 +165,31 @@ export const petStoreSlice = createSlice({
         return stat;
       });
 
+      // state.pets = state.pets.map((pD, idx) => {
+      //   console.log(idx, state.activeIdx);
+      //   if(idx === state.activeIdx){
+      //     console.log(`__ ${state.pets[idx].id}`);
+      //     return {
+      //       ...state.pets[state.activeIdx],
+      //       lastSaved: time,
+      //       logic:{
+      //         ...state.pets[state.activeIdx].logic,
+      //         stats: state.pets[state.activeIdx].logic.stats.map(s => ({
+      //           ...s,
+      //           value: newStats.find(ns => ns.id === s.id)?.value || s.value
+      //         }))
+      //       }
+      //     };
+      //   }else{
+      //     return {
+      //       ...pD,
+      //       lastSaved: time
+      //     };
+      //   }
+      // });
       state.pets[state.activeIdx] = {
         ...state.pets[state.activeIdx],
-        timestamp: time,
+        lastSaved: time,
         logic:{
           ...state.pets[state.activeIdx].logic,
           stats: state.pets[state.activeIdx].logic.stats.map(s => ({
@@ -188,7 +216,7 @@ export const petStoreSlice = createSlice({
         ...petDefinition,
         logic: logicGroup,
         bornOn: initialState?.bornOn || new Date().getTime(),
-        timestamp: nowTime
+        lastSaved: nowTime
       } as PetDefinition;
 
       if(foundPet){
@@ -206,7 +234,7 @@ export const petStoreSlice = createSlice({
   }
 });
 
-export const { createPet, setActiveIdx, setActiveId, clearSave, addInteractionEvent, restoreInteractionFromSave, changeStatEvent, removeInteractionEvent } = petStoreSlice.actions;
+export const { createPet, setActiveIdx, setActiveId, clearSave, setSavedPetData, addInteractionEvent, restoreInteractionFromSave, changeStatEvent, removeInteractionEvent } = petStoreSlice.actions;
 
 export const selectActiveIdx = (state: RootState): number => state.petStore.activeIdx;
 export const selectPets = (state: RootState): PetDefinition[] => state.petStore.pets;
@@ -218,8 +246,8 @@ export const selectActivePet = createSelector(
     return pets[activeIdx];
   }
 );
-export const selectActiveTime = createSelector(
-  [selectActivePet], (activePet) => activePet?.timestamp || 0
+export const selectActiveLastSaved = createSelector(
+  [selectActivePet], (activePet) => activePet?.lastSaved || 0
 );
 export const selectActiveStatDefinitions = createSelector(
   [selectActivePet], (activePet) => activePet?.logic?.stats || []
@@ -259,7 +287,7 @@ export const selectActiveInteractionStatus = createSelector(
 
 
 export const selectActiveDeltaStats = createSelector(
-  [selectActiveStatDefinitions, selectActiveTime, selectLastRendered], 
+  [selectActiveStatDefinitions, selectActiveLastSaved, selectLastRendered], 
   (petStatus, petTime, time) => {
     return getRenderedDeltaStats(petStatus, petTime, time);
   }
@@ -341,21 +369,79 @@ export const selectPetList = createSelector(
 );
 
 export const selectSavedDeltaStats = createSelector(
-  [selectActiveStatDefinitions, selectActiveTime, selectLastSaved], 
-  (petStatus, petTime, lastSavedTime) => {
-    return getSaveDeltaStats(petStatus, petTime, lastSavedTime);
+  [selectActiveStatDefinitions, selectActiveLastSaved, selectLastSaved], 
+  (petStats, petTime, lastSavedTime) => {
+    console.warn(`\n\n!!!!!compare between ${(lastSavedTime - petTime) / 1000}`);
+    console.warn(`${new Date(petTime).toTimeString()}`);
+    console.warn(`${new Date(lastSavedTime).toTimeString()}`);
+    return getSaveDeltaStats(petStats, petTime, lastSavedTime);
   }
 );
 
-
+export const getFromLocalStorage = () => {
+  try{
+    return JSON.parse((global as any).localStorage.getItem('browserpet'));
+  }catch(e){
+    console.log('no localStorage entry found for "browserpet"');
+    return null;
+  }
+}
+export const getPetsFromLocalStorage = () => {
+  try{
+    return getFromLocalStorage().pets;
+  } catch(e){
+    return [];
+  }
+}
 
 export const selectNewSavePayload = createSelector(
-  [selectLastSaved, selectSavedDeltaStats, selectActivePet, selectActiveInteractionStatus],
-  (lastSaved, deltaStats, activePet, activeInteractions): LocalStorageState => {
+  [selectLastSaved, selectSavedDeltaStats, selectActivePet, selectActiveInteractionStatus, getPetsFromLocalStorage],
+  (lastSaved, deltaStats, activePet, activeInteractions, storedPets): LocalStorageState => {
+    console.log('from localStorage', storedPets);
+    console.log('from deltaStats', deltaStats);
 
     if(!activePet){
       return DEFAULT_LOCALSTORAGE_STATE;
     }
+    
+    const foundIdx = storedPets.findIndex((sP: SavedPetState) => sP.id === activePet.id);
+    let newList = [];
+    if(foundIdx > -1){
+      // console.log('>>>> FOUND', storedPets.length)
+      newList = storedPets.map((sP: SavedPetState) => {
+        if(sP.id === activePet.id){
+          // console.log('match, new', activePet.id)
+          return {
+            id: activePet.id,
+            stats: deltaStats,
+            bornOn: activePet.bornOn,
+            lastSaved: lastSaved
+          }
+        }else{
+          console.log('no match, retain', sP.id)
+          // TODO, not sure if this should happen or not...
+          // return sP;
+          return {
+            ...sP,
+            lastSaved: lastSaved
+          } 
+        }
+      })
+    }else{
+      console.log('>>>> ADDING')
+      newList = storedPets.map((sP: SavedPetState) => ({
+        ...sP,
+        lastSaved: lastSaved
+      })).concat([{
+        id: activePet.id,
+        stats: deltaStats,
+        bornOn: activePet.bornOn,
+        lastSaved: lastSaved
+      }]);
+    }
+
+    console.log('... savin', newList)
+    
     return {
       config:{
         activePet: activePet?.id || '',
@@ -368,6 +454,7 @@ export const selectNewSavePayload = createSelector(
         bornOn: activePet.bornOn,
         lastSaved: lastSaved
       }]
+      // pets:newList
     };
   }
 );

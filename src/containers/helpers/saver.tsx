@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import useLocalStorage from '../../util/hooks/useLocalStorage';
-import { selectNewSavePayload } from '../../services/petstore';
+import { selectNewSavePayload, setSavedPetData } from '../../services/petstore';
 import { DEFAULT_LOCALSTORAGE_STATE } from '../../services/store';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -16,6 +16,7 @@ export const Saver = () => {
     if(!!savePayload.config.activePet){
       console.log('(saving)', savePayload);
       setLocalStorage(() => savePayload);
+      // dispatch(setSavedPetData(savePayload.pets));
     }
   }, [ savePayload, dispatch ])
 
