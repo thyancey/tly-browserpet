@@ -1,18 +1,20 @@
 // slightly evolving from create-react-app example
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ActiveInteractionStatus, PingPayload } from '../../types';
+import { ActiveInteractionStatus, PingPayload, SavedPetState } from '../../types';
 import { RootState } from '../store';
 
 export type UiSlice = {
   lastRendered: number,
   lastSaved: number,
-  interactions: ActiveInteractionStatus[]
+  interactions: ActiveInteractionStatus[],
+  savedPets: SavedPetState[]
 }
 
 const initialState: UiSlice = {
-  lastRendered: 0,
-  lastSaved: 0,
-  interactions: []
+  lastRendered: new Date().getTime(),
+  lastSaved: new Date().getTime(),
+  interactions: [],
+  savedPets: []
 };
 
 export const uiSlice = createSlice({
@@ -25,6 +27,7 @@ export const uiSlice = createSlice({
       state.lastRendered = nowTime;
       if(action.payload.doSave){
         state.lastSaved = nowTime;
+
       }
     },
   }

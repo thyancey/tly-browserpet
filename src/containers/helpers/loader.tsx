@@ -3,7 +3,7 @@ import { jsonc } from 'jsonc';
 
 import { LocalStorageState, PetDefinition, PetManifestEntry, PetStatDefinitionJSON, RawPetJSON } from '../../types';
 import useLocalStorage from '../../util/hooks/useLocalStorage';
-import { createPet, removeInteractionEvent, restoreInteractionFromSave, setActiveId } from '../../services/petstore';
+import { createPet, removeInteractionEvent, restoreInteractionFromSave, setActiveId, setActiveIdx } from '../../services/petstore';
 import { DEFAULT_LOCALSTORAGE_STATE } from '../../services/store';
 import { useDispatch } from 'react-redux';
 import { pingStore } from '../../services/ui';
@@ -86,17 +86,34 @@ const finishUp = (parsedPets: RawPetJSON[], dispatch: any, savedData: LocalStora
   console.log('>>> FINISH UP')
   console.log(`JSON definitions parsed successfully`, parsedPets);
   console.log(`LocalStorage was read successfully`, savedData);
+  let activeId = '';
+  
+  if(savedData.config.activePet){
+    activeId = savedData.config.activePet;
+  }
+
+
   parsedPets.forEach((petDef: RawPetJSON) => {
     const savedStatus = savedData?.pets.find(p => p.id === petDef.id) || null;
+    if(!activeId && savedStatus && savedData.config.activePet === savedStatus.id){
+      activeId = savedStatus.id;
+      // dispatch(setActiveId(activeId));
+    }
     dispatch(createPet({
+      isActive: (activeId === savedStatus?.id),
       petDefinition: petDef,
       initialState: savedStatus
     }));
   });
 
-  if(savedData.config.activePet){
-    dispatch(setActiveId(savedData.config.activePet));
+  if(activeId){
+    console.error('set id', activeId)
+    dispatch(setActiveId(activeId));
+  }else{
+    console.error('set idx', 0)
+    dispatch(setActiveIdx(0));
   }
+
   savedData.interactions.filter(interaction => interaction.endAt > now).forEach(interaction => {
     dispatch((thunkDispatch:Dispatch) => {
       thunkDispatch(restoreInteractionFromSave(interaction))
