@@ -490,8 +490,7 @@ export const selectNewSavePayload = createSelector(
             id: activePet.id,
             stats: deltaStats,
             bornOn: activePet.bornOn,
-            // lastSaved: sP.lastSaved // active pets should not update this value, so they stay active in the background
-            lastSaved: lastSaved // active pets should not update this value, so they stay active in the background
+            lastSaved: lastSaved // active pets should not update this value, so they stay active in the background,
           }
         }
 

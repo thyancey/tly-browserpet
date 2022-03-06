@@ -151,8 +151,8 @@ export type CachedPetStat = {
 export type SavedPetState = {
   id: string,
   lastSaved?: number,
-  bornOn?: number,
-  stats: CachedPetStat[]
+  stats: CachedPetStat[],
+  bornOn?: number
 }
 
 export type ActiveInteractionStatus = {

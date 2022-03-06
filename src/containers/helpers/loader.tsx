@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { jsonc } from 'jsonc';
 
-import { LocalStorageState, PetDefinition, PetManifestEntry, PetStatDefinitionJSON, RawPetJSON } from '../../types';
+import { LocalStorageState, PetManifestEntry, RawPetJSON } from '../../types';
 import useLocalStorage from '../../util/hooks/useLocalStorage';
 import { createPet, removeInteractionEvent, restoreInteractionFromSave, setActiveId, setActiveIdx } from '../../services/petstore';
 import { DEFAULT_LOCALSTORAGE_STATE } from '../../services/store';
