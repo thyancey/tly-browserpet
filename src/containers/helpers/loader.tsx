@@ -97,7 +97,6 @@ const finishUp = (parsedPets: RawPetJSON[], dispatch: any, savedData: LocalStora
     const savedStatus = savedData?.pets.find(p => p.id === petDef.id) || null;
     if(!activeId && savedStatus && savedData.config.activePet === savedStatus.id){
       activeId = savedStatus.id;
-      // dispatch(setActiveId(activeId));
     }
     dispatch(createPet({
       isActive: (activeId === savedStatus?.id),
@@ -107,10 +106,8 @@ const finishUp = (parsedPets: RawPetJSON[], dispatch: any, savedData: LocalStora
   });
 
   if(activeId){
-    console.error('set id', activeId)
     dispatch(setActiveId(activeId));
   }else{
-    console.error('set idx', 0)
     dispatch(setActiveIdx(0));
   }
 
@@ -123,7 +120,7 @@ const finishUp = (parsedPets: RawPetJSON[], dispatch: any, savedData: LocalStora
     });
   });
 
-  dispatch(pingStore({ time: now, doSave: true }));
+  // dispatch(pingStore({ time: now, doSave: true }));
 }
 
 export const Loader = () => {

@@ -1,7 +1,7 @@
 // slightly evolving from create-react-app example
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { PetDefinition, SavedPetState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetBehaviorDefinition, PetStatDefinitionJSON, PetInteractionDefinition, StatChangeDefinition, PetInteractionDetail, LocalStorageState, ActiveInteractionStatus, DeltaStat, PetBehaviorJSON, CachedPetStat } from '../../types';
-import { clamp, getRenderedDeltaStats, getSaveDeltaStats } from '../../util/tools';
+import { clamp, getRenderedDeltaStats, getCachedDeltaStats } from '../../util/tools';
 import { evaluateWhenThenNumberGroup, evaluateWhenThenStringGroup, parseRawWhenThenGroup } from '../../util/whenthen';
 
 import { RootState } from '../store';
@@ -20,8 +20,7 @@ export type PetStoreState = {
   activeIdx: number,
   pets: PetDefinition[],
   interactions: ActiveInteractionStatus[],
-  cachedPets: SavedPetState[],
-  lastCached: number,
+  cachedPets: SavedPetState[]
 }
 
 export type CreatePetPayload = {
@@ -34,8 +33,7 @@ const initialStoreState: PetStoreState = {
   activeIdx: -1,
   pets: [],
   interactions: [],
-  cachedPets: [],
-  lastCached: 0
+  cachedPets: []
 };
 
 // might want to do some validation and pre-processing here
@@ -100,6 +98,32 @@ export const parseStatsGroup = (statsDef: PetStatDefinitionJSON[], initialState:
   });
 };
 
+export const getWasntTracked = (previous: SavedPetState[], activeIdx: number) => {
+  try{
+    return !previous[activeIdx].beingTracked
+  }catch(e){
+    return false;
+  }
+}
+
+export const getUpdatedBeingTracked = (activeId:string, cachedPets: SavedPetState[], nowTime: number) => {
+  return cachedPets.map(cP => {
+    if(cP.id === activeId){
+      return {
+        ...cP,
+        beingTracked: true,
+        lastSaved: nowTime
+      }
+    }else if(cP.beingTracked){
+      return {
+        ...cP,
+        beingTracked: false
+      }
+    }
+    return cP;
+  });
+}
+
 export const petStoreSlice = createSlice({
   name: 'petStore',
   initialState: initialStoreState,
@@ -111,14 +135,20 @@ export const petStoreSlice = createSlice({
     },
     setActiveId: (state: PetStoreState, action: PayloadAction<any>) => {
       const petIdx = state.pets.findIndex((p:PetDefinition) => p.id === action.payload);
+      const nowTime = new Date().getTime();
+
       if(petIdx === -1){
         console.log(`Cannot find pet with id "${action.payload}"`);
       }else{
         state.activeIdx = petIdx;
+        state.cachedPets = getUpdatedBeingTracked(action.payload, state.cachedPets, nowTime);
       }
     },
     setActiveIdx: (state: PetStoreState, action: PayloadAction<any>) => {
+      const nowTime = new Date().getTime();
+
       state.activeIdx = action.payload;
+      state.cachedPets = getUpdatedBeingTracked(state.pets[action.payload]?.id || '', state.cachedPets, nowTime);
     },
     restoreInteractionFromSave:  (state: PetStoreState, action: PayloadAction<any>) => {
       const interaction = action.payload as ActiveInteractionStatus;
@@ -148,16 +178,8 @@ export const petStoreSlice = createSlice({
       }
     },
     setCachedPayload: (state: PetStoreState, action: PayloadAction<any>) => {
-      const lss = action.payload as LocalStorageState;
-      // console.log('setCached, localStorageState:', lss);
-      if(lss.config.lastSaved !== state.lastCached){
-        console.log('caching!', state.lastCached, lss.pets);
-        state.lastCached = lss.config.lastSaved || 0;
-        state.cachedPets = lss.pets.map(p => ({
-          ...p,
-          // lastSaved: p.id === lss.config.activePet ? p.lastSaved : new Date().getTime()
-        }));
-      }
+      const lsState = action.payload as LocalStorageState;
+      state.cachedPets = lsState.pets;
     },
     changeStatEvent: (state: PetStoreState, action: PayloadAction<any>) => {
       const { changedStats, time, activeStats } = action.payload as {
@@ -179,28 +201,6 @@ export const petStoreSlice = createSlice({
         return stat;
       });
 
-      // state.pets = state.pets.map((pD, idx) => {
-      //   console.log(idx, state.activeIdx);
-      //   if(idx === state.activeIdx){
-      //     console.log(`__ ${state.pets[idx].id}`);
-      //     return {
-      //       ...state.pets[state.activeIdx],
-      //       lastSaved: time,
-      //       logic:{
-      //         ...state.pets[state.activeIdx].logic,
-      //         stats: state.pets[state.activeIdx].logic.stats.map(s => ({
-      //           ...s,
-      //           value: newStats.find(ns => ns.id === s.id)?.value || s.value
-      //         }))
-      //       }
-      //     };
-      //   }else{
-      //     return {
-      //       ...pD,
-      //       lastSaved: time
-      //     };
-      //   }
-      // });
       state.pets[state.activeIdx] = {
         ...state.pets[state.activeIdx],
         logic:{
@@ -218,28 +218,22 @@ export const petStoreSlice = createSlice({
       state.interactions = state.interactions.filter(interaction => interaction.id !== intId);
     },
     createPet: (state: PetStoreState, action: PayloadAction<any>) => {
-      console.log('createPet', action.payload);
-
-      // state.
-      // const lastSaved =  (savedData.config.activePet === petDef.id) ? (savedStatus?.lastSaved || new Date().getTime()) : new Date().getTime()
-      
+      console.log('\n\ncreatePet', action.payload);
       const { petDefinition, initialState, isActive } = action.payload as CreatePetPayload;
       const foundPet = state.pets.find(p => p.id === petDefinition.id);
       const nowTime = new Date().getTime();
-      // const nowTime = initialState?.lastSaved || new Date().getTime();
       const logicGroup = parseLogicGroup(petDefinition, initialState);
 
-      const lastSaved = isActive ? (initialState?.lastSaved || nowTime) : nowTime;
+      const lastSaved = initialState?.lastSaved || nowTime;
 
-      console.log(`\n createPet: ${petDefinition.id}, isActive? ${isActive}`);
+      console.log(`>> createPet: ${petDefinition.id}, isActive? ${isActive}, beingTracked? ${initialState?.beingTracked}`);
       if(!initialState){
         console.log('no initial state found.')
       }else{
         console.log('initial state:', initialState);
       }
-      console.log(`for ${petDefinition.id}, lastSaved: ${lastSaved}`)
-      console.log(`for ${petDefinition.id}, lastSaved: ${new Date(lastSaved).toTimeString()}`)
-      console.log(`backgroundImage: ${petDefinition.backgroundImage}`)
+      // console.log(`for ${petDefinition.id}, lastSaved: ${lastSaved}`)
+      // console.log(`for ${petDefinition.id}, lastSaved: ${new Date(lastSaved).toTimeString()}`)
 
       const updatedDef = {
         ...petDefinition,
@@ -261,6 +255,7 @@ export const petStoreSlice = createSlice({
         state.pets.push(updatedDef);
       }
 
+      
       // restore it to the cache if it was saved!
       if(initialState){
         if(!state.cachedPets.find(cP => cP.id === initialState?.id)){
@@ -269,12 +264,6 @@ export const petStoreSlice = createSlice({
             lastSaved: lastSaved
           }]]
         }
-      }
-
-      // TODO: man, this is confusing. But to keep the "active" as the only thing that changed, this
-      // sets the comparison time on load
-      if(isActive){
-        state.lastCached = lastSaved
       }
     }
   }
@@ -286,10 +275,6 @@ export const selectActiveIdx = (state: RootState): number => state.petStore.acti
 export const selectPets = (state: RootState): PetDefinition[] => state.petStore.pets;
 export const getActiveInteractions = (state: RootState): ActiveInteractionStatus[] => state.petStore.interactions;
 export const getCachedPets = (state: RootState): SavedPetState[] => state.petStore.cachedPets;
-export const getLastCached = (state: RootState): number => state.petStore.lastCached;
-export const selectLastCached = createSelector(
-  [getLastCached], (lastCached) => lastCached
-);
 
 export const selectActivePet = createSelector(
   [selectPets, selectActiveIdx],
@@ -324,7 +309,6 @@ export const selectCachedPetStats = createSelector(
 export const selectActiveCachedPetStats = createSelector(
   [getCachedPets, selectActivePet],
   (cachedPets, activePet): CachedPetStat[] => {
-    console.log('>>>> activePet is ', activePet?.id)
     if(!activePet) return [];
     return cachedPets.find(cP => cP.id === activePet.id)?.stats || [];
   }
@@ -350,11 +334,19 @@ export const selectActiveInteractionStatus = createSelector(
   [getActiveInteractions], (activeInteractions:ActiveInteractionStatus[]) => activeInteractions
 );
 
+export const selectActiveLastCached = createSelector(
+  [getCachedPets, selectActivePet],
+  (cachedPets, activePet): number => {
+    // console.log('< selectActiveLastCached');
+    if(!activePet) return 0;
+    return cachedPets.find(cP => cP.id === activePet.id)?.lastSaved || 0;
+  }
+);
 
-export const selectActiveDeltaStats = createSelector(
-  [selectActiveStatDefinitions, selectActiveCachedPetStats, selectLastCached, selectLastRendered], 
-  (petStatus, cachedStats, petTime, time) => {
-    return getRenderedDeltaStats(petStatus, cachedStats, petTime, time);
+export const selectRenderedDeltaStats = createSelector(
+  [selectActiveStatDefinitions, selectActiveCachedPetStats, selectActiveLastCached, selectLastRendered], 
+  (statDefinitions, cachedStats, petTime, time) => {
+    return getRenderedDeltaStats(statDefinitions, cachedStats, petTime, time);
   }
 );
 
@@ -373,7 +365,7 @@ export const selectActiveInteractionDetail = createSelector(
 );
 
 export const selectActiveDeltaStatuses = createSelector(
-  [selectActiveDeltaStats, selectActiveStatDefinitions], 
+  [selectRenderedDeltaStats, selectActiveStatDefinitions], 
   (deltaStats, statDefinitions) => {
     // for each statDef, look through statDef.statEffects, which is a whenThenNumberGroup[]
     // all stats should be evaluated, and output all unique statuses matched
@@ -433,12 +425,11 @@ export const selectPetList = createSelector(
   }))
 );
 
-export const selectSavedDeltaStats = createSelector(
-  [selectActiveStatDefinitions, selectActiveCachedPetStats, selectLastCached, selectLastSaved], 
+export const selectCachedDeltaStats = createSelector(
+  [selectActiveStatDefinitions, selectActiveCachedPetStats, selectActiveLastCached, selectLastSaved], 
   (petStats, cachedPetStats, lastCachedTime, lastSavedTime) => {
-    if(!lastCachedTime) console.error('selectSavedDeltaStats, LAST CACHE')
-    if(!lastSavedTime) console.error('selectSavedDeltaStats, LAST SAVED')
-    return getSaveDeltaStats(petStats, cachedPetStats, lastCachedTime, lastSavedTime);
+    if(lastCachedTime === lastSavedTime) return null;
+    return getCachedDeltaStats(petStats, cachedPetStats, lastCachedTime, lastSavedTime);
   }
 );
 
@@ -463,20 +454,18 @@ export const selectPetsFromLocalStorage = createSelector(
   [getPetsFromLocalStorage], (pets: SavedPetState[]) => pets
 );
 
+// TODO, the beingTracked here needs to be investigated more.
 export const selectNewSavePayload = createSelector(
-  [selectLastSaved, selectLastCached, selectSavedDeltaStats, selectActivePet, selectActiveInteractionStatus, selectCachedPets],
-  (lastSaved, lastCached, deltaStats, activePet, activeInteractions, storedPets): (LocalStorageState | null) => {
-    console.log('from savedPets', storedPets);
-    console.log('from deltaStats', deltaStats);
+  [selectLastSaved, selectCachedDeltaStats, selectActivePet, selectActiveInteractionStatus, selectCachedPets],
+  (lastSaved, cachedDeltaStats, activePet, activeInteractions, storedPets): (LocalStorageState | null) => {
 
-    console.log('\nTIMEDIFF: ', lastCached - lastSaved);
+    //TODO, this seems fishy
+    if(!cachedDeltaStats){
+      return null;
+    }
 
     if(!activePet){
       return DEFAULT_LOCALSTORAGE_STATE;
-    }
-    if(lastCached - lastSaved === 0) {
-      // avoids a double save condition
-      return null;
     }
     
     const foundIdx = storedPets.findIndex((sP: SavedPetState) => sP.id === activePet.id);
@@ -485,31 +474,29 @@ export const selectNewSavePayload = createSelector(
       // console.log('>>>> FOUND', storedPets.length)
       newList = storedPets.map((sP: SavedPetState) => {
         if(sP.id === activePet.id){
-          // console.log('match, new', activePet.id)
           return {
             id: activePet.id,
-            stats: deltaStats,
+            stats: cachedDeltaStats,
             bornOn: activePet.bornOn,
-            lastSaved: lastSaved // active pets should not update this value, so they stay active in the background,
+            lastSaved: lastSaved,
+            // beingTracked: true
           }
         }
 
-        return {
-          ...sP,
-          lastSaved: lastSaved
-        }
+        return sP;
       })
     }else{
       console.log('>>>> ADDING')
       newList = storedPets.concat([{
         id: activePet.id,
-        stats: deltaStats,
+        stats: cachedDeltaStats,
         bornOn: activePet.bornOn,
-        lastSaved: lastSaved
+        lastSaved: lastSaved,
+        beingTracked: false
       }]);
     }
 
-    console.log('... savin', newList)
+    // console.log('>> returning savedPayload', newList);
     
     return {
       config:{

@@ -122,7 +122,6 @@ export type RawPetJSON = {
     behaviorRules: {when:string[], then:string}[],
     interactions: PetInteractionDefinition[]
   },
-  lastSaved: number,
   backgroundImage?:string
 }
 
@@ -150,9 +149,10 @@ export type CachedPetStat = {
 }
 export type SavedPetState = {
   id: string,
-  lastSaved?: number,
   stats: CachedPetStat[],
-  bornOn?: number
+  lastSaved?: number,
+  bornOn?: number,
+  beingTracked?: boolean
 }
 
 export type ActiveInteractionStatus = {
@@ -172,7 +172,7 @@ export type PetInteractionDetail = {
 export type LocalStorageState = {
   config: {
     activePet?: string,
-    lastSaved?: number,
+    lastSaved: number,
   },
   interactions: ActiveInteractionStatus[],
   pets: SavedPetState[]

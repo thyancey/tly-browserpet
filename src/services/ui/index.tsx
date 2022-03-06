@@ -26,8 +26,8 @@ export const uiSlice = createSlice({
 
       state.lastRendered = nowTime;
       if(action.payload.doSave){
+        // console.log('update lastSaved');
         state.lastSaved = nowTime;
-
       }
     },
   }

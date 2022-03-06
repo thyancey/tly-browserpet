@@ -111,12 +111,12 @@
         "then": "BE_DEAD"
       },
       {
-        "when": [ "STATUS_ROTTEN", "STATUS_SKINNY" ],
-        "then": "BE_ANGRY_ROTTEN"
-      },
-      {
         "when": [ "STATUS_ROTTEN", "STATUS_SHRIVELLED" ],
         "then": "BE_LITTLE_ROTTEN"
+      },
+      {
+        "when": [ "STATUS_ROTTEN", "STATUS_SKINNY" ],
+        "then": "BE_ANGRY_ROTTEN"
       },
       {
         "when": [ "STATUS_ROTTEN" ],
@@ -146,8 +146,8 @@
       { "id": "BE_ANGRY_ROTTEN", "image": "assets/hotdoug-angry-r.gif", "position": "bottom", "offsetY": -50 },
       { "id": "BE_SAD", "image": "assets/hotdoug-sad.gif", "position": "bottom", "offsetY": -50 },
       { "id": "BE_SAD_ROTTEN", "image": "assets/hotdoug-sad-r.gif", "position": "bottom", "offsetY": -50 },
-      { "id": "BE_LITTLE", "image": "assets/hotdoug-little.gif", "position": "bottom", "offsetY": -50 },
-      { "id": "BE_LITTLE_ROTTEN", "image": "assets/hotdoug-little-r.gif", "position": "bottom", "offsetY": -50 },
+      { "id": "BE_LITTLE", "image": "assets/hotdoug-little.gif", "position": "bottom", "offsetY": 10 },
+      { "id": "BE_LITTLE_ROTTEN", "image": "assets/hotdoug-little-r.gif", "position": "bottom", "offsetY": 10 },
       { "id": "BE_WIGGLE", "image": "assets/hotdoug-wiggle.gif", "position": "bottom", "offsetY": -50 },
       { "id": "BE_DEAD", "image": "assets/hotdoug-dead.gif", "position": "bottom", "offsetY": -50 }
     ],

@@ -54,7 +54,7 @@ const ScBehavior = styled.p`
 export const PetContainer = () => {
   const activeBehavior = useSelector(selectActiveBehavior, shallowEqual);
   const bgImageUrl = useSelector(selectActiveBg, shallowEqual);
-  console.log('bgImageUrl', bgImageUrl)
+
   return (
     <ScContainer bgImageUrl={bgImageUrl}>
       { activeBehavior && (
