@@ -63,13 +63,19 @@ export type StatChangeDefinition = {
 
 export type PetBehaviorDefinition = {
   id: string,
-  imageUrl: string
+  imageUrl: string,
+  position: string,
+  offsetX: number,
+  offsetY: number
 }
 
 export type PetBehaviorJSON = {
   id: string,
   image?: string,
-  imageUrl?: string
+  imageUrl?: string,
+  position: string,
+  offsetX?: number,
+  offsetY?: number
 }
 
 export type WhenNumber = {
@@ -116,7 +122,8 @@ export type RawPetJSON = {
     behaviorRules: {when:string[], then:string}[],
     interactions: PetInteractionDefinition[]
   },
-  lastSaved: number
+  lastSaved: number,
+  backgroundImage?:string
 }
 
 export type PetDefinition = {
@@ -126,7 +133,8 @@ export type PetDefinition = {
   bornOn?: number,
   level: number,
   logic: PetLogicGroup,
-  lastSaved: number
+  lastSaved: number,
+  bgImage?:string
 }
 
 export type PetListItem = {

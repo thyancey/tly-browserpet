@@ -52,7 +52,10 @@ export const parseLogicGroup = (petDefJSON: RawPetJSON, initialState: SavedPetSt
 export const parsePetBehaviors = (petBehaviorsJson: PetBehaviorJSON[], baseUrl: string) => {
   return petBehaviorsJson.map(pB => ({
     ...pB,
-    imageUrl: pB.image ? `${baseUrl}/${pB.image}` : pB.imageUrl || ''
+    imageUrl: pB.image ? `${baseUrl}/${pB.image}` : pB.imageUrl || '',
+    position: pB.position ? pB.position : 'center',
+    offsetX: pB.offsetX ? pB.offsetX : 0,
+    offsetY: pB.offsetY ? pB.offsetY : 0
   }))
 }
 
@@ -236,12 +239,14 @@ export const petStoreSlice = createSlice({
       }
       console.log(`for ${petDefinition.id}, lastSaved: ${lastSaved}`)
       console.log(`for ${petDefinition.id}, lastSaved: ${new Date(lastSaved).toTimeString()}`)
+      console.log(`backgroundImage: ${petDefinition.backgroundImage}`)
 
       const updatedDef = {
         ...petDefinition,
         logic: logicGroup,
         bornOn: initialState?.bornOn || new Date().getTime(),
-        lastSaved: lastSaved
+        lastSaved: lastSaved,
+        bgImage: petDefinition.backgroundImage ? `${petDefinition.baseUrl}/${petDefinition.backgroundImage}` : null
       } as PetDefinition;
 
       if(foundPet){
@@ -306,6 +311,9 @@ export const selectActiveBehaviorRuleDefinitions = createSelector(
 );
 export const selectActiveBehaviorDefinitions = createSelector(
   [selectActivePet], (activePet) => activePet?.logic?.behaviors || []
+);
+export const selectActiveBg = createSelector(
+  [selectActivePet], (activePet) => activePet?.bgImage
 );
 export const selectCachedPets = createSelector(
   [getCachedPets], (cachedPets) => cachedPets

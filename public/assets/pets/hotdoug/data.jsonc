@@ -1,0 +1,188 @@
+{
+  "id": "hotdoug",
+  "name": "Hot Doug the hotdog",
+  "bio": "hot doug.",
+  "level": 0,
+  "backgroundImage": "assets/bg.jpg",
+  "logic":{
+    "stats":[
+      {
+        "id": "xp",
+        "label": "XP",
+        "value": 50.0,
+        "perSecond": 0,
+        "max": 100.0,
+        "fullIsGood": true
+      },
+      {
+        "id": "shelflife",
+        "label": "Shelf-Life",
+        "value": 250.0,
+        "perSecond": -10.0,
+        "max": 500.0,
+        "fullIsGood": true,
+        "statEffects":[
+          { "when": "<=_0", "then": "STATUS_DEAD" },
+          { "when": "<_25%", "then": "STATUS_ROTTEN" },
+          { "when": "<_50%", "then": "STATUS_STINKY" }
+        ]
+      },
+      {
+        "id": "meatyness",
+        "label": "Meatyness",
+        "value": 50.0,
+        "perSecond": -15.0,
+        "max": 100.0,
+        "fullIsGood": true,
+        "statEffects":[
+          { "when": "=_0%", "then": "STATUS_SHRIVELLED" },
+          { "when": "<_25%", "then": "STATUS_SKINNY" },
+          { "when": "<_50%", "then": "STATUS_NORMAL" },
+          { "when": ">=_75%", "then": "STATUS_MEATY" }
+        ]
+      },
+      {
+        "id": "poop",
+        "label": "Poop",
+        "value": 0.0,
+        "perSecond": 0,
+        "max": 100.0,
+        "fullIsGood": false
+      }
+    ],
+    "statuses":[
+      {
+        "id": "STATUS_SAD",
+        "label": "sad",
+        "message": ""
+      },
+      {
+        "id": "STATUS_MEATY",
+        "label": "meaty",
+        "message": "",
+        "alertType": "" 
+      },
+      {
+        "id": "STATUS_SHRIVELLED",
+        "label": "shrivelled",
+        "message": "",
+        "alertType": "" 
+      },
+      {
+        "id": "STATUS_SKINNY",
+        "label": "skinny",
+        "message": "",
+        "alertType": "" 
+      },
+      {
+        "id": "STATUS_STINKY",
+        "label": "strinky",
+        "message": "",
+        "alertType": "" 
+      },
+      {
+        "id": "STATUS_ROTTEN",
+        "label": "rotten",
+        "message": "",
+        "alertType": "alert" 
+      },
+      {
+        "id": "STATUS_HUNGRY",
+        "label": "hungry",
+        "message": "",
+        "alertType": "" 
+      },
+      {
+        "id": "STATUS_NORMAL",
+        "label": "normal",
+        "message": "",
+        "alertType": "" 
+      },
+      {
+        "id": "STATUS_DEAD",
+        "label": "i'm dead :(",
+        "message": "",
+        "alertType": "alert"
+      }
+    ],
+    "behaviorRules":[
+      {
+        "when":"STATUS_DEAD",
+        "then": "BE_DEAD"
+      },
+      {
+        "when": [ "STATUS_ROTTEN", "STATUS_SKINNY" ],
+        "then": "BE_ANGRY_ROTTEN"
+      },
+      {
+        "when": [ "STATUS_ROTTEN", "STATUS_SHRIVELLED" ],
+        "then": "BE_LITTLE_ROTTEN"
+      },
+      {
+        "when": [ "STATUS_ROTTEN" ],
+        "then": "BE_SAD_ROTTEN"
+      },
+      {
+        "when": "STATUS_SHRIVELLED",
+        "then": "BE_LITTLE"
+      },
+      {
+        "when": "STATUS_SKINNY",
+        "then": "BE_HUNGRY"
+      },
+      {
+        "when": "STATUS_MEATY",
+        "then": "BE_WIGGLE"
+      },
+      {
+        "when":[], // use for default
+        "then": "BE_NORMAL"
+      }
+    ],
+    "behaviors":[
+      { "id": "BE_NORMAL", "image": "assets/hotdoug-default.gif", "position": "bottom", "offsetY": -50 },
+      { "id": "BE_HUNGRY", "image": "assets/hotdoug-eat.gif", "position": "bottom", "offsetY": -50 },
+      { "id": "BE_ANGRY", "image": "assets/hotdoug-angry.gif", "position": "bottom", "offsetY": -50 },
+      { "id": "BE_ANGRY_ROTTEN", "image": "assets/hotdoug-angry-r.gif", "position": "bottom", "offsetY": -50 },
+      { "id": "BE_SAD", "image": "assets/hotdoug-sad.gif", "position": "bottom", "offsetY": -50 },
+      { "id": "BE_SAD_ROTTEN", "image": "assets/hotdoug-sad-r.gif", "position": "bottom", "offsetY": -50 },
+      { "id": "BE_LITTLE", "image": "assets/hotdoug-little.gif", "position": "bottom", "offsetY": -50 },
+      { "id": "BE_LITTLE_ROTTEN", "image": "assets/hotdoug-little-r.gif", "position": "bottom", "offsetY": -50 },
+      { "id": "BE_WIGGLE", "image": "assets/hotdoug-wiggle.gif", "position": "bottom", "offsetY": -50 },
+      { "id": "BE_DEAD", "image": "assets/hotdoug-dead.gif", "position": "bottom", "offsetY": -50 }
+    ],
+    "interactions":[
+      {
+        "id":"INT_MEATUP",
+        "label": "Meat up!",
+        "cooldown": 3000,
+        "changeStats":[
+          {
+            "statId":"meatyness",
+            "value": 25.0
+          },
+          {
+            "statId":"shelflife",
+            "value": -5.0
+          }
+        ]
+      },
+      {
+        "id":"INT_FRESHENUP",
+        "label": "freshen up",
+        "cooldown": 3000,
+        "changeStats":[
+          {
+            "statId":"shelflife",
+            "value": 100.0
+          },
+          {
+            "statId":"poop",
+            "value": 10.0
+          }
+        ]
+      }
+    ]
+  }
+}
+  

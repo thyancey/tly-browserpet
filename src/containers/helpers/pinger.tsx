@@ -5,7 +5,8 @@ import { pingStore } from '../../services/ui';
 import { useDispatch } from 'react-redux';
 
 const PING_RATE = 2000;
-const SAVE_RATE = 6000;
+const SAVE_RATE = 2000;
+// const SAVE_RATE = 6000;
 
 export const Pinger = () => {
   const [pinger, setPinger] = useState(0);
