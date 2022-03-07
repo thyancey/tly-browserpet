@@ -1,6 +1,6 @@
 {
   "id": "bunchie",
-  "name": "Bunchie!!",
+  "name": "Bunchie",
   "bio": "A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama. A big dumb hopping green llama.",
   "level": 0,
   "logic":{
@@ -133,8 +133,8 @@
         ]
       },
       {
-        "id":"INT_RELIEVE",
-        "label": "lil dumps",
+        "id":"INT_FART",
+        "label": "fart",
         "cooldown": 3000,
         "changeStats":[
           {
@@ -144,11 +144,15 @@
           {
             "statId":"brains",
             "value": -10
+          },
+          {
+            "statId":"xp",
+            "value": 3.875
           }
         ]
       },
       {
-        "id":"INT_RELIEVE2",
+        "id":"INT_DUMP",
         "label": "big dumps",
         "cooldown": 10000,
         "changeStats":[

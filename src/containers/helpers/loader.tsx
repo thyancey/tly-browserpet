@@ -1,54 +1,54 @@
 import { useEffect, useState } from 'react';
 import { jsonc } from 'jsonc';
 
-import { LocalStorageState, PetManifestEntry, RawPetJSON } from '../../types';
+import { LocalStorageState, PetManifestEntry, RawManifest, RawManifestItem, RawPetJSON } from '../../types';
 import useLocalStorage from '../../util/hooks/useLocalStorage';
 import { createPet, removeInteractionEvent, restoreInteractionFromSave, setActiveId, setActiveIdx } from '../../services/petstore';
 import { DEFAULT_LOCALSTORAGE_STATE } from '../../services/store';
 import { useDispatch } from 'react-redux';
 import { Dispatch } from '@reduxjs/toolkit';
-
+import { log } from '../../util/tools';
 
 const fetchAllData = async (url: string, dispatch: any, savedData: LocalStorageState) => {
-  console.log('\n\n\n');
-  console.log('-------fetchAllData----------');
+  log('\n\nfdfdfdfdfdfddfdf\n');
+  log('-------fetchAllData----------');
   const pets = await readManifest(url)
-  console.log('fetchAllData: received pets', pets);
+  log('fetchAllData: received pets', pets);
 
-  const parsedPets = await fetchPetFiles(pets)
-  console.log('fetchAllData: received parsedPets', parsedPets);
+  const jsonParsedPets = await fetchPetFiles(pets)
+  log('fetchAllData: received jsonParsedPets', jsonParsedPets);
 
-  finishUp(parsedPets, dispatch, savedData)
+  finishUp(jsonParsedPets, dispatch, savedData)
 
-  console.log('\n\n\n');
+  log('\n\n\n');
 }
 
 const readManifest = async (url: string) => {
-  console.log(`readManifest: reading manifest from ${url}`);
-  const petsList = await fetchManifest(url).then(json => {
-    console.log('readManifest: fetched:', json);
-    return json.pets.map((p:any) => ({
+  log(`readManifest: reading manifest from ${url}`);
+  const petsList: RawManifestItem[] = await fetchManifest(url).then((json: RawManifest) => {
+    log('readManifest: fetched:', json);
+    return json.pets.map((p:RawManifestItem) => ({
       id: p.id,
       baseUrl: p.baseUrl
     }));
   });
 
-  console.log('readManifest: returning', petsList);
-  return petsList;
+  return petsList.filter(p => !!p); //remove any null records from errors
 }
 
 const fetchManifest = async (url: string) => {
   try{
     const response = await fetch(url, { mode: 'cors'});
     if(!response.ok){
-      throw `bad response`;
+      // throw `bad response`;
+      return null;
     }
     
     const text = await response.text();
     return jsonc.parse(text);
   } catch(e){
     console.error(`Error fetching or parsing manifest from ${url}`, e);
-    return {};
+    return null;
   }
 }
 
@@ -56,7 +56,7 @@ const fetchPetFiles = async (petFiles: PetManifestEntry[]) => {
   let promises = [] as Promise<RawPetJSON>[];
   petFiles.forEach(pF => promises.push(getPetPromise(pF)));
   const result = await Promise.all(promises);
-  return result
+  return result.filter(r => !!r); //remove any null records from errors
 }
 
 const getPetPromise = (petFile: PetManifestEntry): Promise<RawPetJSON> => {
@@ -68,7 +68,8 @@ const fetchPetFile = async (petManifestEntry: PetManifestEntry) => {
   try{
     const response = await fetch(url, { mode: 'cors'});
     if(!response.ok){
-      throw `bad response`;
+      console.error(`bad response from ${url}`);
+      return null;
     }
     const petJson = jsonc.parse(await response.text());
     petJson.baseUrl = petManifestEntry.baseUrl;
@@ -76,15 +77,14 @@ const fetchPetFile = async (petManifestEntry: PetManifestEntry) => {
     return petJson;
   } catch(e){
     console.error(`Error fetching or parsing pet manifest from ${url}`, e);
-    return {};
+    return null;
   }
 }
 
 const finishUp = (parsedPets: RawPetJSON[], dispatch: any, savedData: LocalStorageState) => {
   const now = new Date().getTime();
-  console.log('>>> FINISH UP')
-  console.log(`JSON definitions parsed successfully`, parsedPets);
-  console.log(`LocalStorage was read successfully`, savedData);
+  log(`JSON definitions parsed successfully`, parsedPets);
+  log(`LocalStorage was read successfully`, savedData);
   let activeId = '';
   
   if(savedData.config.activePet){

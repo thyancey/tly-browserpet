@@ -53,22 +53,31 @@ const ScBehavior = styled.p`
 
 export const PetContainer = () => {
   const activeBehavior = useSelector(selectActiveBehavior, shallowEqual);
-  const bgImageUrl = useSelector(selectActiveBg, shallowEqual);
+  const { imageUrl, backgroundColor } = useSelector(selectActiveBg, shallowEqual);
+  if(!activeBehavior){
+    return <ScContainer bgImageUrl={imageUrl} />
+  }
+  
+  // console.log('selectActiveBehavior', activeBehavior);
+
+  const backgroundStyles = {
+    backgroundImage: `url(${activeBehavior.imageUrl})`, 
+    backgroundPosition: `${activeBehavior.position}`,
+    left: `${activeBehavior.offsetX}px`,
+    bottom: `${activeBehavior.offsetY}px`
+  } as any;
+
+  if(backgroundColor){
+    backgroundStyles.backgroundColor = backgroundColor;
+  }
 
   return (
-    <ScContainer bgImageUrl={bgImageUrl}>
-      { activeBehavior && (
-        <>
-          <ScBehavior>{`behavior: ${activeBehavior.id}`}</ScBehavior>
-          <Statuses />
-          <ScPetImage style={{ 
-            backgroundImage: `url(${activeBehavior.imageUrl})`, 
-            backgroundPosition: `${activeBehavior.position}`,
-            left: `${activeBehavior.offsetX}px`,
-            bottom: `${activeBehavior.offsetY}px`
-          }}/>
-        </>
-      ) }
+    <ScContainer bgImageUrl={imageUrl}>
+      <>
+        <ScBehavior>{`behavior: ${activeBehavior.id}`}</ScBehavior>
+        <Statuses />
+        <ScPetImage style={backgroundStyles}/>
+      </>
     </ScContainer>
   )
 }

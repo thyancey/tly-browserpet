@@ -9,6 +9,15 @@ export interface ChromeMessage {
   message: any
 }
 
+export type RawManifest = {
+  pets: RawManifestItem[]
+}
+
+export type RawManifestItem = {
+  id: string,
+  baseUrl: string
+}
+
 export type PetInfo = {
   id: string,
   name: string,
@@ -85,16 +94,16 @@ export type WhenNumber = {
 }
 export type RawWhenThen = {
   when: string[],
-  then: string
+  then: (string | string[]),
 }
 export type WhenThenNumberGroup = {
   when: WhenNumber[],
-  then: string
+  then: (string | string[])
 }
 
 export type WhenThenStringGroup = {
   when: string[],
-  then: string
+  then: (string | string[])
 }
 export type PetLogicGroup = {
   stats: PetStatDefinition[],
@@ -122,7 +131,8 @@ export type RawPetJSON = {
     behaviorRules: {when:string[], then:string}[],
     interactions: PetInteractionDefinition[]
   },
-  backgroundImage?:string
+  backgroundImage?:string,
+  backgroundColor?:string
 }
 
 export type PetDefinition = {
@@ -132,7 +142,8 @@ export type PetDefinition = {
   bornOn?: number,
   level: number,
   logic: PetLogicGroup,
-  bgImage?:string
+  bgImage?:string,
+  bgColor?:string
 }
 
 export type PetListItem = {

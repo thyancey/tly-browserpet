@@ -1,8 +1,7 @@
 // slightly evolving from create-react-app example
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { stat } from 'fs';
-import { PetDefinition, SavedPetState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetBehaviorDefinition, PetStatDefinitionJSON, PetInteractionDefinition, StatChangeDefinition, PetInteractionDetail, LocalStorageState, ActiveInteractionStatus, DeltaStat, PetBehaviorJSON, CachedPetStat, PingPayload, PetStatDefinition } from '../../types';
-import { clamp, getRenderedDeltaStats, getCachedDeltaStats } from '../../util/tools';
+import { PetDefinition, SavedPetState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetBehaviorDefinition, PetStatDefinitionJSON, PetInteractionDefinition, StatChangeDefinition, PetInteractionDetail, LocalStorageState, ActiveInteractionStatus, DeltaStat, PetBehaviorJSON, CachedPetStat, PingPayload } from '../../types';
+import { clamp, getRenderedDeltaStats, getCachedDeltaStats, log } from '../../util/tools';
 import { evaluateWhenThenNumberGroup, evaluateWhenThenStringGroup, parseRawWhenThenGroup } from '../../util/whenthen';
 
 import { RootState } from '../store';
@@ -172,6 +171,8 @@ export const petStoreSlice = createSlice({
       const petIdx = state.pets.findIndex((p:PetDefinition) => p.id === action.payload);
       if(petIdx === -1){
         console.log(`Cannot find pet with id "${action.payload}"`);
+        state.activeIdx = 0;
+        hackySave(state);
       }else{
         state.activeIdx = petIdx;
 
@@ -241,25 +242,26 @@ export const petStoreSlice = createSlice({
       state.interactions = state.interactions.filter(interaction => interaction.id !== intId);
     },
     createPet: (state: PetStoreState, action: PayloadAction<any>) => {
-      console.log('\n\ncreatePet', action.payload);
+      log('\n\ncreatePet', action.payload);
       const { petDefinition, initialState, isActive } = action.payload as CreatePetPayload;
       const foundPet = state.pets.find(p => p.id === petDefinition.id);
       const nowTime = new Date().getTime();
       const logicGroup = parseLogicGroup(petDefinition, initialState);
 
 
-      console.log(`>> createPet: ${petDefinition.id}, isActive? ${isActive}, beingTracked? ${initialState?.beingTracked}`);
+      log(`>> createPet: ${petDefinition.id}, isActive? ${isActive}, beingTracked? ${initialState?.beingTracked}`);
       if(!initialState){
-        console.log('no initial state found.')
+        log('no initial state found.')
       }else{
-        console.log('initial state:', initialState);
+        log('initial state:', initialState);
       }
 
       const updatedDef = {
         ...petDefinition,
         logic: logicGroup,
         bornOn: initialState?.bornOn || nowTime,
-        bgImage: petDefinition.backgroundImage ? `${petDefinition.baseUrl}/${petDefinition.backgroundImage}` : null
+        bgImage: petDefinition.backgroundImage ? `${petDefinition.baseUrl}/${petDefinition.backgroundImage}` : null,
+        bgColor: petDefinition.backgroundColor || null
       } as PetDefinition;
 
       if(foundPet){
@@ -326,8 +328,12 @@ export const selectActiveBehaviorDefinitions = createSelector(
   [selectActivePet], (activePet) => activePet?.logic?.behaviors || []
 );
 export const selectActiveBg = createSelector(
-  [selectActivePet], (activePet) => activePet?.bgImage
+  [selectActivePet], (activePet) => ({
+    imageUrl: activePet?.bgImage,
+    backgroundColor: activePet?.bgColor
+  })
 );
+
 export const selectCachedPets = createSelector(
   [getCachedPets], (cachedPets) => cachedPets
 );

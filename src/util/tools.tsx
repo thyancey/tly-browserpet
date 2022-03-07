@@ -64,3 +64,8 @@ export const getCachedDeltaStats = (stats: PetStatDefinition[], cachedPetStats: 
     } as DeltaStat;
   });
 };
+
+const LOG = false;
+export const log = (...messages:any) => {
+  LOG && console.log(...messages);
+}
