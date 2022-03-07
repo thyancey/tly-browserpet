@@ -58,7 +58,7 @@ export const PetContainer = () => {
     return <ScContainer bgImageUrl={imageUrl} />
   }
   
-  console.log('selectActiveBehavior', activeBehavior);
+  // console.log('selectActiveBehavior', activeBehavior);
 
   const backgroundStyles = {
     backgroundImage: `url(${activeBehavior.imageUrl})`, 
