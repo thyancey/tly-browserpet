@@ -4,8 +4,10 @@
   */
   "pets":[
     { "id": "bunchie", "baseUrl": "assets/pets/bunchie" },
-    // { "id": "hotdoug", "baseUrl": "assets/pets/hotdoug" }
     { "id": "hotdoug", "baseUrl": "https://thyancey.github.io/browserpet-library/pets/hotdoug" },
     { "id": "mika", "baseUrl": "https://thyancey.github.io/browserpet-library/pets/mika" }
+    // { "id": "hotdoug", "baseUrl": "assets/ignored-pets/hotdoug" }
+    // { "id": "mika", "baseUrl": "assets/ignored-pets/mika" },
+    // { "id": "cheerimonster", "baseUrl": "assets/ignored-pets/cheerimonster" }
   ]
 }

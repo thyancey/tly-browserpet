@@ -131,7 +131,8 @@ export type RawPetJSON = {
     behaviorRules: {when:string[], then:string}[],
     interactions: PetInteractionDefinition[]
   },
-  backgroundImage?:string
+  backgroundImage?:string,
+  backgroundColor?:string
 }
 
 export type PetDefinition = {
@@ -141,7 +142,8 @@ export type PetDefinition = {
   bornOn?: number,
   level: number,
   logic: PetLogicGroup,
-  bgImage?:string
+  bgImage?:string,
+  bgColor?:string
 }
 
 export type PetListItem = {

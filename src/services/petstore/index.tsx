@@ -171,6 +171,8 @@ export const petStoreSlice = createSlice({
       const petIdx = state.pets.findIndex((p:PetDefinition) => p.id === action.payload);
       if(petIdx === -1){
         console.log(`Cannot find pet with id "${action.payload}"`);
+        state.activeIdx = 0;
+        hackySave(state);
       }else{
         state.activeIdx = petIdx;
 
@@ -258,7 +260,8 @@ export const petStoreSlice = createSlice({
         ...petDefinition,
         logic: logicGroup,
         bornOn: initialState?.bornOn || nowTime,
-        bgImage: petDefinition.backgroundImage ? `${petDefinition.baseUrl}/${petDefinition.backgroundImage}` : null
+        bgImage: petDefinition.backgroundImage ? `${petDefinition.baseUrl}/${petDefinition.backgroundImage}` : null,
+        bgColor: petDefinition.backgroundColor || null
       } as PetDefinition;
 
       if(foundPet){
@@ -325,8 +328,12 @@ export const selectActiveBehaviorDefinitions = createSelector(
   [selectActivePet], (activePet) => activePet?.logic?.behaviors || []
 );
 export const selectActiveBg = createSelector(
-  [selectActivePet], (activePet) => activePet?.bgImage
+  [selectActivePet], (activePet) => ({
+    imageUrl: activePet?.bgImage,
+    backgroundColor: activePet?.bgColor
+  })
 );
+
 export const selectCachedPets = createSelector(
   [getCachedPets], (cachedPets) => cachedPets
 );
