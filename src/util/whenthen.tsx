@@ -15,7 +15,6 @@ export const evaluateWhenThenStringGroup = (whenThenStringGroup: WhenThenStringG
     // something in the required group was not found
     return null;
   };
-
   return whenThenStringGroup.then[Math.floor(Math.random() * whenThenStringGroup.then.length)];
 };
 
@@ -25,7 +24,6 @@ export const parseRawWhenThenGroup = (rawWhenThenGroup: RawWhenThen[], type: 'st
       // json should support string or array, make this better
       const whens = typeof rwt.when === 'string' ? [ rwt.when ] : rwt.when;
       const thens = typeof rwt.then === 'string' ? [ rwt.then ] : rwt.then;
-
 
       return {
         when: whens,
@@ -40,8 +38,7 @@ export const parseRawWhenThenGroup = (rawWhenThenGroup: RawWhenThen[], type: 'st
       const whens = typeof rwt.when === 'string' ? [ rwt.when ] : rwt.when;
       return {
         when: whens.map(w => parseExpressionString(w)).filter(w => w !== null),
-        // then: rwt.then
-        then: typeof rwt.then === 'number' ? [ rwt.then ] : rwt.then
+        then: (typeof rwt.then === 'string') ? [ rwt.then ] : rwt.then
       } as WhenThenNumberGroup;
     }) as WhenThenNumberGroup[];
   }

@@ -94,16 +94,16 @@ export type WhenNumber = {
 }
 export type RawWhenThen = {
   when: string[],
-  then: string,
+  then: (string | string[]),
 }
 export type WhenThenNumberGroup = {
   when: WhenNumber[],
-  then: string
+  then: (string | string[])
 }
 
 export type WhenThenStringGroup = {
   when: string[],
-  then: string[]
+  then: (string | string[])
 }
 export type PetLogicGroup = {
   stats: PetStatDefinition[],
