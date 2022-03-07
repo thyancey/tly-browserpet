@@ -31,7 +31,7 @@
         "id": "meatyness",
         "label": "Meatyness",
         "value": 50.0,
-        "perSecond": -15.0,
+        "perSecond": -5.0,
         "max": 100.0,
         "fullIsGood": true,
         "statEffects":[
@@ -155,11 +155,11 @@
       {
         "id":"INT_MEATUP",
         "label": "Meat up!",
-        "cooldown": 3000,
+        "cooldown": 300,
         "changeStats":[
           {
             "statId":"meatyness",
-            "value": 25.0
+            "value": 10.0
           },
           {
             "statId":"shelflife",
@@ -174,7 +174,7 @@
         "changeStats":[
           {
             "statId":"shelflife",
-            "value": 100.0
+            "value": 500.0
           },
           {
             "statId":"poop",

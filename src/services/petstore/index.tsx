@@ -1,6 +1,7 @@
 // slightly evolving from create-react-app example
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PetDefinition, SavedPetState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetBehaviorDefinition, PetStatDefinitionJSON, PetInteractionDefinition, StatChangeDefinition, PetInteractionDetail, LocalStorageState, ActiveInteractionStatus, DeltaStat, PetBehaviorJSON, CachedPetStat, PingPayload } from '../../types';
+import { stat } from 'fs';
+import { PetDefinition, SavedPetState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetBehaviorDefinition, PetStatDefinitionJSON, PetInteractionDefinition, StatChangeDefinition, PetInteractionDetail, LocalStorageState, ActiveInteractionStatus, DeltaStat, PetBehaviorJSON, CachedPetStat, PingPayload, PetStatDefinition } from '../../types';
 import { clamp, getRenderedDeltaStats, getCachedDeltaStats } from '../../util/tools';
 import { evaluateWhenThenNumberGroup, evaluateWhenThenStringGroup, parseRawWhenThenGroup } from '../../util/whenthen';
 
@@ -109,6 +110,46 @@ export const getWasntTracked = (previous: SavedPetState[], activeIdx: number) =>
   }
 }
 
+export const getUpdatedStats = (cachedPetStats: CachedPetStat[], statDefinitions: DeltaStat[], newStats: StatChangeDefinition[]) => {
+  const getNewValue = (cachedStat: CachedPetStat, statDefs: DeltaStat[], changeDefs: StatChangeDefinition[]) => {
+    const found = changeDefs.find(cD => cD.statId === cachedStat.id);
+    if(!found) return cachedStat.value;
+
+    const rawNew = cachedStat.value + found.value;
+    const max = statDefs.find(sD => cachedStat.id === sD.id)?.max;
+    if(max){
+      return clamp(rawNew, 0, max);
+    }
+    return rawNew > 0 ? rawNew : 0;
+  }
+
+  return cachedPetStats.map(oldStat => ({
+    id: oldStat.id,
+    value: getNewValue(oldStat, statDefinitions, newStats)
+    // value: newStats.find(newStat => newStat.id === oldStat.id)?.value || oldStat.value
+  }));
+}
+
+export const getNewStats = (oldStats: DeltaStat[], statChanges: StatChangeDefinition[]) => {
+  return oldStats.map(stat => {
+    const toChange = statChanges.find(sChange => sChange.statId === stat.id);
+    if(toChange){
+      return {
+        id: stat.id,
+        value: clamp(stat.value + toChange.value, 0, stat.max)
+      };
+    }
+    return stat;
+  });
+}
+
+export const hackySave = (state: PetStoreState, explicitTime?:number) => {
+  const nowTime = (explicitTime !== undefined) ? explicitTime : new Date().getTime();
+  state.lastSaved = nowTime;
+  state.lastRendered = nowTime;
+}
+
+
 export const petStoreSlice = createSlice({
   name: 'petStore',
   initialState: initialStoreState,
@@ -135,16 +176,18 @@ export const petStoreSlice = createSlice({
         state.activeIdx = petIdx;
 
         // TODO: this seems sketchy
-        state.lastRendered = new Date().getTime();
-        state.lastSaved = new Date().getTime();
+        hackySave(state);
       }
     },
     setActiveIdx: (state: PetStoreState, action: PayloadAction<any>) => {
       state.activeIdx = action.payload;
 
       // TODO: this seems sketchy
-      state.lastRendered = new Date().getTime();
-      state.lastSaved = new Date().getTime();
+      hackySave(state);
+    },
+    setCachedPayload: (state: PetStoreState, action: PayloadAction<any>) => {
+      const lsState = action.payload as LocalStorageState;
+      state.cachedPets = lsState.pets;
     },
     restoreInteractionFromSave:  (state: PetStoreState, action: PayloadAction<any>) => {
       const interaction = action.payload as ActiveInteractionStatus;
@@ -153,61 +196,43 @@ export const petStoreSlice = createSlice({
         state.interactions.push(interaction);
       }
     },
-    addInteractionEvent: (state: PetStoreState, action: PayloadAction<any>) => {
+    addNewInteractionEvent: (state: PetStoreState, action: PayloadAction<any>) => {
       const { interaction, time } = action.payload as {
         interaction: PetInteractionDefinition,
         time: number
       };
 
-      // no need to save it if its immediate
-      if(!interaction.cooldown){
-        return;
+      let doSave = false;
+      // interaction has to sit a bit, so save it for later
+      if(interaction.cooldown){
+        doSave = true;
+        // // these are added by a user interaction
+        if(!state.interactions.find(iE => iE.id === interaction.id)){
+          state.interactions.push({
+            id: interaction.id,
+            startAt: time,
+            endAt: time + (interaction.cooldown || 0)
+          });
+        }
       }
       
-      // // these are added by a user interaction
-      if(!state.interactions.find(iE => iE.id === interaction.id)){
-        state.interactions.push({
-          id: interaction.id,
-          startAt: time,
-          endAt: time + (interaction.cooldown || 0)
-        });
+      if(interaction.changeStats.length > 0){
+        doSave = true;
+        const activePet = state.pets[state.activeIdx];
+        const cachedIdx = state.cachedPets.findIndex(cP => cP.id === activePet.id);
+        if(cachedIdx > -1){
+          const cachedStats = state.cachedPets[cachedIdx]?.stats || [];
+          const statDefs = activePet.logic.stats;
+        
+          state.cachedPets[cachedIdx] = {
+            ...state.cachedPets[cachedIdx],
+            stats: getUpdatedStats(cachedStats, statDefs, interaction.changeStats)
+          }
+        }
       }
-    },
-    setCachedPayload: (state: PetStoreState, action: PayloadAction<any>) => {
-      const lsState = action.payload as LocalStorageState;
-      state.cachedPets = lsState.pets;
-    },
-    changeStatEvent: (state: PetStoreState, action: PayloadAction<any>) => {
-      const { changedStats, time, activeStats } = action.payload as {
-        changedStats: StatChangeDefinition[],
-        time: number,
-        activeStats: DeltaStat[]
-      };
 
-      console.log('CHANGE STAT EVENT:', action.payload);
-      
-      // // these are added by a user interaction
-
-      const newStats = activeStats.map(stat => {
-        const toChange = changedStats.find(cStat => cStat.statId === stat.id);
-        if(toChange){
-          return {
-            ...stat,
-            value: clamp(stat.value + toChange.value, 0, stat.max)
-          };
-        }
-        return stat;
-      });
-
-      state.pets[state.activeIdx] = {
-        ...state.pets[state.activeIdx],
-        logic:{
-          ...state.pets[state.activeIdx].logic,
-          stats: state.pets[state.activeIdx].logic.stats.map(s => ({
-            ...s,
-            value: newStats.find(ns => ns.id === s.id)?.value || s.value
-          }))
-        }
+      if(doSave){
+        hackySave(state, time);
       }
     },
     removeInteractionEvent: (state: PetStoreState, action: PayloadAction<any>) => {
@@ -263,7 +288,7 @@ export const petStoreSlice = createSlice({
   }
 });
 
-export const { pingStore, createPet, setActiveIdx, setActiveId, clearSave, setCachedPayload, addInteractionEvent, restoreInteractionFromSave, changeStatEvent, removeInteractionEvent } = petStoreSlice.actions;
+export const { pingStore, createPet, setActiveIdx, setActiveId, clearSave, setCachedPayload, addNewInteractionEvent, restoreInteractionFromSave, removeInteractionEvent } = petStoreSlice.actions;
 
 export const selectActiveIdx = (state: RootState): number => state.petStore.activeIdx;
 export const selectPets = (state: RootState): PetDefinition[] => state.petStore.pets;
@@ -340,7 +365,7 @@ export const selectActiveInteractionStatus = createSelector(
 export const selectActiveLastCached = createSelector(
   [getCachedPets, selectActivePet],
   (cachedPets, activePet): number => {
-    console.log('< selectActiveLastCached', cachedPets);
+    // console.log('< selectActiveLastCached', cachedPets);
     if(!activePet) return 0;
     return cachedPets.find(cP => cP.id === activePet.id)?.lastSaved || 0;
   }

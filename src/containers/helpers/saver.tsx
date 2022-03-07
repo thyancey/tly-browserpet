@@ -15,6 +15,7 @@ export const Saver = () => {
   useEffect(() => {
     // this check avoids trying to save the initialState on first load, maybe there's a better way around this.
     if(savePayload && !!savePayload.config.activePet){
+      console.log('> setLocalStorage', savePayload.config.lastSaved);
       setLocalStorage(() => savePayload);
       if(lastSaved !== savePayload.config.lastSaved){
         lastSaved = savePayload.config.lastSaved;
