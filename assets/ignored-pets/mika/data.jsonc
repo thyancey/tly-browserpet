@@ -1,0 +1,102 @@
+{
+  "id": "mika",
+  "name": "Mika",
+  "bio": "This is some placeholder text and this is some more placeholder text. This is some placeholder text and this is some more placeholder text. This is some placeholder text and this is some more placeholder text. This is some placeholder text and this is some more placeholder text. ",
+  "level": 0,
+  "backgroundColor": "#e48c7c",
+  "logic":{
+    "stats":[
+      {
+        "id": "food",
+        "label": "Food",
+        "value": 150.0,
+        "perSecond": -5.0,
+        "min": 0.0,
+        "max": 500.0,
+        "fullIsGood": true,
+        "statEffects": [
+          { "when": "<_25%", "then": "STATUS_HUNGRY" }
+        ]
+      },
+      {
+        "id": "poop",
+        "label": "Poop",
+        "value": 0.0,
+        "perSecond": 0.0,
+        "min": 0.0,
+        "max": 10.0,
+        "fullIsGood": false,
+        "statEffects": [
+          { "when": ">_50%", "then": "STATUS_POOPY" }
+        ]
+      }
+    ],
+    "statuses":[
+      {
+        "id": "STATUS_NORMAL",
+        "label": "normal",
+        "message": ""
+      },
+      {
+        "id": "STATUS_HUNGRY",
+        "label": "hungry",
+        "message": ""
+      },
+      {
+        "id": "STATUS_POOPY",
+        "label": "poopy",
+        "message": ""
+      }
+    ],
+    "behaviorRules":[
+      {
+        "when": ["STATUS_HUNGRY"],
+        "then": "BE_HUNGRY"
+      },
+      {
+        "when": ["STATUS_POOPY"],
+        "then": "BE_POOPY"
+      },
+      {
+        "when": [],
+        "then": "BE_NORMAL"
+      }
+    ],
+    "behaviors":[
+      { "id": "BE_NORMAL", "image": "assets/sleep-loop.gif" },
+      { "id": "BE_HUNGRY", "image": "assets/food.gif" },
+      { "id": "BE_POOPY", "image": "assets/poop.gif" }
+    ],
+    "interactions":[
+      {
+        "id":"INT_FEED",
+        "label": "Feed",
+        "cooldown": 1000,
+        "changeStats":[
+          {
+            "statId":"food",
+            "value": 100.0
+          },
+          {
+            "statId":"poop",
+            "value": 3.0
+          }
+        ]
+      },
+      {
+        "id":"INT_WALK",
+        "label": "walk",
+        "cooldown": 20000,
+        "changeStats":[
+          {
+            "statId":"poop",
+            "value": -10.0
+          },{
+            "statId":"food",
+            "value": -200.0
+          }
+        ]
+      }
+    ]
+  }
+}

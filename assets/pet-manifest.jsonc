@@ -4,8 +4,13 @@
   */
   "pets":[
     { "id": "bunchie", "baseUrl": "assets/pets/bunchie" },
-    // { "id": "hotdoug", "baseUrl": "assets/pets/hotdoug" }
     { "id": "hotdoug", "baseUrl": "https://thyancey.github.io/browserpet-library/pets/hotdoug" },
-    { "id": "mika", "baseUrl": "https://thyancey.github.io/browserpet-library/pets/mika" }
+    { "id": "mika", "baseUrl": "https://thyancey.github.io/browserpet-library/pets/mika" },
+    { "id": "cheerimonster", "baseUrl": "https://thyancey.github.io/browserpet-library/pets/cheerimonster" },
+    { "id": "lisa", "baseUrl": "https://thyancey.github.io/browserpet-library/pets/lisa" }
+    // { "id": "hotdoug", "baseUrl": "assets/ignored-pets/hotdoug" }
+    // { "id": "mika", "baseUrl": "assets/ignored-pets/mika" },
+    // { "id": "cheerimonster", "baseUrl": "assets/ignored-pets/cheerimonster" },
+    // { "id": "lisa", "baseUrl": "assets/ignored-pets/lisa" }
   ]
-}
+} 

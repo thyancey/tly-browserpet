@@ -1,0 +1,85 @@
+{
+  "id": "cheerimonster",
+  "name": "Cheerimonster",
+  "bio": "This is some placeholder text and this is some more placeholder text. This is some placeholder text and this is some more placeholder text. This is some placeholder text and this is some more placeholder text. This is some placeholder text and this is some more placeholder text. ",
+  "level": 0,
+  "backgroundColor": "#343b44",
+  "logic":{
+    "stats":[
+      {
+        "id": "cheeri-lust",
+        "label": "Cheeri Lust",
+        "value": 0.0,
+        "perSecond": 121.68,
+        "min": 0.0,
+        "max": 1000.0,
+        "fullIsGood": false,
+        "statEffects": [
+          { "when": "<_10%", "then": "STATUS_BLOATED" },
+          { "when": [">=_10%", "<_45%"], "then": "STATUS_SATIATED" },
+          { "when": ">_45%", "then": "STATUS_HUNGRY" }
+        ]
+      }
+    ],
+    "statuses":[
+      {
+        "id": "STATUS_NORMAL",
+        "label": "normal",
+        "message": ""
+      },
+      {
+        "id": "STATUS_HUNGRY",
+        "label": "me hungry!",
+        "message": ""
+      },
+      {
+        "id": "STATUS_SATIATED",
+        "label": "me ate cheeris!",
+        "message": ""
+      },
+      {
+        "id": "STATUS_BLOATED",
+        "label": "too many cheeris!",
+        "message": ""
+      }
+    ],
+    "behaviorRules":[
+      {
+        "when": ["STATUS_HUNGRY"],
+        "then": [ "BE_UNHAPPY", "BE_SAD" ]
+      },
+      {
+        "when": ["STATUS_BLOATED"],
+        "then": "BE_SCARED"
+      },
+      {
+        "when": ["STATUS_SATIATED"],
+        "then": "BE_HAPPY"
+      },
+      {
+        "when": [],
+        "then": "BE_COMPLACENT"
+      }
+    ],
+    "behaviors":[
+      { "id": "BE_COMPLACENT", "image": "assets/complacent.gif" },
+      { "id": "BE_HAPPY", "image": "assets/happy.gif" },
+      { "id": "BE_SAD", "image": "assets/sad.gif" },
+      { "id": "BE_SCARED", "image": "assets/scared.gif" },
+      { "id": "BE_UNHAPPY", "image": "assets/unhappy.gif" }
+    ],
+    "interactions":[
+      {
+        "id":"INT_FEED_CHEERI",
+        "label": "feed me cheeris!!",
+        "cooldown": 1000,
+        "changeStats":[
+          {
+            "statId":"cheeri-lust",
+            "value": -300.0
+          }
+        ]
+      }
+    ]
+  }
+}

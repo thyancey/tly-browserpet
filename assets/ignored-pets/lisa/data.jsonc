@@ -1,0 +1,68 @@
+{
+  "id": "lisa",
+  "name": "Lisa",
+  "bio": "This is some placeholder text and this is some more placeholder text. This is some placeholder text and this is some more placeholder text. This is some placeholder text and this is some more placeholder text. This is some placeholder text and this is some more placeholder text. ",
+  "level": 0,
+  "backgroundColor": "#888f59",
+  "logic":{
+    "stats":[
+      {
+        "id": "food",
+        "label": "Food",
+        "value": 10.0,
+        "perSecond": -0.9,
+        "min": 0.0,
+        "max": 20.0,
+        "fullIsGood": true,
+        "statEffects": [
+          { "when": "<_70%", "then": "STATUS_HUNGRY" },
+          { "when": "<=_0%", "then": "STATUS_DEAD" }
+        ]
+      }
+    ],
+    "statuses":[
+      {
+        "id": "STATUS_HUNGRY",
+        "label": "I'm Hungry!",
+        "message": ""
+      },
+      {
+        "id": "STATUS_DEAD",
+        "label": "I'm Dead!",
+        "message": ""
+      }
+    ],
+    "behaviorRules":[
+      {
+        "when": ["STATUS_DEAD"],
+        "then": "BE_DEAD"
+      },
+      {
+        "when": ["STATUS_HUNGRY"],
+        "then": "BE_HUNGRY"
+      },
+      {
+        "when": [],
+        "then": "BE_NORMAL"
+      }
+    ],
+    "behaviors":[
+      { "id": "BE_NORMAL", "image": "assets/idle.gif" },
+      { "id": "BE_HUNGRY", "image": "assets/eat.gif" },
+      { "id": "BE_DEAD", "image": "assets/dead.gif" }
+    ],
+    "interactions":[
+      {
+        "id":"INT_FEED",
+        "label": "feed me! (+3)",
+        "cooldown": 1000,
+        "changeStats":[
+          {
+            "statId":"food",
+            "value": 3.0
+          }
+        ]
+      }
+    ]
+  }
+}
