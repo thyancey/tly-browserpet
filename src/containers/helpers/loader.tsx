@@ -7,33 +7,33 @@ import { createPet, removeInteractionEvent, restoreInteractionFromSave, setActiv
 import { DEFAULT_LOCALSTORAGE_STATE } from '../../services/store';
 import { useDispatch } from 'react-redux';
 import { Dispatch } from '@reduxjs/toolkit';
-
+import { log } from '../../util/tools';
 
 const fetchAllData = async (url: string, dispatch: any, savedData: LocalStorageState) => {
-  console.log('\n\n\n');
-  console.log('-------fetchAllData----------');
+  log('\n\nfdfdfdfdfdfddfdf\n');
+  log('-------fetchAllData----------');
   const pets = await readManifest(url)
-  console.log('fetchAllData: received pets', pets);
+  log('fetchAllData: received pets', pets);
 
   const parsedPets = await fetchPetFiles(pets)
-  console.log('fetchAllData: received parsedPets', parsedPets);
+  log('fetchAllData: received parsedPets', parsedPets);
 
   finishUp(parsedPets, dispatch, savedData)
 
-  console.log('\n\n\n');
+  log('\n\n\n');
 }
 
 const readManifest = async (url: string) => {
-  console.log(`readManifest: reading manifest from ${url}`);
+  log(`readManifest: reading manifest from ${url}`);
   const petsList = await fetchManifest(url).then(json => {
-    console.log('readManifest: fetched:', json);
+    log('readManifest: fetched:', json);
     return json.pets.map((p:any) => ({
       id: p.id,
       baseUrl: p.baseUrl
     }));
   });
 
-  console.log('readManifest: returning', petsList);
+  log('readManifest: returning', petsList);
   return petsList;
 }
 
@@ -82,9 +82,8 @@ const fetchPetFile = async (petManifestEntry: PetManifestEntry) => {
 
 const finishUp = (parsedPets: RawPetJSON[], dispatch: any, savedData: LocalStorageState) => {
   const now = new Date().getTime();
-  console.log('>>> FINISH UP')
-  console.log(`JSON definitions parsed successfully`, parsedPets);
-  console.log(`LocalStorage was read successfully`, savedData);
+  log(`JSON definitions parsed successfully`, parsedPets);
+  log(`LocalStorage was read successfully`, savedData);
   let activeId = '';
   
   if(savedData.config.activePet){

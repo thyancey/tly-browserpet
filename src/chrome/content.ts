@@ -1,4 +1,5 @@
 import { ChromeMessage, Sender } from "../types";
+import { log } from "../util/tools";
 
 type MessageResponse = (response?: any) => void
 
@@ -6,7 +7,7 @@ const validateSender = (
   message: ChromeMessage,
   sender: chrome.runtime.MessageSender
 ) => {
-  console.log('validateSender', sender)
+  log('validateSender', sender)
   return sender.id === chrome.runtime.id && message.from === Sender.React;
 }
 
@@ -17,7 +18,7 @@ const messagesFromReactAppListener = (
 ) => {
 
   const isValidated = validateSender(message, sender);
-  console.log('got message', message.message)
+  log('got message', message.message)
 
   if (isValidated && message.message === 'Hello from React') {
     response('Hello from content.js');
@@ -30,7 +31,7 @@ const messagesFromReactAppListener = (
 }
 
 const main = () => {
-  console.log('[content.ts] Main');
+  log('[content.ts] Main');
   /**
    * Fired when a message is sent from either an extension process or a content script.
    */

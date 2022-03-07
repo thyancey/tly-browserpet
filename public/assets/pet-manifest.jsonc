@@ -13,6 +13,6 @@
     { "id": "mika", "baseUrl": "assets/pets/mika" },
     { "id": "raccoon", "baseUrl": "assets/pets/raccoon" },
     { "id": "hotdoug", "baseUrl": "assets/pets/hotdoug" }
-    // { "id": "raccoon", "baseUrl": "https://thomasyancey.com/tests/browserpet/pets/raccoon" } //hosted files are ok too
+    // { "id": "hotdoug", "baseUrl": "https://thyancey.github.io/browserpet-library/pets/hotdoug" }
   ]
 }
