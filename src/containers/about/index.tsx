@@ -4,7 +4,6 @@ import { getColor } from '../../themes/';
 
 import styled from 'styled-components';
 import { clearSave } from '../../services/petstore';
-import { pingStore } from '../../services/ui';
 import { useDispatch } from 'react-redux';
 
 const ScContainer = styled.div`
@@ -46,9 +45,6 @@ export const About = () => {
       </ScButton>
       <ScButton onClick={() => {dispatch(clearSave())}}>
         {'Clear Save'}
-      </ScButton>
-      <ScButton onClick={() => {dispatch(pingStore({ time: new Date().getTime(), doSave: true }))}}>
-        {'Force Save'}
       </ScButton>
     </ScContainer>
   )

@@ -1,4 +1,4 @@
-import { PetStatDefinition, DeltaStat } from '../types';
+import { PetStatDefinition, DeltaStat, SavedPetState, CachedPetStat } from '../types';
 
 // general
 export const round = (number:number, pad?:number) => {
@@ -16,28 +16,51 @@ export const randBetween = (range:number[]) => {
   return range[0] + (Math.random() * (range[1] - range[0]));
 };
 
-// in the future, if the needs to be accurate, it needs to be simulated per second
-// and not totalled/clamped at the end
-// for frequent updates and basic save/load this is fine
-// future needs are for a "while you were gone" timeline and more accurate events
-export const getRenderedDeltaStats = (stats: PetStatDefinition[], prevTime: number, nowTime: number) =>{
-  const timeDiff = (nowTime - prevTime) / 1000;
+export const getStatValue = (s: PetStatDefinition, cachedPetStats: CachedPetStat[], timeDiff: number, forceCurrent?: boolean) => {
+  let curValue = cachedPetStats.find(cS => cS.id === s.id)?.value;
+  if(curValue === undefined){
+    curValue = s.value;
+  }
 
-  return stats.map(s => ({
-    id: s.id,
-    value: Math.round((clamp(s.value + (s.perSecond * timeDiff), 0, s.max)) * 100) / 100,
-    max: s.max,
-    label: s.label
-  }));
-};
+  if(forceCurrent) return curValue; // from invalid time supplied, dont calculate
+  return Math.round((clamp(curValue + (s.perSecond * timeDiff), 0, s.max)) * 100) / 100
+}
 
-export const getSaveDeltaStats = (stats: PetStatDefinition[], oldSaveTime: number, newSaveTime: number) =>{
+export const getRenderedDeltaStats = (stats: PetStatDefinition[], cachedPetStats: CachedPetStat[], oldSaveTime: number, newSaveTime: number) =>{
   const timeDiff = (newSaveTime - oldSaveTime) / 1000;
+  /*
+    TODO, this could get removed simplified after resolving:
+    - redundant call on save
+    - negative time on change pet between saves
+  */
+
+  if(timeDiff <= 0){
+    return stats.map(s => {
+      return {
+        id: s.id,
+        value: getStatValue(s, cachedPetStats, timeDiff, true),
+        max: s.max,
+        label: s.label
+      }
+    });
+  }
 
   return stats.map(s => {
     return {
       id: s.id,
-      value: Math.round((clamp(s.value + (s.perSecond * timeDiff), 0, s.max)) * 100) / 100
+      value: getStatValue(s, cachedPetStats, timeDiff),
+      max: s.max,
+      label: s.label
+    }
+  });
+};
+
+export const getCachedDeltaStats = (stats: PetStatDefinition[], cachedPetStats: CachedPetStat[], oldSaveTime: number, newSaveTime: number) =>{
+  const timeDiff = (newSaveTime && oldSaveTime) ? (newSaveTime - oldSaveTime) / 1000 : 0;
+  return stats.map(s => {
+    return {
+      id: s.id,
+      value: getStatValue(s, cachedPetStats, timeDiff)
     } as DeltaStat;
   });
 };

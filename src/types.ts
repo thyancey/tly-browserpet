@@ -63,13 +63,19 @@ export type StatChangeDefinition = {
 
 export type PetBehaviorDefinition = {
   id: string,
-  imageUrl: string
+  imageUrl: string,
+  position: string,
+  offsetX: number,
+  offsetY: number
 }
 
 export type PetBehaviorJSON = {
   id: string,
   image?: string,
-  imageUrl?: string
+  imageUrl?: string,
+  position: string,
+  offsetX?: number,
+  offsetY?: number
 }
 
 export type WhenNumber = {
@@ -116,7 +122,7 @@ export type RawPetJSON = {
     behaviorRules: {when:string[], then:string}[],
     interactions: PetInteractionDefinition[]
   },
-  timestamp: number
+  backgroundImage?:string
 }
 
 export type PetDefinition = {
@@ -126,7 +132,7 @@ export type PetDefinition = {
   bornOn?: number,
   level: number,
   logic: PetLogicGroup,
-  timestamp: number
+  bgImage?:string
 }
 
 export type PetListItem = {
@@ -136,14 +142,16 @@ export type PetListItem = {
 }
 
 // slimmer save object for localStorage
+export type CachedPetStat = {
+  id: string,
+  value: number
+}
 export type SavedPetState = {
   id: string,
-  lastSaved: number,
+  stats: CachedPetStat[],
+  lastSaved?: number,
   bornOn?: number,
-  stats: {
-    id: string,
-    value: number
-  }[]
+  beingTracked?: boolean
 }
 
 export type ActiveInteractionStatus = {
@@ -163,7 +171,7 @@ export type PetInteractionDetail = {
 export type LocalStorageState = {
   config: {
     activePet?: string,
-    lastSaved?: number,
+    lastSaved: number,
   },
   interactions: ActiveInteractionStatus[],
   pets: SavedPetState[]

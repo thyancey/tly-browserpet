@@ -1,6 +1,6 @@
 import React from 'react';
 import { RootState } from '../store';
-import reducer, { PetStoreState, selectActiveDeltaStats, selectActiveIdx, setActiveId } from './index';
+import reducer, { PetStoreState, selectRenderedDeltaStats, selectActiveIdx, setActiveId } from './index';
 // import { render } from '@testing-library/react';
 
 
@@ -50,11 +50,11 @@ describe('#petstore.selectors', () => {
   });
 
   
-  describe('#selectActiveDeltaStats', () => {
+  describe('#selectRenderedDeltaStats', () => {
     test('should increase stat over time', () => {
       const lastTime = 1000;
       const time = 3000;
-      expect(selectActiveDeltaStats.resultFunc(
+      expect(selectRenderedDeltaStats.resultFunc(
         [
           {
             id: 'food',
@@ -79,7 +79,7 @@ describe('#petstore.selectors', () => {
     test('should decrease stat over time', () => {
       const lastTime = 1000;
       const time = 3000;
-      expect(selectActiveDeltaStats.resultFunc(
+      expect(selectRenderedDeltaStats.resultFunc(
         [
           {
             id: 'food',
@@ -104,7 +104,7 @@ describe('#petstore.selectors', () => {
     test('stat should not go past 0 or max', () => {
       const lastTime = 1000;
       const time = 10000;
-      expect(selectActiveDeltaStats.resultFunc(
+      expect(selectRenderedDeltaStats.resultFunc(
         [
           {
             id: 'food',

@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 import { jsonc } from 'jsonc';
 
-import { LocalStorageState, PetDefinition, PetManifestEntry, PetStatDefinitionJSON, RawPetJSON } from '../../types';
+import { LocalStorageState, PetManifestEntry, RawPetJSON } from '../../types';
 import useLocalStorage from '../../util/hooks/useLocalStorage';
-import { createPet, removeInteractionEvent, restoreInteractionFromSave, setActiveId } from '../../services/petstore';
+import { createPet, removeInteractionEvent, restoreInteractionFromSave, setActiveId, setActiveIdx } from '../../services/petstore';
 import { DEFAULT_LOCALSTORAGE_STATE } from '../../services/store';
 import { useDispatch } from 'react-redux';
-import { pingStore } from '../../services/ui';
 import { Dispatch } from '@reduxjs/toolkit';
 
 
@@ -86,17 +85,31 @@ const finishUp = (parsedPets: RawPetJSON[], dispatch: any, savedData: LocalStora
   console.log('>>> FINISH UP')
   console.log(`JSON definitions parsed successfully`, parsedPets);
   console.log(`LocalStorage was read successfully`, savedData);
+  let activeId = '';
+  
+  if(savedData.config.activePet){
+    activeId = savedData.config.activePet;
+  }
+
+
   parsedPets.forEach((petDef: RawPetJSON) => {
     const savedStatus = savedData?.pets.find(p => p.id === petDef.id) || null;
+    if(!activeId && savedStatus && savedData.config.activePet === savedStatus.id){
+      activeId = savedStatus.id;
+    }
     dispatch(createPet({
+      isActive: (activeId === savedStatus?.id),
       petDefinition: petDef,
       initialState: savedStatus
     }));
   });
 
-  if(savedData.config.activePet){
-    dispatch(setActiveId(savedData.config.activePet));
+  if(activeId){
+    dispatch(setActiveId(activeId));
+  }else{
+    dispatch(setActiveIdx(0));
   }
+
   savedData.interactions.filter(interaction => interaction.endAt > now).forEach(interaction => {
     dispatch((thunkDispatch:Dispatch) => {
       thunkDispatch(restoreInteractionFromSave(interaction))
@@ -106,7 +119,7 @@ const finishUp = (parsedPets: RawPetJSON[], dispatch: any, savedData: LocalStora
     });
   });
 
-  dispatch(pingStore({ time: now, doSave: true }));
+  // dispatch(pingStore({ time: now, doSave: true }));
 }
 
 export const Loader = () => {

@@ -3,9 +3,8 @@ import styled from 'styled-components';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from '@reduxjs/toolkit';
 
-import { selectActiveInteractionDefinitions, addInteractionEvent, selectActiveInteractionStatus, removeInteractionEvent, changeStatEvent, selectActiveDeltaStats } from '../../../services/petstore';
+import { selectActiveInteractionDefinitions, addNewInteractionEvent, selectActiveInteractionStatus, removeInteractionEvent } from '../../../services/petstore';
 import { PetInteractionDefinition } from '../../../types';
-import { pingStore } from '../../../services/ui';
 import { InteractionButton } from './interaction-button';
 
 const ScInteractions = styled.ul`
@@ -27,17 +26,16 @@ const ScInteractions = styled.ul`
 export const Interactions = () => {
   const interactionDefs = useSelector(selectActiveInteractionDefinitions, shallowEqual);
   const interactionStatus = useSelector(selectActiveInteractionStatus, shallowEqual);
-  const activeStats = useSelector(selectActiveDeltaStats);
 
   // thunk madness, cause I don't know how else to do this.
   const dispatch = useDispatch();
   const addTemporaryInteraction = (interaction: PetInteractionDefinition) => {
     const now = new Date().getTime();
     dispatch((thunkDispatch: Dispatch) => {
-      thunkDispatch(addInteractionEvent({ interaction: interaction, time: now }));
-      thunkDispatch(changeStatEvent({ changedStats: interaction.changeStats, time: now + 1, activeStats: activeStats }));
-      // its possible this save is not needed
-      thunkDispatch(pingStore({ time: now, doSave: true}));
+      thunkDispatch(addNewInteractionEvent({ 
+        interaction: interaction, 
+        time: now 
+      }));
       if(interaction.cooldown){
         window.setTimeout(() => {
           thunkDispatch(removeInteractionEvent(interaction.id))
