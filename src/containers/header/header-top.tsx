@@ -11,10 +11,10 @@ const ScHelpButton = styled.div`
   position:absolute;
   right:0rem;
   bottom:-.5rem;
-  width:3rem;
+  width:7rem;
   height:3rem;
 
-  border-radius:2rem 2rem 0 0;
+  border-radius:1rem 1rem 0 0;
   background-color: ${getColor('red')};
   color: ${getColor('white')};
 
@@ -34,7 +34,7 @@ const ScHelpButton = styled.div`
 const ScLogo = styled.h1`
   font-size:2rem;
   text-align:right;
-  margin-right:4rem;
+  margin-right:8rem;
   margin-bottom:-.5rem;
 `;
 
@@ -61,7 +61,7 @@ export const HeaderTop = () => {
         <ScLogo>{'Browser Pet'}</ScLogo>
         {/* <ScHelpButton onClick={() => {push('/about')}}> */}
         <ScHelpButton onClick={() => dispatch(clearSave())}>
-          {'X'}
+          {'RESET'}
         </ScHelpButton>
       </div>
     </ScContainer>

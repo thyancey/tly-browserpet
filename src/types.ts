@@ -9,6 +9,15 @@ export interface ChromeMessage {
   message: any
 }
 
+export type RawManifest = {
+  pets: RawManifestItem[]
+}
+
+export type RawManifestItem = {
+  id: string,
+  baseUrl: string
+}
+
 export type PetInfo = {
   id: string,
   name: string,

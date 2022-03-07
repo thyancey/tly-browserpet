@@ -1,18 +1,11 @@
 {
   /*
-    pingRate
-    how often in milliseconds to check behavior/stat loop
-    integer, can be "50" - "5000", but why would you want that
-
-    http://thomasyancey.com/projects/virtualpet-external/pets/rizzo-raccoon
+    https://thyancey.github.io/browserpet-library/pets/hotdoug
   */
-  // "renderRate": 1000,
-  // "saveRate": 3000,
   "pets":[
     { "id": "bunchie", "baseUrl": "assets/pets/bunchie" },
-    { "id": "mika", "baseUrl": "assets/pets/mika" },
-    { "id": "raccoon", "baseUrl": "assets/pets/raccoon" },
-    { "id": "hotdoug", "baseUrl": "assets/pets/hotdoug" }
-    // { "id": "hotdoug", "baseUrl": "https://thyancey.github.io/browserpet-library/pets/hotdoug" }
+    // { "id": "hotdoug", "baseUrl": "assets/pets/hotdoug" }
+    { "id": "hotdoug", "baseUrl": "https://thyancey.github.io/browserpet-library/pets/hotdoug" },
+    { "id": "mika", "baseUrl": "https://thyancey.github.io/browserpet-library/pets/mika" }
   ]
 }
