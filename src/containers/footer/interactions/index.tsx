@@ -5,7 +5,7 @@ import { Dispatch } from '@reduxjs/toolkit';
 
 import { selectActiveInteractionDefinitions, addInteractionEvent, selectActiveInteractionStatus, removeInteractionEvent, changeStatEvent, selectRenderedDeltaStats } from '../../../services/petstore';
 import { PetInteractionDefinition } from '../../../types';
-import { pingStore } from '../../../services/ui';
+import { pingStore } from '../../../services/petstore';
 import { InteractionButton } from './interaction-button';
 
 const ScInteractions = styled.ul`
@@ -37,7 +37,7 @@ export const Interactions = () => {
       thunkDispatch(addInteractionEvent({ interaction: interaction, time: now }));
       thunkDispatch(changeStatEvent({ changedStats: interaction.changeStats, time: now + 1, activeStats: activeStats }));
       // its possible this save is not needed
-      // thunkDispatch(pingStore({ time: now, doSave: true}));
+      thunkDispatch(pingStore({ time: now, doSave: true}));
       if(interaction.cooldown){
         window.setTimeout(() => {
           thunkDispatch(removeInteractionEvent(interaction.id))

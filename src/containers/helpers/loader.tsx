@@ -6,7 +6,6 @@ import useLocalStorage from '../../util/hooks/useLocalStorage';
 import { createPet, removeInteractionEvent, restoreInteractionFromSave, setActiveId, setActiveIdx } from '../../services/petstore';
 import { DEFAULT_LOCALSTORAGE_STATE } from '../../services/store';
 import { useDispatch } from 'react-redux';
-import { pingStore } from '../../services/ui';
 import { Dispatch } from '@reduxjs/toolkit';
 
 

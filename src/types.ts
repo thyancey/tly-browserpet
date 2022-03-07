@@ -132,7 +132,6 @@ export type PetDefinition = {
   bornOn?: number,
   level: number,
   logic: PetLogicGroup,
-  lastSaved: number,
   bgImage?:string
 }
 
