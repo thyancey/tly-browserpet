@@ -18,7 +18,7 @@ const ScInteractions = styled.ul`
     &:first-child{
       margin-left: .5rem;
     }
-    flex: 1;
+    flex: 1 auto;
     list-style:none;
   }
 `;

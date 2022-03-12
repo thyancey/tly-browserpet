@@ -13,7 +13,7 @@ const ScButton = styled.div`
   font-weight:bold;
   font-size: 2rem;
 
-  padding:1rem 1.5rem;
+  padding:1rem .5rem;
 
   position:relative;
   overflow: hidden;

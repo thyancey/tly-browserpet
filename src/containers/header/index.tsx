@@ -13,10 +13,12 @@ const ScHeader = styled.header`
 `;
 
 const ScTop = styled.div`
-  flex: 0 0 2rem;
+  flex: 0 0 3rem;
 `;
 
 const ScBottom = styled.div`
+  position:relative;
+  z-index:1;
   flex: 1;
 `;
 

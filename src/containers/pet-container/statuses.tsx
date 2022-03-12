@@ -66,7 +66,7 @@ const getBottom = (index:number) => {
 
 export const Statuses = () => {
   const activeDeltaStatuses = useSelector(selectDetailedActiveDeltaStatuses, shallowEqual);
-
+  
   return (
     <ScContainer>
       <ScStatuses>

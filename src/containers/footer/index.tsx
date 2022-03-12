@@ -28,9 +28,9 @@ const ScPetInfo = styled.div`
 
   font-size: 1.5rem;
   line-height: 1.5rem;
-  padding: 0.25rem .5rem .5rem .5rem;
   font-weight:500;
-  padding:2rem;
+  padding: 1rem;
+  padding-top: .5rem ;
   
   color: black;
   
