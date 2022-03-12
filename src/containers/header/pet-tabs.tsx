@@ -24,6 +24,8 @@ type ScTabProps = {
 const ScTab = styled.li<ScTabProps>`
   list-style:none;
   margin:none;
+  position:relative;
+  z-index:1;
   
   display:inline-block;
   vertical-align:bottom;
@@ -33,10 +35,11 @@ const ScTab = styled.li<ScTabProps>`
   font-size:2rem;
   line-height:2rem;
   font-weight:bold;
-  padding: .25rem 1rem;
+  padding: .1rem .2rem;
   padding-bottom: 0rem;
-  margin-right:.25rem;
+  margin-right:-.75rem;
   margin-bottom: -.25rem;
+  box-shadow: .2rem .2rem .2rem .2rem ${getColor('black')};
 
   border:.5rem solid ${getColor('white')};
   border-radius:1rem 1rem 0 0;
@@ -44,20 +47,33 @@ const ScTab = styled.li<ScTabProps>`
   background-color:${getColor('blue')};
   border-bottom-color: ${getColor('white')};
   color:${getColor('black')};
-  transition: padding-bottom .1s ease-in-out, background-color .1s ease-in-out;
+  transition: all .1s;
 
   &:hover{
     background-color:${getShade('blue', 20)};
   }
   
   ${props => props.isActive && css`
+
     background-color:${getColor('green')};
-    padding-bottom: .5rem;
-    padding-top: .5rem;
-    transition: padding .2s ease-out, background-color .2s ease-out;
+    /* padding-bottom: .5rem;
+    padding-top: .5rem; */
+    padding: .5rem;
+    transition: all .2s ease-out;
+    font-size: 3rem;
+    z-index:2;
+    margin-right: -.25rem;
+    margin-left: 0.25rem;
+    margin-bottom: 0rem;
+    border-radius:1rem;
+    box-shadow: .2rem .2rem .4rem .05rem ${getColor('black')};
 
     &:hover{
       background-color:${getShade('green', 40)};
+    }
+    
+    :first-child{
+      margin-left:0rem;
     }
   `};
 

@@ -16,8 +16,6 @@ const ScContainer = styled.div`
   right:0;
   top:0;
   bottom:0;
-  min-width:30rem;
-  min-height:55rem;
 
   display:grid;
   grid-template-columns: auto;

@@ -30,7 +30,7 @@ const ScPetInfo = styled.div`
   line-height: 1.5rem;
   padding: 0.25rem .5rem .5rem .5rem;
   font-weight:500;
-  padding:2rem;
+  padding:1rem;
   
   color: black;
   

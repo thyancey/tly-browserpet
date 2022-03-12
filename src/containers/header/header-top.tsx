@@ -7,7 +7,7 @@ import { clearSave } from '../../services/petstore';
 import { getColor, getShade } from '../../themes/';
 import { PetTabs } from './pet-tabs';
 
-const ScHelpButton = styled.div`
+const ScResetButton = styled.div`
   position:absolute;
   right:0rem;
   bottom:-.5rem;
@@ -32,15 +32,20 @@ const ScHelpButton = styled.div`
 `;
 
 const ScLogo = styled.h1`
-  font-size:2rem;
+  position:absolute;
+  right:8rem;
+  bottom:0;
+  width:20rem;
+  z-index:-1;
+
+  font-size:1.5rem;
   text-align:right;
-  margin-right:8rem;
-  margin-bottom:-.5rem;
 `;
 
 const ScContainer = styled.div`
   display:flex;
   flex-direction:row;
+  height:100%;
 
   >div{
     flex:1;
@@ -59,10 +64,10 @@ export const HeaderTop = () => {
       </div>
       <div>
         <ScLogo>{'Browser Pet'}</ScLogo>
-        {/* <ScHelpButton onClick={() => {push('/about')}}> */}
-        <ScHelpButton onClick={() => dispatch(clearSave())}>
+        {/* <ScResetButton onClick={() => {push('/about')}}> */}
+        <ScResetButton onClick={() => dispatch(clearSave())}>
           {'RESET'}
-        </ScHelpButton>
+        </ScResetButton>
       </div>
     </ScContainer>
   )
