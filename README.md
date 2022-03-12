@@ -1,5 +1,7 @@
 
+
 # Overview
+
 A somewhat light-weight way to make a little virtual friend that lives in a browser tab or chrome extension.
 
 
@@ -9,8 +11,18 @@ This is based of an earlier project I made, which was a little more complicated,
 
 <img src="assets/readme/readme-preview.gif" />
 
+---
 ## How does it work?
-Using extensible rules and localStorage, determine what images and values to show - based on user input and the passage of time
+Everything about the pet is parameterized to support user-generated content:
+- The name, biography, scene, and other info for the pet
+- The individual stats, their max values, how fast they change over time, and their effects on the pet
+- Different statuses and behaviors the pet can have, how it chooses between them, and how they alter the pet's image and other assets in the UI
+- Which buttons to show in the UI, what their affects are, and how long the cooldown period is
+
+The pets are designed to change over time, even when the webpage/extension is closed. By saving "last saved" info to localStorage, and using timestamps to calculate the value of stats, the application gives the appearance of always in the background.
+
+At the moment, only the last active pet's stats change over time in the background. This might be changed in the future.
+
 <img src="https://docs.google.com/drawings/d/e/2PACX-1vQ9W3m2QjxCHnV-CEJ-aYRqpahqXHKZtQ8UTY_kQJes-L4iO3D3QRa8mj4TAbjKu112BUsebmLTNL0O/pub?w=843&h=668">
 
 
