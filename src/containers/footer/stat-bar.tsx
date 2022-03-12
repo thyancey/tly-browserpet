@@ -27,7 +27,7 @@ const ScBar = styled.div`
   box-shadow: 0px -2px 4px ${getShade('white', -40)};
 `;
 
-const ScBarValue = styled.span`
+const ScBarValue = styled.div`
   position: relative;
   font-size: 1.5rem;
   font-weight: bold;
@@ -43,6 +43,17 @@ const ScBarFill = styled.div`
   background-color: ${getColor('blue')};
 `;
 
+const ScValueProgress = styled.p`
+`;
+
+const ScValuePercentage = styled.p`
+  opacity:.5;
+  margin-top:.125rem;
+  margin-bottom:0rem;
+  font-size:1.25rem;
+`;
+
+
 type StatBarProps = {
   label: string,
   max: number,
@@ -57,7 +68,12 @@ export const StatBar = ({label, max, value, hideStats = false}: StatBarProps) =>
     <ScContainer>
       <ScLabel>{label.toLocaleUpperCase()}</ScLabel>
       <ScBar>
-        <ScBarValue>{!hideStats && `${round(value)} / ${max} (${percent}%)`}</ScBarValue>
+          {!hideStats && (
+            <ScBarValue>
+              <ScValueProgress>{`${round(value)} / ${max}`}</ScValueProgress>
+              <ScValuePercentage>{`${percent}%`}</ScValuePercentage>
+            </ScBarValue>
+          )}
         <ScBarFill style={{width:`${percent}%`}} />
       </ScBar>
     </ScContainer>

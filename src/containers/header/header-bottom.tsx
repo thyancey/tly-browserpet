@@ -80,7 +80,7 @@ export const HeaderBottom = () => {
             <ScBornOn>{`born on: ${getDateLabel(petInfo.bornOn)}`}</ScBornOn>
           </ScLabel>
           <ScPetLevel>
-            <h4>{`Level: ${petInfo.level}`}</h4>
+            {/* <h4>{`Level: ${petInfo.level}`}</h4> */}
           </ScPetLevel>
         </>
       )}
