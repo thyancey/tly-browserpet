@@ -10,7 +10,7 @@ This is based of an earlier project I made, which was a little more complicated,
 <img src="assets/readme/readme-preview.gif" />
 
 ## How does it work?
-Using extensible rules and localStorage, determine what images and values to show - based on user input and the passage of time
+Using extensible rules and localStorage, determine what images and values to show - based on user input and the passage of time  
 <img src="https://docs.google.com/drawings/d/e/2PACX-1vQ9W3m2QjxCHnV-CEJ-aYRqpahqXHKZtQ8UTY_kQJes-L4iO3D3QRa8mj4TAbjKu112BUsebmLTNL0O/pub?w=843&h=668">
 
 
