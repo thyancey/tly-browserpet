@@ -7,7 +7,9 @@
     { "id": "hotdoug", "baseUrl": "https://thyancey.github.io/browserpet-library/pets/hotdoug" },
     { "id": "mika", "baseUrl": "https://thyancey.github.io/browserpet-library/pets/mika" },
     { "id": "cheerimonster", "baseUrl": "https://thyancey.github.io/browserpet-library/pets/cheerimonster" },
-    { "id": "lisa", "baseUrl": "https://thyancey.github.io/browserpet-library/pets/lisa" }
+    { "id": "lisa", "baseUrl": "https://thyancey.github.io/browserpet-library/pets/lisa" },
+    { "id": "marshall", "baseUrl": "https://thyancey.github.io/browserpet-library/pets/marshall" }
+    // { "id": "marshall", "baseUrl": "assets/ignored-pets/marshall" }
     // { "id": "hotdoug", "baseUrl": "assets/ignored-pets/hotdoug" }
     // { "id": "mika", "baseUrl": "assets/ignored-pets/mika" },
     // { "id": "cheerimonster", "baseUrl": "assets/ignored-pets/cheerimonster" },

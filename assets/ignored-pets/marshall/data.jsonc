@@ -1,0 +1,147 @@
+{
+  "id": "marshall",
+  "name": "Marshall",
+  "bio": "A campfire marshmallow.",
+  "level": 0,
+  "backgroundColor": "#000000",
+  "logic":{
+    "stats":[
+      {
+        "id": "toastyness",
+        "label": "Toastyness",
+        "value": 0.0,
+        "perSecond": 14.123,
+        "min": 0.0,
+        "max": 500.0,
+        "fullIsGood": false,
+        "statEffects": [
+          { "when": "<_25%", "then": "STATUS_RAW" },
+          { "when": [">_25%", "<=_50%"], "then": "STATUS_PERFECT" },
+          { "when": [">_50%", "<_100%"], "then": "STATUS_BURNT" },
+          { "when": ">=_100%", "then": "STATUS_TOAST" }
+        ]
+      },
+      {
+        "id": "eaten",
+        "label": "Eaten",
+        "value": 0.0,
+        "perSecond": 0.0,
+        "min": 0.0,
+        "max": 1.0,
+        "fullIsGood": true,
+        "statEffects": [
+          { "when": "=_1", "then": "STATUS_EATEN" }
+        ]
+      }
+    ],
+    "statuses":[
+      {
+        "id": "STATUS_EATEN",
+        "label": "eaten"
+      },
+      {
+        "id": "STATUS_RAW",
+        "label": "raw",
+        "alertType": ""
+      },
+      {
+        "id": "STATUS_PERFECT",
+        "label": "perfect!",
+        "alertType": "reward"
+      },
+      {
+        "id": "STATUS_BURNT",
+        "label": "burning!",
+        "alertType": "warning"
+      },
+      {
+        "id": "STATUS_TOAST",
+        "label": "charred brick",
+        "alertType": "alert"
+      }
+    ],
+    "behaviorRules":[
+      {
+        "when": "STATUS_EATEN",
+        "then": "BE_EATEN"
+      },
+      {
+        "when": "STATUS_TOAST",
+        "then": "BE_TOAST"
+      },
+      {
+        "when": "STATUS_PERFECT",
+        "then": "BE_TOASTED"
+      },
+      {
+        "when": "STATUS_BURNT",
+        "then": "BE_BURNING"
+      },
+      {
+        "when": [],
+        "then": "BE_NORMAL"
+      }
+    ],
+    "behaviors":[
+      { "id": "BE_EATEN", "image": "assets/eaten.gif" },
+      { "id": "BE_NORMAL", "image": "assets/fresh.gif" },
+      { "id": "BE_TOASTED", "image": "assets/toasted.gif" },
+      { "id": "BE_BURNING", "image": "assets/burning.gif" },
+      { "id": "BE_TOAST", "image": "assets/toast.gif" }
+    ],
+    "interactions":[
+      {
+        "id":"INT_EAT",
+        "enabledWhen": [
+          {
+            "when": ["STATUS_EATEN"],
+            "then": "false"
+          },
+          {
+            "when": ["STATUS_TOAST"],
+            "then": "false"
+          },
+          {
+            "when": [],
+            "then": "true"
+          }
+        ],
+        "label": "Eat",
+        "cooldown": 10000,
+        "changeStats":[
+          {
+            "statId":"eaten",
+            "value": 1
+          }
+        ]
+      },{
+        "id":"INT_NEW",
+        "enabledWhen": [
+          {
+            "when": ["STATUS_EATEN"],
+            "then": "true"
+          },
+          {
+            "when": ["STATUS_TOAST"],
+            "then": "true"
+          },
+          {
+            "when": [],
+            "then": "false"
+          }
+        ],
+        "label": "New Marshall",
+        "cooldown": 10000,
+        "changeStats":[
+          {
+            "statId":"eaten",
+            "value": -1
+          },{
+            "statId":"toastyness",
+            "value": -1000
+          }
+        ]
+      }
+    ]
+  }
+}
