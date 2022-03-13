@@ -7,7 +7,7 @@ describe('#evaluateWhenThenStringGroup', () => {
   test('should match single when ', () => {
     const whenThenStringGroup = {
       when: ['MATCHING_CRITERIA'],
-      then: 'EXPECTED_RESULT'
+      then: ['EXPECTED_RESULT']
     } as WhenThenStringGroup
     const result = evaluateWhenThenStringGroup(whenThenStringGroup, ['MATCHING_CRITERIA']);
     expect(result).toBe('EXPECTED_RESULT');
@@ -16,7 +16,7 @@ describe('#evaluateWhenThenStringGroup', () => {
   test('should match multiple when requirements', () => {
     const whenThenStringGroup = {
       when: ['MATCHING_ONE', 'MATCHING_TWO'],
-      then: 'EXPECTED_RESULT'
+      then: ['EXPECTED_RESULT']
     } as WhenThenStringGroup
     const result = evaluateWhenThenStringGroup(whenThenStringGroup, ['MATCHING_ONE', 'MATCHING_TWO', 'SOMETHING_ELSE']);
     expect(result).toBe('EXPECTED_RESULT');
@@ -25,7 +25,7 @@ describe('#evaluateWhenThenStringGroup', () => {
   test('should return null on no match', () => {
     const whenThenStringGroup = {
       when: ['NOT_MATCHING_CRITERIA'],
-      then: 'SHOULDNT_GET_THIS'
+      then: ['SHOULDNT_GET_THIS']
     } as WhenThenStringGroup
     const result = evaluateWhenThenStringGroup(whenThenStringGroup, ['MATCHING_CRITERIA']);
     expect(result).toBe(null);
@@ -34,7 +34,7 @@ describe('#evaluateWhenThenStringGroup', () => {
   test('should return null on only one when match', () => {
     const whenThenStringGroup = {
       when: ['MATCHING_ONE', 'MATCHING_TWO'],
-      then: 'SHOULDNT_GET_THIS'
+      then: ['SHOULDNT_GET_THIS']
     } as WhenThenStringGroup
     const result = evaluateWhenThenStringGroup(whenThenStringGroup, ['MATCHING_ONE']);
     expect(result).toBe(null);
@@ -43,7 +43,7 @@ describe('#evaluateWhenThenStringGroup', () => {
   test('should return null on no provided criteria', () => {
     const whenThenStringGroup = {
       when: ['MATCHING_ONE'],
-      then: 'SHOULDNT_GET_THIS'
+      then: ['SHOULDNT_GET_THIS']
     } as WhenThenStringGroup
     const result = evaluateWhenThenStringGroup(whenThenStringGroup, []);
     expect(result).toBe(null);
@@ -52,7 +52,7 @@ describe('#evaluateWhenThenStringGroup', () => {
   test('should return then if no required when', () => {
     const whenThenStringGroup = {
       when: [],
-      then: 'EXPECTED_RESULT'
+      then: ['EXPECTED_RESULT']
     } as WhenThenStringGroup
     const result = evaluateWhenThenStringGroup(whenThenStringGroup, []);
     expect(result).toBe('EXPECTED_RESULT');
@@ -69,7 +69,7 @@ describe('#evaluateWhenThenNumberGroup', () => {
           isPercent: false
         }
       ],
-      then: 'EXPECTED_RESULT'
+      then: [ 'EXPECTED_RESULT' ]
     } as WhenThenNumberGroup;
 
     expect(
@@ -94,7 +94,7 @@ describe('#evaluateWhenThenNumberGroup', () => {
           isPercent: false
         }
       ],
-      then: 'EXPECTED_RESULT'
+      then: ['EXPECTED_RESULT']
     } as WhenThenNumberGroup;
 
     expect(
@@ -116,7 +116,7 @@ describe('#evaluateWhenThenNumberGroup', () => {
           isPercent: false
         }
       ],
-      then: 'EXPECTED_RESULT'
+      then: ['EXPECTED_RESULT']
     } as WhenThenNumberGroup;
 
     expect(
@@ -139,7 +139,7 @@ describe('#evaluateWhenThenNumberGroup', () => {
           isPercent: false
         }
       ],
-      then: 'EXPECTED_RESULT'
+      then: ['EXPECTED_RESULT']
     } as WhenThenNumberGroup;
 
     expect(
@@ -156,7 +156,7 @@ describe('#evaluateWhenThenNumberGroup', () => {
           isPercent: false
         }
       ],
-      then: 'EXPECTED_RESULT'
+      then: ['EXPECTED_RESULT']
     } as WhenThenNumberGroup;
     const result = evaluateWhenThenNumberGroup(whenThenNumberGroup, 50, 100);
     expect(result).toBe('EXPECTED_RESULT');

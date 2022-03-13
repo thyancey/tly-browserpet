@@ -62,7 +62,16 @@ export type PetInteractionDefinition = {
   id: string,
   label: string,
   cooldown: number,
-  changeStats: StatChangeDefinition[]
+  changeStats: StatChangeDefinition[],
+  availability: WhenThenStringBooleanGroup[]
+}
+
+export type PetInteractionDefinitionJSON = {
+  id: string,
+  label: string,
+  cooldown: number,
+  changeStats: StatChangeDefinition[],
+  availability: RawWhenThen[]
 }
 
 export type StatChangeDefinition = {
@@ -94,7 +103,7 @@ export type WhenNumber = {
 }
 export type RawWhenThen = {
   when: string[],
-  then: (string | string[]),
+  then: (string | string[] | boolean),
 }
 export type WhenThenNumberGroup = {
   when: WhenNumber[],
@@ -104,6 +113,10 @@ export type WhenThenNumberGroup = {
 export type WhenThenStringGroup = {
   when: string[],
   then: (string | string[])
+}
+export type WhenThenStringBooleanGroup = {
+  when: string[],
+  then: boolean
 }
 export type PetLogicGroup = {
   stats: PetStatDefinition[],
@@ -129,7 +142,7 @@ export type RawPetJSON = {
     statuses: PetStatusDefinition[],
     behaviors: PetBehaviorJSON[],
     behaviorRules: {when:string[], then:string}[],
-    interactions: PetInteractionDefinition[]
+    interactions: PetInteractionDefinitionJSON[]
   },
   backgroundImage?:string,
   backgroundColor?:string
@@ -165,7 +178,7 @@ export type SavedPetState = {
   beingTracked?: boolean
 }
 
-export type ActiveInteractionStatus = {
+export type InteractionCooldownStatus = {
   id: string,
   startAt: number,
   endAt: number // result of cooldown, if cooldown is 0, this whole record wouldnt have been saved
@@ -176,7 +189,9 @@ export type PetInteractionDetail = {
   label: string,
   startAt: number,
   endAt: number,
-  progress: number,
+  enabled: boolean,
+  definition: PetInteractionDefinition,
+  cooldownStatus: InteractionCooldownStatus,
 }
 
 export type LocalStorageState = {
@@ -184,7 +199,7 @@ export type LocalStorageState = {
     activePet?: string,
     lastSaved: number,
   },
-  interactions: ActiveInteractionStatus[],
+  interactions: InteractionCooldownStatus[],
   pets: SavedPetState[]
 }
 

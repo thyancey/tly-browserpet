@@ -1,12 +1,20 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { getColor } from '../../../themes';
-import { ActiveInteractionStatus, PetInteractionDefinition } from '../../../types';
+import { InteractionCooldownStatus, PetInteractionDefinition } from '../../../types';
 import { ProgressBar } from './progress-bar';
 
+type ScInteractionProps = {
+  isEnabled?: boolean
+}
 
-const ScInteraction = styled.li`
+const ScInteraction = styled.li<ScInteractionProps>`
   text-align:center;
+
+  ${p => !p.isEnabled && css`
+    opacity: .5;
+    pointer-events:none;
+  `}
 `;
 
 const ScButton = styled.div`
@@ -42,21 +50,20 @@ const ScLabel = styled.p`
 `
 
 type InteractionButtonProps = {
-  activeStatus?: ActiveInteractionStatus,
+  cooldownStatus?: InteractionCooldownStatus,
   interaction: PetInteractionDefinition,
+  isEnabled: boolean,
   onClickHandler?: Function
 }
 
-export const InteractionButton = ({activeStatus, interaction, onClickHandler}: InteractionButtonProps) => {
-  if(activeStatus){
-    const total = activeStatus.endAt - activeStatus.startAt; 
-    const progress = (total - (activeStatus.endAt - new Date().getTime())) / total;
-    const timeLeft = (activeStatus.endAt - new Date().getTime()) / 1000;
+export const InteractionButton = ({cooldownStatus, isEnabled, interaction, onClickHandler}: InteractionButtonProps) => {
+  if(cooldownStatus){
+    const total = cooldownStatus.endAt - cooldownStatus.startAt; 
+    const progress = (total - (cooldownStatus.endAt - new Date().getTime())) / total;
+    const timeLeft = (cooldownStatus.endAt - new Date().getTime()) / 1000;
 
-    // console.log(`${interaction.id} is %${progress * 100} complete with ${timeLeft} left.`)
-    // console.log(`of ${total / 1000} seconds`)
     return(
-      <ScInteraction >
+      <ScInteraction isEnabled={isEnabled}>
         <ScCooldownButton>
           <ScLabel>{interaction.label}</ScLabel>
           <ProgressBar startProgress={progress} duration={timeLeft} />
@@ -65,7 +72,7 @@ export const InteractionButton = ({activeStatus, interaction, onClickHandler}: I
     );
   }else{
     return(
-      <ScInteraction onClick={() => onClickHandler && onClickHandler()} >
+      <ScInteraction isEnabled={isEnabled} onClick={() => onClickHandler && onClickHandler()} >
         <ScButton>
           <ScLabel>{`${interaction.label}`}</ScLabel>
         </ScButton>
