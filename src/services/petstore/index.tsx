@@ -1,8 +1,8 @@
 // slightly evolving from create-react-app example
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PetDefinition, SavedPetState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetBehaviorDefinition, PetStatDefinitionJSON, PetInteractionDefinition, StatChangeDefinition, PetInteractionDetail, LocalStorageState, ActiveInteractionStatus, DeltaStat, PetBehaviorJSON, CachedPetStat, PingPayload } from '../../types';
+import { PetDefinition, SavedPetState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetBehaviorDefinition, PetStatDefinitionJSON, PetInteractionDefinition, StatChangeDefinition, PetInteractionDetail, LocalStorageState, ActiveInteractionStatus, DeltaStat, PetBehaviorJSON, CachedPetStat, PingPayload, WhenThenNumberGroup, WhenThenStringGroup } from '../../types';
 import { clamp, getRenderedDeltaStats, getCachedDeltaStats, log } from '../../util/tools';
-import { evaluateWhenThenNumberGroup, evaluateWhenThenStringGroup, parseRawWhenThenGroup } from '../../util/whenthen';
+import { evaluateWhenThenGroupOfThenBooleans, evaluateWhenThenNumberGroup, evaluateWhenThenStringGroup, parseRawWhenThenGroup } from '../../util/whenthen';
 
 import { RootState } from '../store';
 
@@ -68,6 +68,10 @@ export const parseStatChanges = (statChangesJSON: StatChangeDefinition[] = []) =
   }));
 }
 
+export const parseInteractionEnabledWhen = (enabledWhen: WhenThenStringGroup[]) => {
+  return enabledWhen ? parseRawWhenThenGroup(enabledWhen, 'interactions') : []
+}
+
 export const parseInteractionsGroup = (interactions: PetInteractionDefinition[], initialState: SavedPetState) => {
   if(!interactions) return [];
 
@@ -76,7 +80,8 @@ export const parseInteractionsGroup = (interactions: PetInteractionDefinition[],
       id: int.id,
       label: int.label,
       cooldown: int.cooldown,
-      changeStats: parseStatChanges(int.changeStats)
+      changeStats: parseStatChanges(int.changeStats),
+      enabledWhen: parseInteractionEnabledWhen(int.enabledWhen)
     }
   ));
 };
@@ -384,20 +389,6 @@ export const selectRenderedDeltaStats = createSelector(
   }
 );
 
-export const selectActiveInteractionDetail = createSelector(
-  [selectActiveInteractionDefinitions, selectActiveInteractionStatus], 
-  (activeInteractionDefinitions, activeInteractions): PetInteractionDetail[] => { 
-    return activeInteractionDefinitions.map(iD => {
-      return {
-        id:iD.id,
-        label: iD.label,
-        startAt: activeInteractions.find(aI => aI.id === iD.id)?.startAt || 0,
-        endAt: activeInteractions.find(aI => aI.id === iD.id)?.endAt || 0
-      } as PetInteractionDetail
-    }); 
-  }
-);
-
 export const selectActiveDeltaStatuses = createSelector(
   [selectRenderedDeltaStats, selectActiveStatDefinitions], 
   (deltaStats, statDefinitions) => {
@@ -447,6 +438,28 @@ export const selectActiveBehavior = createSelector(
       }
     }
     return null;
+  }
+);
+
+export const selectActiveInteractionDetail = createSelector(
+  [selectActiveInteractionDefinitions, selectActiveInteractionStatus, selectActiveDeltaStatuses], 
+  (activeInteractionDefinitions, activeInteractionStatus, activeStatuses): PetInteractionDetail[] => { 
+    return activeInteractionDefinitions.map(iD => {
+      const currentInteraction = activeInteractionStatus.find(aI => aI.id === iD.id);
+      // if(!interaction) return null;
+
+      const isEnabled = evaluateWhenThenGroupOfThenBooleans(iD.enabledWhen, activeStatuses);
+
+      return {
+        id:iD.id,
+        label: iD.label,
+        startAt: currentInteraction?.startAt || 0,
+        endAt: currentInteraction?.endAt || 0,
+        enabled: isEnabled,
+        definition: iD,
+        activeStatus: currentInteraction
+      } as PetInteractionDetail;
+    }); 
   }
 );
 

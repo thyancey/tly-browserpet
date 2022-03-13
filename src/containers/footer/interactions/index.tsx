@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from '@reduxjs/toolkit';
 
-import { selectActiveInteractionDefinitions, addNewInteractionEvent, selectActiveInteractionStatus, removeInteractionEvent } from '../../../services/petstore';
+import { selectActiveInteractionDefinitions, addNewInteractionEvent, selectActiveInteractionStatus, removeInteractionEvent, selectActiveInteractionDetail } from '../../../services/petstore';
 import { PetInteractionDefinition } from '../../../types';
 import { InteractionButton } from './interaction-button';
 
@@ -24,8 +24,7 @@ const ScInteractions = styled.ul`
 `;
 
 export const Interactions = () => {
-  const interactionDefs = useSelector(selectActiveInteractionDefinitions, shallowEqual);
-  const interactionStatus = useSelector(selectActiveInteractionStatus, shallowEqual);
+  const interactionDetails = useSelector(selectActiveInteractionDetail, shallowEqual);
 
   // thunk madness, cause I don't know how else to do this.
   const dispatch = useDispatch();
@@ -46,12 +45,13 @@ export const Interactions = () => {
 
   return (
     <ScInteractions>
-      {interactionDefs.map((interaction, i) => (
+      {interactionDetails.map((iDetail, i) => (
         <InteractionButton
-          key={interaction.id}
-          activeStatus={interactionStatus.find(iS => iS.id === interaction.id)}
-          interaction={interaction}
-          onClickHandler={() => addTemporaryInteraction(interaction)} />
+          key={iDetail.id}
+          activeStatus={iDetail.activeStatus}
+          isEnabled={iDetail.enabled}
+          interaction={iDetail.definition}
+          onClickHandler={() => addTemporaryInteraction(iDetail.definition)} />
       ))}
     </ScInteractions>
   )

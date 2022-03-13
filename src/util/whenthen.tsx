@@ -1,5 +1,18 @@
 import { ConditionOperator, RawWhenThen, WhenNumber, WhenThenNumberGroup, WhenThenStringGroup } from '../types';
 
+// this is ridiculous
+export const evaluateWhenThenGroupOfThenBooleans = (wTSG: WhenThenStringGroup[], stringCriteria: string[]) => {
+  if(!wTSG || wTSG.length === 0) return true;
+  
+  for(let i = 0; i < wTSG.length; i++){
+    const result = evaluateWhenThenStringGroup(wTSG[i], stringCriteria);
+    if(result){
+      return result === 'true';
+    }
+  }
+
+  return false;
+}
 
 export const evaluateWhenThenNumberGroup = (whenThenNumberGroup: WhenThenNumberGroup, referenceValue: number, maxValue:number) => {
   if(whenThenNumberGroup.when.find(w => !evaluateWhenNumber(w, referenceValue, maxValue))){
@@ -18,8 +31,8 @@ export const evaluateWhenThenStringGroup = (whenThenStringGroup: WhenThenStringG
   return whenThenStringGroup.then[Math.floor(Math.random() * whenThenStringGroup.then.length)];
 };
 
-export const parseRawWhenThenGroup = (rawWhenThenGroup: RawWhenThen[], type: 'stats' | 'statuses') => {
-  if(type === 'statuses'){
+export const parseRawWhenThenGroup = (rawWhenThenGroup: RawWhenThen[], type: 'stats' | 'statuses' | 'interactions') => {
+  if(type === 'statuses' || type === 'interactions'){
     return rawWhenThenGroup.map(rwt => {
       // json should support string or array, make this better
       const whens = typeof rwt.when === 'string' ? [ rwt.when ] : rwt.when;

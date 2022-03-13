@@ -62,7 +62,8 @@ export type PetInteractionDefinition = {
   id: string,
   label: string,
   cooldown: number,
-  changeStats: StatChangeDefinition[]
+  changeStats: StatChangeDefinition[],
+  enabledWhen: WhenThenStringGroup[]
 }
 
 export type StatChangeDefinition = {
@@ -176,7 +177,9 @@ export type PetInteractionDetail = {
   label: string,
   startAt: number,
   endAt: number,
-  progress: number,
+  enabled: boolean,
+  definition: PetInteractionDefinition,
+  activeStatus: ActiveInteractionStatus,
 }
 
 export type LocalStorageState = {
