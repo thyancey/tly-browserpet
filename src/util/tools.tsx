@@ -1,4 +1,4 @@
-import { PetStatDefinition, DeltaStat, SavedPetState, CachedPetStat } from '../types';
+import { PetStatDefinition, DeltaStat, CachedPetStat } from '../types';
 
 // general
 export const round = (number:number, pad?:number) => {
@@ -68,4 +68,8 @@ export const getCachedDeltaStats = (stats: PetStatDefinition[], cachedPetStats: 
 const LOG = false;
 export const log = (...messages:any) => {
   LOG && console.log(...messages);
+}
+
+export const ensureArray = (thing: any): any[] => {
+  return Array.isArray(thing) ? thing : [ thing ];
 }

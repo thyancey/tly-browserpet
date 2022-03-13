@@ -63,7 +63,15 @@ export type PetInteractionDefinition = {
   label: string,
   cooldown: number,
   changeStats: StatChangeDefinition[],
-  enabledWhen: RawWhenThen[]
+  availability: WhenThenStringBooleanGroup[]
+}
+
+export type PetInteractionDefinitionJSON = {
+  id: string,
+  label: string,
+  cooldown: number,
+  changeStats: StatChangeDefinition[],
+  availability: RawWhenThen[]
 }
 
 export type StatChangeDefinition = {
@@ -134,7 +142,7 @@ export type RawPetJSON = {
     statuses: PetStatusDefinition[],
     behaviors: PetBehaviorJSON[],
     behaviorRules: {when:string[], then:string}[],
-    interactions: PetInteractionDefinition[]
+    interactions: PetInteractionDefinitionJSON[]
   },
   backgroundImage?:string,
   backgroundColor?:string

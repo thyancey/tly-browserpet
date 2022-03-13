@@ -1,8 +1,8 @@
 // slightly evolving from create-react-app example
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PetDefinition, SavedPetState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetBehaviorDefinition, PetStatDefinitionJSON, PetInteractionDefinition, StatChangeDefinition, PetInteractionDetail, LocalStorageState, InteractionCooldownStatus, DeltaStat, PetBehaviorJSON, CachedPetStat, PingPayload, WhenThenNumberGroup, WhenThenStringGroup, WhenThenStringBooleanGroup, RawWhenThen } from '../../types';
+import { PetDefinition, SavedPetState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetBehaviorDefinition, PetStatDefinitionJSON, PetInteractionDefinition, StatChangeDefinition, PetInteractionDetail, LocalStorageState, InteractionCooldownStatus, DeltaStat, PetBehaviorJSON, CachedPetStat, PingPayload, WhenThenNumberGroup, WhenThenStringGroup, WhenThenStringBooleanGroup, RawWhenThen, PetInteractionDefinitionJSON } from '../../types';
 import { clamp, getRenderedDeltaStats, getCachedDeltaStats, log } from '../../util/tools';
-import { evaluateWhenThenGroupOfThenBooleans, evaluateWhenThenNumberGroup, evaluateWhenThenStringGroup, parseRawWhenThenGroup } from '../../util/whenthen';
+import { evaluateAvailabilityWhenThenGroup, evaluateWhenThenNumberGroup, evaluateWhenThenStringGroup, getFirstOfWhenThenStringGroups, parseInteractionWhenThenGroup, parseStatsWhenThenGroup, parseStatusesWhenThenGroup } from '../../util/whenthen';
 
 import { RootState } from '../store';
 
@@ -44,9 +44,9 @@ export const parseLogicGroup = (petDefJSON: RawPetJSON, initialState: SavedPetSt
   return {
     stats: parseStatsGroup(petDefJSON.logic.stats, initialState),
     statuses: petDefJSON.logic.statuses || [],
-    behaviorRules: parseRawWhenThenGroup(petDefJSON.logic.behaviorRules, 'statuses'),
+    behaviorRules: parseStatusesWhenThenGroup(petDefJSON.logic.behaviorRules),
     behaviors: parsePetBehaviors(petDefJSON.logic.behaviors || [], petDefJSON.baseUrl),
-    interactions: parseInteractionsGroup(petDefJSON.logic.interactions, initialState),
+    interactions: parseInteractionsGroup(petDefJSON.logic.interactions),
   } as PetLogicGroup;
 };
 
@@ -68,11 +68,11 @@ export const parseStatChanges = (statChangesJSON: StatChangeDefinition[] = []) =
   }));
 }
 
-export const parseInteractionEnabledWhen = (enabledWhen: RawWhenThen[]) => {
-  return enabledWhen ? parseRawWhenThenGroup(enabledWhen, 'interactions') : []
+export const parseInteractionAvailability = (availability: RawWhenThen[]) => {
+  return availability ? parseInteractionWhenThenGroup(availability) : []
 }
 
-export const parseInteractionsGroup = (interactions: PetInteractionDefinition[], initialState: SavedPetState) => {
+export const parseInteractionsGroup = (interactions: PetInteractionDefinitionJSON[]) => {
   if(!interactions) return [];
 
   return interactions.map(int => (
@@ -81,7 +81,7 @@ export const parseInteractionsGroup = (interactions: PetInteractionDefinition[],
       label: int.label,
       cooldown: int.cooldown,
       changeStats: parseStatChanges(int.changeStats),
-      enabledWhen: parseInteractionEnabledWhen(int.enabledWhen)
+      availability: parseInteractionAvailability(int.availability)
     }
   ));
 };
@@ -89,7 +89,7 @@ export const parseInteractionsGroup = (interactions: PetInteractionDefinition[],
 export const parseStatsGroup = (statsDef: PetStatDefinitionJSON[], initialState: SavedPetState) => {
   return statsDef.map(pS => {
     const foundStat = initialState?.stats.find(iS => iS.id === pS.id);
-    const statEffects = parseRawWhenThenGroup(pS.statEffects, 'stats');
+    const statEffects = parseStatsWhenThenGroup(pS.statEffects);
 
     if(foundStat){
       return {
@@ -376,7 +376,6 @@ export const selectCooldownStatus = createSelector(
 export const selectActiveLastCached = createSelector(
   [getCachedPets, selectActivePet],
   (cachedPets, activePet): number => {
-    // console.log('< selectActiveLastCached', cachedPets);
     if(!activePet) return 0;
     return cachedPets.find(cP => cP.id === activePet.id)?.lastSaved || 0;
   }
@@ -426,18 +425,8 @@ export const selectDetailedActiveDeltaStatuses = createSelector(
 export const selectActiveBehavior = createSelector(
   [selectActiveDeltaStatuses, selectActiveBehaviorRuleDefinitions, selectActiveBehaviorDefinitions],
   (deltaStatusIds, behaviorRules, behaviorDefinitions): (PetBehaviorDefinition | null) => {
-    for(let i = 0; i < behaviorRules.length; i++){
-      let finalBehaviorId = evaluateWhenThenStringGroup(behaviorRules[i], deltaStatusIds);
-      if(finalBehaviorId){
-        const f = behaviorDefinitions.find(bD => bD.id === finalBehaviorId);
-        if(!f){
-          console.log(`ERROR: invalid behaviorId: "${finalBehaviorId}"`);
-          return null;
-        }
-        return f;
-      }
-    }
-    return null;
+    const foundBehaviorId = getFirstOfWhenThenStringGroups(behaviorRules, deltaStatusIds);
+    return behaviorDefinitions.find(bD => bD.id === foundBehaviorId) || null;
   }
 );
 
@@ -446,10 +435,7 @@ export const selectActiveInteractionDetail = createSelector(
   (activeInteractionDefinitions, cooldownStatuses, activeStatuses): PetInteractionDetail[] => { 
     return activeInteractionDefinitions.map(iD => {
       const cooldownStatus = cooldownStatuses.find(aI => aI.id === iD.id);
-      // if(!interaction) return null;
-
-      const isEnabled = evaluateWhenThenGroupOfThenBooleans(iD.enabledWhen as WhenThenStringBooleanGroup[], activeStatuses);
-      console.log('result', isEnabled);
+      const isEnabled = evaluateAvailabilityWhenThenGroup(iD.availability as WhenThenStringBooleanGroup[], activeStatuses);
       return {
         id:iD.id,
         label: iD.label,

@@ -1,40 +1,50 @@
 import { ConditionOperator, RawWhenThen, WhenNumber, WhenThenNumberGroup, WhenThenStringBooleanGroup, WhenThenStringGroup } from '../types';
+import { ensureArray } from './tools';
 
-// this is ridiculous
-export const evaluateWhenThenGroupOfThenBooleans = (wTSG: WhenThenStringBooleanGroup[], stringCriteria: string[]) => {
-  console.log('evaluating', wTSG, stringCriteria)
-  if(!wTSG || wTSG.length === 0) return true;
+export const evaluateAvailabilityWhenThenGroup = (wTSG: WhenThenStringBooleanGroup[], stringCriteria: string[]) => {
+  if(wTSG.length === 0) return true;
 
   for(let i = 0; i < wTSG.length; i++){
-    return evaluateWhenThenStringBooleanGroup(wTSG[i], stringCriteria);
+    // an empty when is used as a "default"
+    if(wTSG[i].when.length === 0){
+      return returnThen(wTSG[i].then);
+    }
+
+    // if all when values are fufilled by available stringCriteria
+    if(wTSG[i].when.filter(wtsg => stringCriteria.indexOf(wtsg) > -1).length === wTSG[i].when.length){
+      return returnThen(wTSG[i].then);
+    }
   }
 
   return false;
 }
 
-export const evaluateWhenThenStringBooleanGroup = (whenThenStringBooleanGroup: WhenThenStringBooleanGroup, stringCriteria: string[]) => {
-  // remember, an empty when skips this and just returns the result
-  console.log('evaluateWhenThenStringBooleanGroup', whenThenStringBooleanGroup, stringCriteria)
-
-  // if all whens are validated, return then
-  if(whenThenStringBooleanGroup.when.filter(wtsg => stringCriteria.indexOf(wtsg) > -1).length === whenThenStringBooleanGroup.when.length){
-    //- all whens are fufilled
+export const getFirstOfWhenThenStringGroups = (whenThenGroup: WhenThenStringGroup[], stringCriteria: string[]) => {
+  // console.log('getFirstOfWhenThenStringGroup', whenThenGroup, stringCriteria)
+  for(let i = 0; i < whenThenGroup.length; i++){
+    let thenResult = evaluateWhenThenStringGroup(whenThenGroup[i], stringCriteria);
+    if(thenResult){
+      return thenResult;
+    }
   }
+  return null;
+}
 
-  // if all true, can return it
-  if (!whenThenStringBooleanGroup.when.find(w => stringCriteria.indexOf(w) === -1)){
-    // something in the required group was not found
-    return false;
-  };
-  return whenThenStringBooleanGroup.then;
-};
+// i made 'then' annoying. when its an array, return a random one, when its not, just return it
+export const returnThen = (then: any[] | any) => {
+  if(Array.isArray(then)){
+    return then[Math.floor(Math.random() * then.length)];
+  }else{
+    return then;
+  }
+}
 
 export const evaluateWhenThenNumberGroup = (whenThenNumberGroup: WhenThenNumberGroup, referenceValue: number, maxValue:number) => {
   if(whenThenNumberGroup.when.find(w => !evaluateWhenNumber(w, referenceValue, maxValue))){
     // something in the required group was not found
     return null;
   }
-  return whenThenNumberGroup.then[Math.floor(Math.random() * whenThenNumberGroup.then.length)];
+  return returnThen(whenThenNumberGroup.then);
 };
 
 export const evaluateWhenThenStringGroup = (whenThenStringGroup: WhenThenStringGroup, stringCriteria: string[]) => {
@@ -43,48 +53,38 @@ export const evaluateWhenThenStringGroup = (whenThenStringGroup: WhenThenStringG
     // something in the required group was not found
     return null;
   };
-  if(typeof whenThenStringGroup.then === 'boolean') return whenThenStringGroup.then;
-  return whenThenStringGroup.then[Math.floor(Math.random() * whenThenStringGroup.then.length)];
+  return returnThen(whenThenStringGroup.then);
 };
 
-export const parseRawWhenThenGroup = (rawWhenThenGroup: RawWhenThen[], type: 'stats' | 'statuses' | 'interactions') => {
-  if(type === 'statuses'){
-    return rawWhenThenGroup.map(rwt => {
-      // json should support string or array, make this better
-      const whens = typeof rwt.when === 'string' ? [ rwt.when ] : rwt.when;
-      const thens = typeof rwt.then === 'string' ? [ rwt.then ] : rwt.then;
+export const parseInteractionWhenThenGroup = (rawWhenThenGroup: RawWhenThen[]) => {
+  return rawWhenThenGroup.map(rwt => {
+    return {
+      when: ensureArray(rwt.when),
+      then: rwt.then
+    } as WhenThenStringBooleanGroup;
+  }) as WhenThenStringBooleanGroup[]; 
+}
 
-      return {
-        when: whens,
-        then: thens
-      } as WhenThenStringGroup;
+export const parseStatusesWhenThenGroup = (rawWhenThenGroup: RawWhenThen[]) => {
+  return rawWhenThenGroup.map(rwt => {
+    return {
+      when: ensureArray(rwt.when),
+      then: ensureArray(rwt.then)
+    } as WhenThenStringGroup;
+  }) as WhenThenStringGroup[];
+}
 
-    }) as WhenThenStringGroup[];
-  } else if(type === 'interactions'){
-    return rawWhenThenGroup.map(rwt => {
-      // json should support string or array, make this better
-      const whens = typeof rwt.when === 'string' ? [ rwt.when ] : rwt.when;
-
-      console.log(`givin back ${whens}, ${rwt.then}`);
-      return {
-        when: whens,
-        then: rwt.then || false
-      } as WhenThenStringBooleanGroup;
-
-    }) as WhenThenStringBooleanGroup[];
-  } else if (type === 'stats'){
-    if(!rawWhenThenGroup) return [] as WhenThenNumberGroup[];
-    return rawWhenThenGroup.map(rwt => {
-      // json should support string or array, make this better
-      const whens = typeof rwt.when === 'string' ? [ rwt.when ] : rwt.when;
-      return {
-        when: whens.map(w => parseExpressionString(w)).filter(w => w !== null),
-        then: (typeof rwt.then === 'string') ? [ rwt.then ] : rwt.then
-      } as WhenThenNumberGroup;
-    }) as WhenThenNumberGroup[];
-  }
-  return [] as WhenThenNumberGroup[];
-};
+export const parseStatsWhenThenGroup = (rawWhenThenGroup: RawWhenThen[]) => {
+  if(!rawWhenThenGroup) return [] as WhenThenNumberGroup[];
+  return rawWhenThenGroup.map(rwt => {
+    // json should support string or array, make this better
+    const whens = ensureArray(rwt.when);
+    return {
+      when: whens.map(w => parseExpressionString(w)).filter(w => w !== null),
+      then: ensureArray(rwt.then)
+    } as WhenThenNumberGroup;
+  }) as WhenThenNumberGroup[];
+}
 
 /*
   //- convert <=_20% into:
