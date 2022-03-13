@@ -92,18 +92,18 @@
     "interactions":[
       {
         "id":"INT_EAT",
-        "enabledWhen": [
+        "availability": [
           {
             "when": ["STATUS_EATEN"],
-            "then": "false"
+            "then": false
           },
           {
             "when": ["STATUS_TOAST"],
-            "then": "false"
+            "then": false
           },
           {
             "when": [],
-            "then": "true"
+            "then": true
           }
         ],
         "label": "Eat",
@@ -116,18 +116,18 @@
         ]
       },{
         "id":"INT_NEW",
-        "enabledWhen": [
+        "availability": [
           {
             "when": ["STATUS_EATEN"],
-            "then": "true"
+            "then": true
           },
           {
             "when": ["STATUS_TOAST"],
-            "then": "true"
+            "then": true
           },
           {
             "when": [],
-            "then": "false"
+            "then": false
           }
         ],
         "label": "New Marshall",
