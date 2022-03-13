@@ -1,6 +1,6 @@
 // slightly evolving from create-react-app example
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PetDefinition, SavedPetState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetBehaviorDefinition, PetStatDefinitionJSON, PetInteractionDefinition, StatChangeDefinition, PetInteractionDetail, LocalStorageState, ActiveInteractionStatus, DeltaStat, PetBehaviorJSON, CachedPetStat, PingPayload, WhenThenNumberGroup, WhenThenStringGroup } from '../../types';
+import { PetDefinition, SavedPetState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetBehaviorDefinition, PetStatDefinitionJSON, PetInteractionDefinition, StatChangeDefinition, PetInteractionDetail, LocalStorageState, ActiveInteractionStatus, DeltaStat, PetBehaviorJSON, CachedPetStat, PingPayload, WhenThenNumberGroup, WhenThenStringGroup, WhenThenStringBooleanGroup, RawWhenThen } from '../../types';
 import { clamp, getRenderedDeltaStats, getCachedDeltaStats, log } from '../../util/tools';
 import { evaluateWhenThenGroupOfThenBooleans, evaluateWhenThenNumberGroup, evaluateWhenThenStringGroup, parseRawWhenThenGroup } from '../../util/whenthen';
 
@@ -68,7 +68,7 @@ export const parseStatChanges = (statChangesJSON: StatChangeDefinition[] = []) =
   }));
 }
 
-export const parseInteractionEnabledWhen = (enabledWhen: WhenThenStringGroup[]) => {
+export const parseInteractionEnabledWhen = (enabledWhen: RawWhenThen[]) => {
   return enabledWhen ? parseRawWhenThenGroup(enabledWhen, 'interactions') : []
 }
 
@@ -448,8 +448,8 @@ export const selectActiveInteractionDetail = createSelector(
       const currentInteraction = activeInteractionStatus.find(aI => aI.id === iD.id);
       // if(!interaction) return null;
 
-      const isEnabled = evaluateWhenThenGroupOfThenBooleans(iD.enabledWhen, activeStatuses);
-
+      const isEnabled = evaluateWhenThenGroupOfThenBooleans(iD.enabledWhen as WhenThenStringBooleanGroup[], activeStatuses);
+      console.log('result', isEnabled);
       return {
         id:iD.id,
         label: iD.label,

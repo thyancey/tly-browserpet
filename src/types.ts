@@ -63,7 +63,7 @@ export type PetInteractionDefinition = {
   label: string,
   cooldown: number,
   changeStats: StatChangeDefinition[],
-  enabledWhen: WhenThenStringGroup[]
+  enabledWhen: RawWhenThen[]
 }
 
 export type StatChangeDefinition = {
@@ -95,7 +95,7 @@ export type WhenNumber = {
 }
 export type RawWhenThen = {
   when: string[],
-  then: (string | string[]),
+  then: (string | string[] | boolean),
 }
 export type WhenThenNumberGroup = {
   when: WhenNumber[],
@@ -105,6 +105,10 @@ export type WhenThenNumberGroup = {
 export type WhenThenStringGroup = {
   when: string[],
   then: (string | string[])
+}
+export type WhenThenStringBooleanGroup = {
+  when: string[],
+  then: boolean
 }
 export type PetLogicGroup = {
   stats: PetStatDefinition[],

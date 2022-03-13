@@ -1,18 +1,33 @@
-import { ConditionOperator, RawWhenThen, WhenNumber, WhenThenNumberGroup, WhenThenStringGroup } from '../types';
+import { ConditionOperator, RawWhenThen, WhenNumber, WhenThenNumberGroup, WhenThenStringBooleanGroup, WhenThenStringGroup } from '../types';
 
 // this is ridiculous
-export const evaluateWhenThenGroupOfThenBooleans = (wTSG: WhenThenStringGroup[], stringCriteria: string[]) => {
+export const evaluateWhenThenGroupOfThenBooleans = (wTSG: WhenThenStringBooleanGroup[], stringCriteria: string[]) => {
+  console.log('evaluating', wTSG, stringCriteria)
   if(!wTSG || wTSG.length === 0) return true;
-  
+
   for(let i = 0; i < wTSG.length; i++){
-    const result = evaluateWhenThenStringGroup(wTSG[i], stringCriteria);
-    if(result){
-      return result === 'true';
-    }
+    return evaluateWhenThenStringBooleanGroup(wTSG[i], stringCriteria);
   }
 
   return false;
 }
+
+export const evaluateWhenThenStringBooleanGroup = (whenThenStringBooleanGroup: WhenThenStringBooleanGroup, stringCriteria: string[]) => {
+  // remember, an empty when skips this and just returns the result
+  console.log('evaluateWhenThenStringBooleanGroup', whenThenStringBooleanGroup, stringCriteria)
+
+  // if all whens are validated, return then
+  if(whenThenStringBooleanGroup.when.filter(wtsg => stringCriteria.indexOf(wtsg) > -1).length === whenThenStringBooleanGroup.when.length){
+    //- all whens are fufilled
+  }
+
+  // if all true, can return it
+  if (!whenThenStringBooleanGroup.when.find(w => stringCriteria.indexOf(w) === -1)){
+    // something in the required group was not found
+    return false;
+  };
+  return whenThenStringBooleanGroup.then;
+};
 
 export const evaluateWhenThenNumberGroup = (whenThenNumberGroup: WhenThenNumberGroup, referenceValue: number, maxValue:number) => {
   if(whenThenNumberGroup.when.find(w => !evaluateWhenNumber(w, referenceValue, maxValue))){
@@ -28,11 +43,12 @@ export const evaluateWhenThenStringGroup = (whenThenStringGroup: WhenThenStringG
     // something in the required group was not found
     return null;
   };
+  if(typeof whenThenStringGroup.then === 'boolean') return whenThenStringGroup.then;
   return whenThenStringGroup.then[Math.floor(Math.random() * whenThenStringGroup.then.length)];
 };
 
 export const parseRawWhenThenGroup = (rawWhenThenGroup: RawWhenThen[], type: 'stats' | 'statuses' | 'interactions') => {
-  if(type === 'statuses' || type === 'interactions'){
+  if(type === 'statuses'){
     return rawWhenThenGroup.map(rwt => {
       // json should support string or array, make this better
       const whens = typeof rwt.when === 'string' ? [ rwt.when ] : rwt.when;
@@ -44,6 +60,18 @@ export const parseRawWhenThenGroup = (rawWhenThenGroup: RawWhenThen[], type: 'st
       } as WhenThenStringGroup;
 
     }) as WhenThenStringGroup[];
+  } else if(type === 'interactions'){
+    return rawWhenThenGroup.map(rwt => {
+      // json should support string or array, make this better
+      const whens = typeof rwt.when === 'string' ? [ rwt.when ] : rwt.when;
+
+      console.log(`givin back ${whens}, ${rwt.then}`);
+      return {
+        when: whens,
+        then: rwt.then || false
+      } as WhenThenStringBooleanGroup;
+
+    }) as WhenThenStringBooleanGroup[];
   } else if (type === 'stats'){
     if(!rawWhenThenGroup) return [] as WhenThenNumberGroup[];
     return rawWhenThenGroup.map(rwt => {
