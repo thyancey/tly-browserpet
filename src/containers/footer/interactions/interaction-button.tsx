@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { getColor } from '../../../themes';
-import { ActiveInteractionStatus, PetInteractionDefinition } from '../../../types';
+import { InteractionCooldownStatus, PetInteractionDefinition } from '../../../types';
 import { ProgressBar } from './progress-bar';
 
 type ScInteractionProps = {
@@ -50,17 +50,17 @@ const ScLabel = styled.p`
 `
 
 type InteractionButtonProps = {
-  activeStatus?: ActiveInteractionStatus,
+  cooldownStatus?: InteractionCooldownStatus,
   interaction: PetInteractionDefinition,
   isEnabled: boolean,
   onClickHandler?: Function
 }
 
-export const InteractionButton = ({activeStatus, isEnabled, interaction, onClickHandler}: InteractionButtonProps) => {
-  if(activeStatus){
-    const total = activeStatus.endAt - activeStatus.startAt; 
-    const progress = (total - (activeStatus.endAt - new Date().getTime())) / total;
-    const timeLeft = (activeStatus.endAt - new Date().getTime()) / 1000;
+export const InteractionButton = ({cooldownStatus, isEnabled, interaction, onClickHandler}: InteractionButtonProps) => {
+  if(cooldownStatus){
+    const total = cooldownStatus.endAt - cooldownStatus.startAt; 
+    const progress = (total - (cooldownStatus.endAt - new Date().getTime())) / total;
+    const timeLeft = (cooldownStatus.endAt - new Date().getTime()) / 1000;
 
     return(
       <ScInteraction isEnabled={isEnabled}>

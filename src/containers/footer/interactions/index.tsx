@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from '@reduxjs/toolkit';
 
-import { selectActiveInteractionDefinitions, addNewInteractionEvent, selectActiveInteractionStatus, removeInteractionEvent, selectActiveInteractionDetail } from '../../../services/petstore';
+import { selectActiveInteractionDefinitions, addNewInteractionEvent, selectCooldownStatus, removeInteractionEvent, selectActiveInteractionDetail } from '../../../services/petstore';
 import { PetInteractionDefinition } from '../../../types';
 import { InteractionButton } from './interaction-button';
 
@@ -48,7 +48,7 @@ export const Interactions = () => {
       {interactionDetails.map((iDetail, i) => (
         <InteractionButton
           key={iDetail.id}
-          activeStatus={iDetail.activeStatus}
+          cooldownStatus={iDetail.cooldownStatus}
           isEnabled={iDetail.enabled}
           interaction={iDetail.definition}
           onClickHandler={() => addTemporaryInteraction(iDetail.definition)} />

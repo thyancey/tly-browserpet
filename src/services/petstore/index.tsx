@@ -1,6 +1,6 @@
 // slightly evolving from create-react-app example
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { PetDefinition, SavedPetState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetBehaviorDefinition, PetStatDefinitionJSON, PetInteractionDefinition, StatChangeDefinition, PetInteractionDetail, LocalStorageState, ActiveInteractionStatus, DeltaStat, PetBehaviorJSON, CachedPetStat, PingPayload, WhenThenNumberGroup, WhenThenStringGroup, WhenThenStringBooleanGroup, RawWhenThen } from '../../types';
+import { PetDefinition, SavedPetState, PetLogicGroup, RawPetJSON, PetStatusDefinition, PetInfo, PetBehaviorDefinition, PetStatDefinitionJSON, PetInteractionDefinition, StatChangeDefinition, PetInteractionDetail, LocalStorageState, InteractionCooldownStatus, DeltaStat, PetBehaviorJSON, CachedPetStat, PingPayload, WhenThenNumberGroup, WhenThenStringGroup, WhenThenStringBooleanGroup, RawWhenThen } from '../../types';
 import { clamp, getRenderedDeltaStats, getCachedDeltaStats, log } from '../../util/tools';
 import { evaluateWhenThenGroupOfThenBooleans, evaluateWhenThenNumberGroup, evaluateWhenThenStringGroup, parseRawWhenThenGroup } from '../../util/whenthen';
 
@@ -18,7 +18,7 @@ const DEFAULT_LOCALSTORAGE_STATE: LocalStorageState = {
 export type PetStoreState = {
   activeIdx: number,
   pets: PetDefinition[],
-  interactions: ActiveInteractionStatus[],
+  interactions: InteractionCooldownStatus[],
   cachedPets: SavedPetState[],
   lastRendered: number,
   lastSaved: number,
@@ -196,7 +196,7 @@ export const petStoreSlice = createSlice({
       state.cachedPets = lsState.pets;
     },
     restoreInteractionFromSave:  (state: PetStoreState, action: PayloadAction<any>) => {
-      const interaction = action.payload as ActiveInteractionStatus;
+      const interaction = action.payload as InteractionCooldownStatus;
       if(!state.interactions.find(iE => iE.id === interaction.id)){
         console.log(`restoreInteractionFromSave ${interaction.id} with ${(interaction.endAt - new Date().getTime()) / 1000} secs left`);
         state.interactions.push(interaction);
@@ -299,7 +299,7 @@ export const { pingStore, createPet, setActiveIdx, setActiveId, clearSave, setCa
 
 export const selectActiveIdx = (state: RootState): number => state.petStore.activeIdx;
 export const selectPets = (state: RootState): PetDefinition[] => state.petStore.pets;
-export const getActiveInteractions = (state: RootState): ActiveInteractionStatus[] => state.petStore.interactions;
+export const getActiveInteractions = (state: RootState): InteractionCooldownStatus[] => state.petStore.interactions;
 export const getCachedPets = (state: RootState): SavedPetState[] => state.petStore.cachedPets;
 export const getNewLastRendered = (state: RootState): number => state.petStore.lastRendered;
 export const getNewLastSaved = (state: RootState): number => state.petStore.lastSaved;
@@ -369,8 +369,8 @@ export const selectActiveInfo = createSelector(
 );
 
 
-export const selectActiveInteractionStatus = createSelector(
-  [getActiveInteractions], (activeInteractions:ActiveInteractionStatus[]) => activeInteractions
+export const selectCooldownStatus = createSelector(
+  [getActiveInteractions], (activeInteractions:InteractionCooldownStatus[]) => activeInteractions
 );
 
 export const selectActiveLastCached = createSelector(
@@ -442,10 +442,10 @@ export const selectActiveBehavior = createSelector(
 );
 
 export const selectActiveInteractionDetail = createSelector(
-  [selectActiveInteractionDefinitions, selectActiveInteractionStatus, selectActiveDeltaStatuses], 
-  (activeInteractionDefinitions, activeInteractionStatus, activeStatuses): PetInteractionDetail[] => { 
+  [selectActiveInteractionDefinitions, selectCooldownStatus, selectActiveDeltaStatuses], 
+  (activeInteractionDefinitions, cooldownStatuses, activeStatuses): PetInteractionDetail[] => { 
     return activeInteractionDefinitions.map(iD => {
-      const currentInteraction = activeInteractionStatus.find(aI => aI.id === iD.id);
+      const cooldownStatus = cooldownStatuses.find(aI => aI.id === iD.id);
       // if(!interaction) return null;
 
       const isEnabled = evaluateWhenThenGroupOfThenBooleans(iD.enabledWhen as WhenThenStringBooleanGroup[], activeStatuses);
@@ -453,11 +453,11 @@ export const selectActiveInteractionDetail = createSelector(
       return {
         id:iD.id,
         label: iD.label,
-        startAt: currentInteraction?.startAt || 0,
-        endAt: currentInteraction?.endAt || 0,
+        startAt: cooldownStatus?.startAt || 0,
+        endAt: cooldownStatus?.endAt || 0,
         enabled: isEnabled,
         definition: iD,
-        activeStatus: currentInteraction
+        cooldownStatus: cooldownStatus
       } as PetInteractionDetail;
     }); 
   }
@@ -503,7 +503,7 @@ export const selectPetsFromLocalStorage = createSelector(
 
 // TODO, the beingTracked here needs to be investigated more.
 export const selectNewSavePayload = createSelector(
-  [selectLastSaved, selectCachedDeltaStats, selectActivePet, selectActiveInteractionStatus, selectCachedPets],
+  [selectLastSaved, selectCachedDeltaStats, selectActivePet, selectCooldownStatus, selectCachedPets],
   (lastSaved, cachedDeltaStats, activePet, activeInteractions, storedPets): (LocalStorageState | null) => {
     
     //TODO, this seems fishy

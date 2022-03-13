@@ -170,7 +170,7 @@ export type SavedPetState = {
   beingTracked?: boolean
 }
 
-export type ActiveInteractionStatus = {
+export type InteractionCooldownStatus = {
   id: string,
   startAt: number,
   endAt: number // result of cooldown, if cooldown is 0, this whole record wouldnt have been saved
@@ -183,7 +183,7 @@ export type PetInteractionDetail = {
   endAt: number,
   enabled: boolean,
   definition: PetInteractionDefinition,
-  activeStatus: ActiveInteractionStatus,
+  cooldownStatus: InteractionCooldownStatus,
 }
 
 export type LocalStorageState = {
@@ -191,7 +191,7 @@ export type LocalStorageState = {
     activePet?: string,
     lastSaved: number,
   },
-  interactions: ActiveInteractionStatus[],
+  interactions: InteractionCooldownStatus[],
   pets: SavedPetState[]
 }
 

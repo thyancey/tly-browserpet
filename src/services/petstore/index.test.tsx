@@ -66,6 +66,7 @@ describe('#petstore.selectors', () => {
             statEffects: []
           }
         ],
+        [],
         lastTime,
         time
       )).toEqual([{
@@ -91,6 +92,7 @@ describe('#petstore.selectors', () => {
             statEffects: []
           }
         ],
+        [],
         lastTime,
         time
       )).toEqual([{
@@ -124,6 +126,7 @@ describe('#petstore.selectors', () => {
             statEffects: []
           }
         ],
+        [],
         lastTime,
         time
       )).toEqual([{
